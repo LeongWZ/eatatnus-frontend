@@ -47,7 +47,8 @@ export default function ResetPassword() {
         />
 
         <View className="mt-4 w-1/4">
-          <Button title="Submit" onPress={onSubmit} />
+          <Button title="Submit" onPress={onSubmit}
+            disabled={formData.email === ""}/>
         </View>
 
         {resetStatus.data && (

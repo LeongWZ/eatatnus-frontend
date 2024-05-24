@@ -24,7 +24,7 @@ export default function SignIn() {
 
     signInWithEmail(formData.email, formData.password)
       .then(() => dispatchAuthStatus({ type: "SIGN_IN_SUCCESS", error_message: null }))
-      .catch((error) => dispatchAuthStatus({ type: "ERROR", error_message: error.message }));
+      .catch(error => dispatchAuthStatus({ type: "ERROR", error_message: error.message }));
   }
   
   if (authStatus.data === "AUTHENTICATED") {
@@ -45,7 +45,8 @@ export default function SignIn() {
           onChangeText={input => setFormData({...formData, password: input})}/>
         
         <View className="mt-4 w-1/4">
-          <Button title="Submit" onPress={onSubmit}/>
+          <Button title="Submit" onPress={onSubmit}
+            disabled={formData.email === "" || formData.password === ""}/>
         </View>
 
         <Link href="/resetpassword" className="mt-2 font-medium text-blue-600 dark:text-blue-500 underline">

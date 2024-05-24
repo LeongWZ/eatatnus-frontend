@@ -46,6 +46,9 @@ export default function Index() {
   const [user, setUser] = React.useState<User | null>(useUser());
   onAuthStateChanged(auth, setUser);
 
+  // For debugging purposes
+  //onAuthStateChanged(auth, user => {setUser(user); (async () => console.log(await user?.getIdToken()))()});
+
   return (
     <View>
       <Header user={user}/>

@@ -49,7 +49,8 @@ export default function Register() {
           onChangeText={input => setFormData({...formData, displayName: input})}/>
         
         <View className="mt-4 w-1/4">
-          <Button title="Submit" onPress={onSubmit}/>
+          <Button title="Submit" onPress={onSubmit}
+            disabled={formData.email === "" || formData.password === "" || formData.displayName === ""}/>
         </View>
 
         <Link href="/signin" className="mt-2 font-medium text-blue-600 dark:text-blue-500 underline">
