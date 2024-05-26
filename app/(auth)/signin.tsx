@@ -1,6 +1,6 @@
 import { Link, Redirect } from "expo-router";
 import { Text, View, TextInput, Button } from "react-native";
-import useUser from "@/hooks/useUser";
+import getUser from "@/utils/getUser";
 import React from "react";
 import signInWithEmail from "@/api/auth/signInWithEmail";
 import useAuthReducer, { AuthStatus, AuthStatusAction } from "@/hooks/useAuthReducer";
@@ -12,10 +12,10 @@ type FormData = {
 
 export default function SignIn() {
 
-  const [authStatus, dispatchAuthStatus]: [AuthStatus, React.Dispatch<AuthStatusAction>] = React.useReducer(
-    useAuthReducer(),
-    { data: useUser() === null ? "NOT_AUTHENTICATED" : "AUTHENTICATED", error_message: null }
-  );
+  const [authStatus, dispatchAuthStatus]: [AuthStatus, React.Dispatch<AuthStatusAction>] = useAuthReducer({
+    data: getUser() === null ? "NOT_AUTHENTICATED" : "AUTHENTICATED",
+    error_message: null
+  });
 
   const [formData, setFormData] = React.useState<FormData>({email: "", password: ""});
 

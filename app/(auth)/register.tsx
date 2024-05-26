@@ -12,10 +12,10 @@ type FormData = {
 
 export default function Register() {
 
-  const [authStatus, dispatchAuthStatus]: [AuthStatus, React.Dispatch<AuthStatusAction>] = React.useReducer(
-    useAuthReducer(),
-    { data: "NOT_AUTHENTICATED", error_message: null }
-  );
+  const [authStatus, dispatchAuthStatus]: [AuthStatus, React.Dispatch<AuthStatusAction>] = useAuthReducer({
+    data: "NOT_AUTHENTICATED",
+    error_message: null
+  });
 
   const [formData, setFormData] = React.useState<FormData>({email: "", password: "", displayName: ""});
 

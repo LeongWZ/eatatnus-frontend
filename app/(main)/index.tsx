@@ -1,9 +1,12 @@
 import { Link } from "expo-router";
 import { Text, View, Pressable } from "react-native";
-import useUser from "@/hooks/useUser";
+import getUser from "@/utils/getUser";
 import { User, onAuthStateChanged } from "firebase/auth";
 import React from "react";
 import {auth} from "@/firebaseConfig";
+import { Canteen } from "../types";
+import CanteenPreview from "@/components/CanteenPreview";
+import fetchCanteens from "@/api/canteens/fetchCanteens";
 
 type HeaderProps = {
   user: User | null;
@@ -43,16 +46,30 @@ function Header({user}: HeaderProps) {
 }
 
 export default function Index() {
-  const [user, setUser] = React.useState<User | null>(useUser());
+  const [user, setUser] = React.useState<User | null>(getUser());
   onAuthStateChanged(auth, setUser);
+
+  const [canteens, setCanteens] = React.useState<Canteen[]>([]);
 
   // For debugging purposes
   //onAuthStateChanged(auth, user => {setUser(user); (async () => console.log(await user?.getIdToken()))()});
 
+  React.useEffect(
+    () => {
+      fetchCanteens()
+      .then(result => setCanteens(result.data.items))
+        .catch(error => {
+          console.log(error);
+          setCanteens([]);
+        })
+    },
+    []
+  );
+
   return (
     <View>
       <Header user={user}/>
-      <Text className="p-2">Welcome to the app!</Text>
+      {canteens.map(canteen => <CanteenPreview key={canteen.id} canteen={canteen}/>)}
     </View>
   );
 }

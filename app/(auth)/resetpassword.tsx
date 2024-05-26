@@ -1,6 +1,6 @@
 import { Link, Redirect } from "expo-router";
 import { Text, View, TextInput, Button } from "react-native";
-import useUser from "@/hooks/useUser";
+import getUser from "@/utils/getUser";
 import React from "react";
 import signInWithEmail from "@/api/auth/signInWithEmail";
 import useAuthReducer, {

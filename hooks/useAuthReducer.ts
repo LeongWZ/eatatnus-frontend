@@ -1,3 +1,5 @@
+import React from "react";
+
 export type AuthStatus = {
     data: "AUTHENTICATED" | "NOT_AUTHENTICATED" | "LOADING";
     error_message: string | null;
@@ -25,6 +27,6 @@ function authReducer(state: AuthStatus, action: AuthStatusAction): AuthStatus {
     }
 }
 
-export default function useAuthReducer() {
-    return authReducer;
+export default function useAuthReducer(initState: AuthStatus) {
+    return React.useReducer(authReducer, initState);
 }
