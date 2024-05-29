@@ -8,11 +8,11 @@ export default function SignOut() {
   const { auth, dispatchAuth } = useContext(AuthContext);
 
   const onSignOut = () => {
-    dispatchAuth({ type: "SIGN_OUT", error_message: null });
+    dispatchAuth({ type: "SIGN_OUT" });
 
     signOut()
       .catch(error =>
-        dispatchAuth({ type: "ERROR", error_message: error.message })
+        dispatchAuth({ type: "ERROR", payload: error.message })
       );
   };
 

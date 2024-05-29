@@ -1,9 +1,9 @@
 import { View, Text } from "react-native";
 
-export default function Canteen() {
+export default function ErrorView() {
     return (
         <View>
-            <Text>Hello</Text>
+            <Text>404 Page not found</Text>
         </View>
     );
 }

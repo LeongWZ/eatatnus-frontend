@@ -6,6 +6,7 @@ import { Canteen } from "../types";
 import CanteenPreview from "@/components/CanteenPreview";
 import fetchCanteens from "@/api/canteens/fetchCanteens";
 import AuthContext from "@/contexts/AuthContext";
+import CanteensDataContext from "@/contexts/CanteensDataContext";
 
 type HeaderProps = {
   user: User | null;
@@ -47,18 +48,8 @@ function Header() {
 }
 
 export default function Index() {
-  const [canteens, setCanteens] = React.useState<Canteen[]>([]);
-
-  React.useEffect(
-    () => {
-      fetchCanteens()
-      .then(result => setCanteens(result.data.items))
-        .catch(error => {
-          console.log(error);
-          setCanteens([]);
-        })
-    },
-    []
+  const canteens = Array.from(
+    React.useContext(CanteensDataContext).canteensData.data.values()
   );
 
   return (

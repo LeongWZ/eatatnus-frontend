@@ -15,10 +15,10 @@ export default function SignIn() {
   const [formData, setFormData] = React.useState<FormData>({email: "", password: ""});
 
   const onSubmit = () => {
-    dispatchAuth({ type: "SIGN_IN", error_message: null });
+    dispatchAuth({ type: "SIGN_IN" });
 
     signInWithEmail(formData.email, formData.password)
-      .catch(error => dispatchAuth({ type: "ERROR", error_message: error.message }));
+      .catch(error => dispatchAuth({ type: "ERROR", payload: error.message }));
   }
   
   if (auth.status === "AUTHENTICATED") {

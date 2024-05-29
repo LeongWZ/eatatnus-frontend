@@ -16,10 +16,10 @@ export default function Register() {
   const [formData, setFormData] = React.useState<FormData>({email: "", password: "", displayName: ""});
 
   const onSubmit = () => {
-    dispatchAuth({ type: "SIGN_IN", error_message: null });
+    dispatchAuth({ type: "SIGN_IN" });
 
     registerWithEmail(formData.email, formData.password, formData.displayName)
-      .catch(error => dispatchAuth({ type: "ERROR", error_message: error?.message }));
+      .catch(error => dispatchAuth({ type: "ERROR", payload: error?.message }));
   };
   
   if (auth.status === "AUTHENTICATED") {

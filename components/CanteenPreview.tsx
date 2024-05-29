@@ -20,7 +20,10 @@ export default function CanteenPreview({canteen}: CanteenPreviewProps) {
     );
 
     return (
-        <Link href="#" asChild>
+        <Link href={{
+            pathname: "/canteens/[id]",
+            params: { id: canteen.id }
+            }} asChild>
             <Pressable className={`
                 border-b
                 px-2
