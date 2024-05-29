@@ -1,8 +1,8 @@
 import { Link, Redirect } from "expo-router";
 import { Text, View, TextInput, Button } from "react-native";
-import React from "react";
-import useAuthReducer, { AuthStatus, AuthStatusAction } from "@/hooks/useAuthReducer";
+import React, { useContext } from "react";
 import registerWithEmail from "@/api/auth/registerWithEmail";
+import AuthContext from "@/contexts/AuthContext";
 
 type FormData = {
   email: string;
@@ -11,23 +11,18 @@ type FormData = {
 }
 
 export default function Register() {
-
-  const [authStatus, dispatchAuthStatus]: [AuthStatus, React.Dispatch<AuthStatusAction>] = useAuthReducer({
-    data: "NOT_AUTHENTICATED",
-    error_message: null
-  });
+  const { auth, dispatchAuth } = useContext(AuthContext);
 
   const [formData, setFormData] = React.useState<FormData>({email: "", password: "", displayName: ""});
 
   const onSubmit = () => {
-    dispatchAuthStatus({ type: "SIGN_IN", error_message: null });
+    dispatchAuth({ type: "SIGN_IN", error_message: null });
 
     registerWithEmail(formData.email, formData.password, formData.displayName)
-      .then(() => dispatchAuthStatus({ type: "SIGN_IN_SUCCESS", error_message: null }))
-      .catch((error: { message: any; }) => dispatchAuthStatus({ type: "ERROR", error_message: error?.message }));
+      .catch(error => dispatchAuth({ type: "ERROR", error_message: error?.message }));
   };
   
-  if (authStatus.data === "AUTHENTICATED") {
+  if (auth.status === "AUTHENTICATED") {
     return <Redirect href="/" />
   }
 
@@ -57,12 +52,12 @@ export default function Register() {
           Already have an account? Sign in
         </Link>
 
-        {authStatus.data === "LOADING" && (
+        {auth.status === "LOADING" && (
           <Text className="mt-2">Loading...</Text>
         )}
 
-        {authStatus.error_message && (
-          <Text className="text-red-500 mt-2">{authStatus.error_message}</Text>
+        {auth.error_message && (
+          <Text className="text-red-500 mt-2">{auth.error_message}</Text>
         )}
       </View>
     </View>

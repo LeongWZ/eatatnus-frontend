@@ -1,36 +1,22 @@
 import { Link, Redirect } from "expo-router";
-import { Text, View, TextInput, Button, Pressable } from "react-native";
-import getUser from "@/utils/getUser";
-import React from "react";
+import { Text, View, Button, Pressable } from "react-native";
+import React, { useContext } from "react";
 import signOut from "@/api/auth/signOut";
-import useAuthReducer, {
-  AuthStatus,
-  AuthStatusAction,
-} from "@/hooks/useAuthReducer";
+import AuthContext from "@/contexts/AuthContext";
 
 export default function SignOut() {
-
-  const [authStatus, dispatchAuthStatus]: [
-    AuthStatus,
-    React.Dispatch<AuthStatusAction>
-  ] = useAuthReducer({
-    data: getUser() === null ? "NOT_AUTHENTICATED" : "AUTHENTICATED",
-    error_message: null,
-  });
+  const { auth, dispatchAuth } = useContext(AuthContext);
 
   const onSignOut = () => {
-    dispatchAuthStatus({ type: "SIGN_OUT", error_message: null });
+    dispatchAuth({ type: "SIGN_OUT", error_message: null });
 
     signOut()
-      .then(() =>
-        dispatchAuthStatus({ type: "SIGN_OUT_SUCCESS", error_message: null })
-      )
-      .catch((error) =>
-        dispatchAuthStatus({ type: "ERROR", error_message: error.message })
+      .catch(error =>
+        dispatchAuth({ type: "ERROR", error_message: error.message })
       );
   };
 
-  if (authStatus.data === "NOT_AUTHENTICATED") {
+  if (auth.status === "NOT_AUTHENTICATED") {
     return <Redirect href="/" />;
   }
 
@@ -55,12 +41,12 @@ export default function SignOut() {
           </Link>
         </View>
 
-        {authStatus.data === "LOADING" && (
+        {auth.status === "LOADING" && (
           <Text className="mt-2">Signing out now...</Text>
         )}
 
-        {authStatus.error_message && (
-          <Text className="text-red-500 mt-2">{authStatus.error_message}</Text>
+        {auth.error_message && (
+          <Text className="text-red-500 mt-2">{auth.error_message}</Text>
         )}
       </View>
     </View>
