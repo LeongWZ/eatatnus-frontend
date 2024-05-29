@@ -1,11 +1,11 @@
 import { ReactNode } from "react";
 
-type ProvidersProps = {
+type ComposeProvidersProps = {
     providers: React.FunctionComponent<{ children: ReactNode }>[];
     children: React.ReactNode;
 }
 
-export default function Providers(props: ProvidersProps) {
+export default function ComposeProviders(props: ComposeProvidersProps) {
     const { providers, children } = props;
 
     return providers.reduceRight((acc, Provider) => (
