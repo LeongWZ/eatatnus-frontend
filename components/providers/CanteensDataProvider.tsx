@@ -19,14 +19,14 @@ export default function CanteensDataProvider(props: CanteensDataProviderProps) {
     dispatchCanteensData({ type: "FETCH" });
 
     fetchCanteens()
-      .then((result) =>
+      .then(canteens =>
         dispatchCanteensData({
           type: "GET",
-          payload: result.data.items,
+          payload: { canteens: canteens },
         })
       )
       .catch((error) => {
-        dispatchCanteensData({ type: "ERROR", payload: error });
+        dispatchCanteensData({ type: "ERROR", payload: { error_message: error } });
       });
   }, []);
 

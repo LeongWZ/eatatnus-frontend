@@ -9,7 +9,10 @@ export type Auth = {
 
 export type AuthAction = {
     type: "SIGN_IN" | "SIGN_OUT" | "SIGN_IN_SUCCESS" | "SIGN_OUT_SUCCESS" | "ERROR";
-    payload?: User | string;
+    payload?: {
+        user?: User
+        error_message?: string
+    };
 }
 
 function authReducer(state: Auth, action: AuthAction): Auth {
@@ -19,11 +22,11 @@ function authReducer(state: Auth, action: AuthAction): Auth {
         case "SIGN_OUT":
             return { ...state, status: "LOADING", error_message: null }
         case "SIGN_IN_SUCCESS":
-            return { user: action.payload as User, status: "AUTHENTICATED", error_message: null }
+            return { user: action.payload?.user ?? null, status: "AUTHENTICATED", error_message: null }
         case "SIGN_OUT_SUCCESS":
             return { user: null, status: "NOT_AUTHENTICATED", error_message: null }
         case "ERROR":
-            return { ...state, status: "NOT_AUTHENTICATED", error_message: action.payload as string }
+            return { ...state, status: "NOT_AUTHENTICATED", error_message: action.payload?.error_message ?? null }
         default:
             throw new Error("Invalid action type: " + action.type + " in authReducer");
     }

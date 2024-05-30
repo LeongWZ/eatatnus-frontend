@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { Text, View, Pressable } from "react-native";
+import { Text, View, Pressable, FlatList } from "react-native";
 import { User } from "firebase/auth";
 import React, { useContext } from "react";
 import { Canteen } from "../types";
@@ -55,7 +55,12 @@ export default function Index() {
   return (
     <View>
       <Header />
-      {canteens.map(canteen => <CanteenPreview key={canteen.id} canteen={canteen}/>)}
+      <FlatList
+        data={canteens}
+        renderItem={({item}) => <CanteenPreview canteen={item}/>}
+        keyExtractor={item => item.id.toString()}
+        extraData={canteens}
+        />
     </View>
   );
 }

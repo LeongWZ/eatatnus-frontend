@@ -1,8 +1,8 @@
 import { Stack } from "expo-router";
 import React from "react";
-import AuthProvider from "@/components/AuthProvider";
-import CanteensDataProvider from "@/components/CanteensDataProvider";
-import ComposeProviders from "@/components/ComposeProviders";
+import AuthProvider from "@/components/providers/AuthProvider";
+import CanteensDataProvider from "@/components/providers/CanteensDataProvider";
+import ComposeProviders from "@/components/providers/ComposeProviders";
 
 
 export default function RootLayout() {

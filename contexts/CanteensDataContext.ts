@@ -3,12 +3,12 @@ import { CanteensData, CanteensDataAction } from "@/hooks/useCanteenReducer"
 import React from "react";
 import { Dispatch } from "react";
 
-type CanteensDataContextType = {
+type CanteensDataReducer = {
     canteensData: CanteensData;
     dispatchCanteensData: Dispatch<CanteensDataAction>;
 }
 
-const CanteensDataContext = React.createContext<CanteensDataContextType>({
+const CanteensDataContext = React.createContext<CanteensDataReducer>({
     canteensData: {
         data: new Map<number, Canteen>(),
         loading: false,

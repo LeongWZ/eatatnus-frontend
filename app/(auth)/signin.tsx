@@ -18,7 +18,10 @@ export default function SignIn() {
     dispatchAuth({ type: "SIGN_IN" });
 
     signInWithEmail(formData.email, formData.password)
-      .catch(error => dispatchAuth({ type: "ERROR", payload: error.message }));
+      .catch(error => dispatchAuth({
+        type: "ERROR",
+        payload: { error_message: error.message }
+      }));
   }
   
   if (auth.status === "AUTHENTICATED") {

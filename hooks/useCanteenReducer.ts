@@ -9,7 +9,11 @@ export type CanteensData = {
 
 export type CanteensDataAction = {
     type: "FETCH" | "GET" | "PATCH" | "ERROR";
-    payload?: Canteen[] | Canteen | string;
+    payload?: {
+        canteens?: Canteen[],
+        canteen?: Canteen,
+        error_message?: string
+    }
 }
 
 function canteensDataReducer(state: CanteensData, action: CanteensDataAction): CanteensData {
@@ -18,17 +22,18 @@ function canteensDataReducer(state: CanteensData, action: CanteensDataAction): C
             return { ...state, loading: true, error_message: null }
         case "GET":
             const newData = new Map<number, Canteen>();
-            const canteens = action.payload as Canteen[];
-            canteens.forEach(canteen => {
+            action.payload?.canteens?.forEach(canteen => {
                 newData.set(canteen.id, canteen);
             });
             return { data: newData, loading: false, error_message: null }
         case "PATCH":
-            const canteen = action.payload as Canteen;
-            state.data.set(canteen.id, canteen);
+            const canteen = action.payload?.canteen;
+            if (canteen) {
+                state.data.set(canteen.id, canteen);
+            }
             return { ...state, loading: false, error_message: null }
         case "ERROR":
-            return { ...state, error_message: action.payload as string }
+            return { ...state, error_message: action.payload?.error_message ?? null }
         default:
             throw new Error("Invalid action type: " + action.type + " in canteensDataReducer");
     }

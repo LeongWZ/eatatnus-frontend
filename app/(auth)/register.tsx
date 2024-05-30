@@ -19,7 +19,10 @@ export default function Register() {
     dispatchAuth({ type: "SIGN_IN" });
 
     registerWithEmail(formData.email, formData.password, formData.displayName)
-      .catch(error => dispatchAuth({ type: "ERROR", payload: error?.message }));
+      .catch(error => dispatchAuth({
+        type: "ERROR",
+        payload: { error_message: error?.message }
+      }));
   };
   
   if (auth.status === "AUTHENTICATED") {

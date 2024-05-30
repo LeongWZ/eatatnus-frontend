@@ -2,7 +2,7 @@ import AuthContext from "@/contexts/AuthContext";
 import useAuthReducer from "@/hooks/useAuthReducer";
 import { onAuthStateChanged } from "firebase/auth";
 import React from "react";
-import { auth as firebaseAuth } from "../firebaseConfig";
+import { auth as firebaseAuth } from "../../firebaseConfig";
 
 type AuthProviderProps = {
   children: React.ReactNode;
@@ -20,10 +20,10 @@ export default function AuthProvider(props: AuthProviderProps) {
       onAuthStateChanged(firebaseAuth, (user) => {
         dispatchAuth({
           type: user ? "SIGN_IN_SUCCESS" : "SIGN_OUT_SUCCESS",
-          ...(user && {payload: user}),
+          ...(user && { payload: { user: user } }),
         });
 
-        // For debudding purposes
+        // For debugging purposes
         //(async () => console.log(await user?.getIdToken()))()
       }),
     []

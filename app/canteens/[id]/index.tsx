@@ -1,9 +1,11 @@
 import CanteensDataContext from "@/contexts/CanteensDataContext";
 import React from "react";
-import { View, Text } from "react-native";
-import { useLocalSearchParams } from 'expo-router';
+import { View, Text, Pressable, FlatList } from "react-native";
+import { Link, useLocalSearchParams } from 'expo-router';
 import ErrorView from "@/components/ErrorView";
 import { Canteen } from "@/app/types";
+import OutletReviewCard from "@/components/OutletReviewCard";
+import roundToNthDecimalPlace from "@/utils/roundToNthDecimalPlace";
 
 export default function CanteenPage() {
     const params = useLocalSearchParams();
@@ -17,14 +19,23 @@ export default function CanteenPage() {
 
     const reviewCount = canteen.outletReviews.length;
 
-    const averageRating = canteen.outletReviews.map(outletReview => outletReview.review.rating)
-        .reduce((acc, x) => acc + x, 0) / Math.max(reviewCount, 1);
+    const averageRating = roundToNthDecimalPlace(
+        canteen.outletReviews.map(outletReview => outletReview.rating)
+            .reduce((acc, x) => acc + x, 0) / Math.max(reviewCount, 1),
+        1
+    );
     
-    const averageSeatAvailability = canteen.outletReviews.map(outletReview => outletReview.seatAvailability)
-        .reduce((acc, x) => acc + x, 0) / Math.max(reviewCount, 1);
+    const averageSeatAvailability = roundToNthDecimalPlace(
+        canteen.outletReviews.map(outletReview => outletReview.seatAvailability)
+            .reduce((acc, x) => acc + x, 0) / Math.max(reviewCount, 1),
+        1
+    );
     
-    const averageCleanliness = canteen.outletReviews.map(outletReview => outletReview.cleanliness)
-        .reduce((acc, x) => acc + x, 0) / Math.max(reviewCount, 1);
+    const averageCleanliness = roundToNthDecimalPlace(
+        canteen.outletReviews.map(outletReview => outletReview.cleanliness)
+            .reduce((acc, x) => acc + x, 0) / Math.max(reviewCount, 1),
+        1,
+    );
 
     return (
         <View>
@@ -40,27 +51,37 @@ export default function CanteenPage() {
                     </>
                 )}
             </View>
-
-            <View className="py-4">
+            
+            <View className="m-3">
                 <Text className="text-2xl">Stalls</Text>
-                {canteen.stalls.map(stall => (
-                    <View key={stall.id}>
-                        <Text>{stall.name}</Text>
-                    </View>
-                ))}
+                <FlatList
+                    data={canteen.stalls}
+                    renderItem={({item}) => (
+                        <View>
+                            <Text>{item.name}</Text>
+                        </View>
+                    )}
+                    keyExtractor={item => item.id.toString()}
+                    extraData={canteen}
+                    />
             </View>
 
-            <View>
-                <Text className="text-2xl">Reviews</Text>
-                {canteen.outletReviews.map(outletReview => (
-                    <View key={outletReview.id} className="border m-3">
-                        <Text>By {outletReview.review.user.name}</Text>
-                        <Text>Rating: {outletReview.review.rating}</Text>
-                        <Text>Seat availability: {outletReview.seatAvailability}</Text>
-                        <Text>Cleanliness: {outletReview.cleanliness}</Text>
-                        <Text>Description: { outletReview.review.description }</Text>
-                    </View>
-                ))}
+            <View className="m-3">
+                <View className="flex-row justify-between">
+                    <Text className="text-2xl">Reviews</Text>
+                    <Link href="./review" className="bg-blue-500" asChild>
+                        <Pressable className="p-2">
+                            <Text className="text-xl">+ Review</Text>
+                        </Pressable>
+                    </Link>
+                </View>
+
+                <FlatList
+                    data={canteen.outletReviews}
+                    renderItem={({item}) => <OutletReviewCard outletReview={item}/>}
+                    keyExtractor={item => item.id.toString()}
+                    extraData={canteen}
+                    />
             </View>
         </View>
     );

@@ -28,13 +28,10 @@ export type Stall = {
 }
 
 export type OutletReview = {
-    id: number;
     cleanliness: number;
     seatAvailability: number;
-    reviewId: number;
     canteenId: number;
-    review: Review;
-}
+} & Review
 
 export type Review = {
     id: number;

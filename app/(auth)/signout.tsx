@@ -11,9 +11,10 @@ export default function SignOut() {
     dispatchAuth({ type: "SIGN_OUT" });
 
     signOut()
-      .catch(error =>
-        dispatchAuth({ type: "ERROR", payload: error.message })
-      );
+      .catch(error => dispatchAuth({
+          type: "ERROR",
+          payload: { error_message: error.message }
+      }));
   };
 
   if (auth.status === "NOT_AUTHENTICATED") {
