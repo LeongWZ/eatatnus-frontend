@@ -39,7 +39,7 @@ export default function CanteenPage() {
 
     return (
         <View>
-            <View className="border-b mb-2">
+            <View className="border-b m-2">
                 <Text className="text-4xl">{canteen.name}</Text>
                 <Text className="text-xl mb-2">{canteen.location.address}</Text>
                 <Text>{reviewCount} reviews</Text>
@@ -66,7 +66,7 @@ export default function CanteenPage() {
                     />
             </View>
 
-            <View className="m-3">
+            <View className="mx-3">
                 <View className="flex-row justify-between">
                     <Text className="text-2xl">Reviews</Text>
                     <Link href="./review" className="bg-blue-500" asChild>
@@ -75,12 +75,13 @@ export default function CanteenPage() {
                         </Pressable>
                     </Link>
                 </View>
-
+                
                 <FlatList
-                    data={canteen.outletReviews}
+                    data={canteen.outletReviews.sort((a, b) => a.id < b.id ? 1 : -1)}
                     renderItem={({item}) => <OutletReviewCard outletReview={item}/>}
                     keyExtractor={item => item.id.toString()}
                     extraData={canteen}
+                    contentContainerStyle={{ paddingBottom: 600 }}
                     />
             </View>
         </View>
