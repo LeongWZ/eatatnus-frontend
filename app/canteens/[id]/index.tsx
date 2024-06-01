@@ -11,7 +11,8 @@ export default function CanteenPage() {
     const params = useLocalSearchParams();
     const id = parseInt(params.id as string);
 
-    const canteen: Canteen | undefined = React.useContext(CanteensDataContext).canteensData.data.get(id);
+    const canteen: Canteen | undefined = React.useContext(CanteensDataContext).canteensData.data
+        .find(canteen => canteen.id === id);
     
     if (canteen === undefined) {
         return <ErrorView />;

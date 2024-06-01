@@ -56,7 +56,7 @@ export default function CanteenReviewPage() {
     return (
         <View className="flex-1">
             <Text className="text-3xl">Review canteen</Text>
-            <Text className="text-2xl">{canteensData.data.get(canteenId)?.name}</Text>
+            <Text className="text-2xl">{canteensData.data.find(canteen => canteen.id === canteenId)?.name}</Text>
 
             <View className="items-center border m-2">
                 <Text className="text-2xl">Rating</Text>

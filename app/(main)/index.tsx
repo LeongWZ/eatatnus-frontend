@@ -48,9 +48,7 @@ function Header() {
 }
 
 export default function Index() {
-  const canteens = Array.from(
-    React.useContext(CanteensDataContext).canteensData.data.values()
-  );
+  const canteens = React.useContext(CanteensDataContext).canteensData.data;
 
   return (
     <View>

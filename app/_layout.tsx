@@ -7,7 +7,7 @@ import ComposeProviders from "@/components/providers/ComposeProviders";
 
 export default function RootLayout() {
   return (
-    <ComposeProviders providers={ [AuthProvider, CanteensDataProvider] }>
+    <ComposeProviders providers={ [CanteensDataProvider, AuthProvider] }>
       <Stack>
         <Stack.Screen name="(main)/index" />
       </Stack>
