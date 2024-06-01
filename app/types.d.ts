@@ -25,13 +25,8 @@ export type Stall = {
     updatedAt: string;
     ownerId: null,
     canteenId: number;
+    stallReview: StallReview[];
 }
-
-export type OutletReview = {
-    cleanliness: number;
-    seatAvailability: number;
-    canteenId: number;
-} & Review
 
 export type Review = {
     id: number;
@@ -43,3 +38,13 @@ export type Review = {
     userId: number;
     user: { name: string };
 }
+
+export type OutletReview = {
+    cleanliness: number;
+    seatAvailability: number;
+    canteenId: number;
+} & Review
+
+export type StallReview = {
+    stallId: number;
+} & Review

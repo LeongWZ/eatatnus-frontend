@@ -4,9 +4,10 @@ import { User } from "firebase/auth";
 import React, { useContext } from "react";
 import { Canteen } from "../types";
 import CanteenPreview from "@/components/CanteenPreview";
-import fetchCanteens from "@/api/canteens/fetchCanteens";
 import AuthContext from "@/contexts/AuthContext";
-import CanteensDataContext from "@/contexts/CanteensDataContext";
+import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
+import StallCollectionContext from "@/contexts/StallCollectionContext";
+import StallPreview from "@/components/StallPreview";
 
 type HeaderProps = {
   user: User | null;
@@ -48,7 +49,11 @@ function Header() {
 }
 
 export default function Index() {
-  const canteens = React.useContext(CanteensDataContext).canteensData.data;
+  const { canteenCollection, dispatchCanteenCollectionAction } = React.useContext(CanteenCollectionContext);
+  const canteens = canteenCollection.items;
+
+  const { stallCollection, dispatchStallCollectionAction } = React.useContext(StallCollectionContext);
+  const stalls = stallCollection.items;
 
   return (
     <View>

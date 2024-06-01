@@ -1,13 +1,14 @@
 import { Stack } from "expo-router";
 import React from "react";
 import AuthProvider from "@/components/providers/AuthProvider";
-import CanteensDataProvider from "@/components/providers/CanteensDataProvider";
+import CanteenCollectionProvider from "@/components/providers/CanteenCollectionProvider";
 import ComposeProviders from "@/components/providers/ComposeProviders";
+import StallCollectionProvider from "@/components/providers/StallCollectionProvider";
 
 
 export default function RootLayout() {
   return (
-    <ComposeProviders providers={ [CanteensDataProvider, AuthProvider] }>
+    <ComposeProviders providers={ [CanteenCollectionProvider, StallCollectionProvider, AuthProvider] }>
       <Stack>
         <Stack.Screen name="(main)/index" />
       </Stack>
