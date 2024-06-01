@@ -10,7 +10,7 @@ type CanteensDataReducer = {
 
 const CanteensDataContext = React.createContext<CanteensDataReducer>({
     canteensData: {
-        data: new Map<number, Canteen>(),
+        data: [],
         loading: false,
         error_message: null,
     },

@@ -10,7 +10,7 @@ type CanteensDataProviderProps = {
 
 export default function CanteensDataProvider(props: CanteensDataProviderProps) {
   const [canteensData, dispatchCanteensData] = useCanteensDataReducer({
-    data: new Map<number, Canteen>(),
+    data: [],
     loading: false,
     error_message: null,
   });

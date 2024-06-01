@@ -2,7 +2,7 @@ import { Canteen } from "@/app/types"
 import React from "react";
 
 export type CanteensData = {
-    data: Map<number, Canteen>;
+    data: Canteen[];
     loading: boolean;
     error_message: string | null;
 }
@@ -21,17 +21,20 @@ function canteensDataReducer(state: CanteensData, action: CanteensDataAction): C
         case "FETCH":
             return { ...state, loading: true, error_message: null }
         case "GET":
-            const newData = new Map<number, Canteen>();
-            action.payload?.canteens?.forEach(canteen => {
-                newData.set(canteen.id, canteen);
-            });
-            return { data: newData, loading: false, error_message: null }
-        case "PATCH":
-            const canteen = action.payload?.canteen;
-            if (canteen) {
-                state.data.set(canteen.id, canteen);
+            return {
+                data: action.payload?.canteens ?? [],
+                loading: false,
+                error_message: null
             }
-            return { ...state, loading: false, error_message: null }
+        case "PATCH":
+            return {
+                data: state.data.map(canteen => canteen.id === action.payload?.canteen?.id
+                    ? action.payload?.canteen
+                    : canteen
+                ),
+                loading: false,
+                error_message: null
+            }
         case "ERROR":
             return { ...state, error_message: action.payload?.error_message ?? null }
         default:
