@@ -1,7 +1,7 @@
 import fetchIndividualCanteen from "@/api/canteens/fetchIndividualCanteen";
 import submitCanteenReview from "@/api/canteens/submitCanteenReview";
 import AuthContext from "@/contexts/AuthContext";
-import CanteensDataContext from "@/contexts/CanteensDataContext";
+import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";
 import React, { useContext } from "react";
 import { View, Text, TextInput, Button } from "react-native";
@@ -26,7 +26,8 @@ export default function CanteenReviewPage() {
         return <Redirect href="/signin" />;
     }
 
-    const { canteensData, dispatchCanteensData } = useContext(CanteensDataContext);
+    const {canteenCollection, dispatchCanteenCollectionAction} = useContext(CanteenCollectionContext);
+    const canteens = canteenCollection.items;
 
     const [formData, setFormData] = React.useState<FormData>({
         rating: 3,
@@ -42,10 +43,10 @@ export default function CanteenReviewPage() {
             .then(async res => {
                 setErrorMessage(null);
 
-                dispatchCanteensData({
+                dispatchCanteenCollectionAction({
                     type: "PATCH",
                     payload: {
-                        canteen: await fetchIndividualCanteen(canteenId)
+                        item: await fetchIndividualCanteen(canteenId)
                     }
                 });
             })
@@ -56,7 +57,7 @@ export default function CanteenReviewPage() {
     return (
         <View className="flex-1">
             <Text className="text-3xl">Review canteen</Text>
-            <Text className="text-2xl">{canteensData.data.find(canteen => canteen.id === canteenId)?.name}</Text>
+            <Text className="text-2xl">{canteens.find(canteen => canteen.id === canteenId)?.name}</Text>
 
             <View className="items-center border m-2">
                 <Text className="text-2xl">Rating</Text>
