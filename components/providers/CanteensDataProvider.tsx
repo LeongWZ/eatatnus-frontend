@@ -21,7 +21,7 @@ export default function CanteensDataProvider(props: CanteensDataProviderProps) {
     fetchCanteens()
       .then(canteens =>
         dispatchCanteensData({
-          type: "GET",
+          type: "PUT",
           payload: { canteens: canteens },
         })
       )

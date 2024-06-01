@@ -8,7 +8,7 @@ export type CanteensData = {
 }
 
 export type CanteensDataAction = {
-    type: "FETCH" | "GET" | "PATCH" | "ERROR";
+    type: "FETCH" | "PUT" | "PATCH" | "ERROR";
     payload?: {
         canteens?: Canteen[],
         canteen?: Canteen,
@@ -20,7 +20,7 @@ function canteensDataReducer(state: CanteensData, action: CanteensDataAction): C
     switch (action.type) {
         case "FETCH":
             return { ...state, loading: true, error_message: null }
-        case "GET":
+        case "PUT":
             return {
                 data: action.payload?.canteens ?? [],
                 loading: false,
