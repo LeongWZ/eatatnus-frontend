@@ -21,12 +21,10 @@ export default function StallPreview({stall}: StallPreviewProps) {
             <Pressable className={`
                 border-b
                 px-2
+                py-4
                 active:bg-slate-400
                 `}>
-                <Text>{stall.name}</Text>
-                {canteen && (
-                    <Text>Canteen: {canteen.name}</Text>
-                )}
+                <Text className="text-xl">{stall.name}</Text>
                 <Text>{stall.description}</Text>
             </Pressable>
         </Link>

@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { Text, View, Pressable, FlatList } from "react-native";
+import { Text, View, Pressable, FlatList, ActivityIndicator, RefreshControl, Button } from "react-native";
 import { User } from "firebase/auth";
 import React, { useContext } from "react";
 import { Canteen } from "../types";
@@ -8,6 +8,7 @@ import AuthContext from "@/contexts/AuthContext";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import StallCollectionContext from "@/contexts/StallCollectionContext";
 import StallPreview from "@/components/StallPreview";
+import fetchCanteens from "@/api/canteens/fetchCanteens";
 
 type HeaderProps = {
   user: User | null;
@@ -52,8 +53,26 @@ export default function Index() {
   const { canteenCollection, dispatchCanteenCollectionAction } = React.useContext(CanteenCollectionContext);
   const canteens = canteenCollection.items;
 
-  const { stallCollection, dispatchStallCollectionAction } = React.useContext(StallCollectionContext);
-  const stalls = stallCollection.items;
+  const onRefresh = () => {
+    dispatchCanteenCollectionAction({ type: "FETCH" })
+    fetchCanteens()
+      .then(canteens => dispatchCanteenCollectionAction({
+        type: "PUT",
+        payload: {
+          items: canteens
+        }
+      }));
+  }
+
+  if (canteens.length === 0 && canteenCollection.loading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator size="large" />
+        <Text>Loading...</Text>
+        <Button onPress={onRefresh} title="Refresh" />
+      </View>
+    );
+  }
 
   return (
     <View>
@@ -63,6 +82,12 @@ export default function Index() {
         renderItem={({item}) => <CanteenPreview canteen={item}/>}
         keyExtractor={item => item.id.toString()}
         extraData={canteens}
+        refreshControl={
+          <RefreshControl
+            refreshing={canteenCollection.loading}
+            onRefresh={onRefresh}
+            />
+        }
         />
     </View>
   );

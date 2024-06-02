@@ -25,7 +25,7 @@ export type Stall = {
     updatedAt: string;
     ownerId: null,
     canteenId: number;
-    stallReview: StallReview[];
+    stallReviews: StallReview[];
 }
 
 export type Review = {

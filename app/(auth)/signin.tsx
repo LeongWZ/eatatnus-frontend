@@ -1,4 +1,4 @@
-import { Link, Redirect } from "expo-router";
+import { Link, Redirect, useRouter } from "expo-router";
 import { Text, View, TextInput, Button } from "react-native";
 import React, { useContext } from "react";
 import signInWithEmail from "@/api/auth/signInWithEmail";
@@ -12,12 +12,15 @@ type FormData = {
 export default function SignIn() {
   const { auth, dispatchAuth } = useContext(AuthContext);
 
+  const router = useRouter();
+
   const [formData, setFormData] = React.useState<FormData>({email: "", password: ""});
 
   const onSubmit = () => {
     dispatchAuth({ type: "SIGN_IN" });
 
     signInWithEmail(formData.email, formData.password)
+      .then(result => router.back())
       .catch(error => dispatchAuth({
         type: "ERROR",
         payload: { error_message: error.message }
