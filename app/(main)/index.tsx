@@ -53,6 +53,8 @@ export default function Index() {
   const { canteenCollection, dispatchCanteenCollectionAction } = React.useContext(CanteenCollectionContext);
   const canteens = canteenCollection.items;
 
+  const { stallCollection, dispatchStallCollectionAction } = React.useContext(StallCollectionContext);
+
   const onRefresh = () => {
     dispatchCanteenCollectionAction({ type: "FETCH" })
     fetchCanteens()
@@ -64,11 +66,11 @@ export default function Index() {
       }));
   }
 
-  if (canteens.length === 0 && canteenCollection.loading) {
+  if (canteens.length === 0 && (canteenCollection.loading || stallCollection.loading)) {
     return (
       <View className="flex-1 justify-center items-center">
-        <ActivityIndicator size="large" />
-        <Text>Loading...</Text>
+        <Text className="text-6xl p-6">eat@NUS</Text>
+        <ActivityIndicator size="large" className="p-4"/>
         <Button onPress={onRefresh} title="Refresh" />
       </View>
     );

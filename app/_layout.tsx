@@ -10,7 +10,10 @@ export default function RootLayout() {
   return (
     <ComposeProviders providers={ [CanteenCollectionProvider, StallCollectionProvider, AuthProvider] }>
       <Stack>
-        <Stack.Screen name="(main)/index" />
+        <Stack.Screen
+          name="(main)/index"
+          options={{ title: "eat@NUS" }}
+          />
       </Stack>
     </ComposeProviders>
   );
