@@ -1,5 +1,6 @@
 import fetchIndividualCanteen from "@/api/canteens/fetchIndividualCanteen";
 import submitCanteenReview from "@/api/canteens/submitCanteenReview";
+import ErrorView from "@/components/ErrorView";
 import AuthContext from "@/contexts/AuthContext";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";
@@ -14,7 +15,7 @@ type FormData = {
     description: string | null;
 }
 
-export default function CanteenReviewPage() {
+export default function CanteenAddReview() {
     const params = useGlobalSearchParams();
     const canteenId = parseInt(params.id as string);
 
@@ -27,7 +28,11 @@ export default function CanteenReviewPage() {
     }
 
     const {canteenCollection, dispatchCanteenCollectionAction} = useContext(CanteenCollectionContext);
-    const canteens = canteenCollection.items;
+    const canteen = canteenCollection.items.find(canteen => canteen.id === canteenId)
+
+    if (!canteen) {
+        return <ErrorView />;
+    }
 
     const [formData, setFormData] = React.useState<FormData>({
         rating: 3,
@@ -50,35 +55,32 @@ export default function CanteenReviewPage() {
                     }
                 });
             })
-            .then(() => router.back())
+            .then(() => router.replace(`canteens/${canteenId}/reviews`))
             .catch(error => setErrorMessage(error.toString()));
     }
     
     return (
         <View className="flex-1">
-            <Text className="text-3xl">Review canteen</Text>
-            <Text className="text-2xl">{canteens.find(canteen => canteen.id === canteenId)?.name}</Text>
-
+            <View className="items-center">
+                <Text className="text-3xl p-2">{canteen.name}</Text>
+            </View>
             <View className="items-center border m-2">
                 <Text className="text-2xl">Rating</Text>
                 <AirbnbRating
                     count={5}
                     defaultRating={3}
-                    size={30}
+                    size={26}
                     onFinishRating={input => setFormData({ ...formData, rating: input })}
                     />
             </View>
 
-            <View className="m-2">
-                <Text>Description</Text>
-                <TextInput
-                    className="border p-2 rounded"
-                    placeholder="description"
-                    multiline={true}
-                    textAlignVertical="top"
-                    numberOfLines={4}
-                    onChangeText={input => setFormData({ ...formData, description: input })}/>
-            </View>
+            <TextInput
+                className="border p-2 m-2 rounded"
+                placeholder="Share details of your own experience"
+                multiline={true}
+                textAlignVertical="top"
+                numberOfLines={5}
+                onChangeText={input => setFormData({ ...formData, description: input })}/>
 
             <View className="flex-row justify-between m-2">
                 <View className="items-center border w-1/2">
