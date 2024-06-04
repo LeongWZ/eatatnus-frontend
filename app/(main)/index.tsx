@@ -20,14 +20,14 @@ function Header() {
   return (
     <View className="flex-row justify-between p-2 border-b">
       <Text className="py-2">
-        Welcome {user ? (user.displayName || user.email) : "guest"}
+        Welcome, {user ? (user.displayName || user.email) : "Guest"}
       </Text>
       {user === null
         ? (
           <View className="flex-row gap-2">
             <Link href="/signin" className="bg-blue-500 p-2" asChild>
               <Pressable>
-                  <Text>Sign in</Text>
+                  <Text>Sign In</Text>
               </Pressable>
             </Link>
             <Link href="/register" className="bg-blue-500 p-2" asChild>
@@ -40,7 +40,7 @@ function Header() {
         : (
           <Link href="/signout" className="bg-blue-500 p-2" asChild>
             <Pressable>
-                <Text>Sign out</Text>
+                <Text>Sign Out</Text>
             </Pressable>
           </Link>
         )
@@ -66,16 +66,26 @@ export default function Index() {
       }));
   }
 
+
   if (canteens.length === 0 && (canteenCollection.loading || stallCollection.loading)) {
     return (
+      <View className="flex-1 justify-center items-center">
+        <Text className="text-6xl p-6">
+         eat@<Text style={{ color: 'orange' }}>NUS</Text>
+         </Text>
+         <ActivityIndicator size="large" className="p-4"/>
+         <Button onPress={onRefresh} title="Refresh" />
+      </View>
+      /*
       <View className="flex-1 justify-center items-center">
         <Text className="text-6xl p-6">eat@NUS</Text>
         <ActivityIndicator size="large" className="p-4"/>
         <Button onPress={onRefresh} title="Refresh" />
-      </View>
+      </View> 
+      */  
     );
   }
-
+  
   return (
     <View>
       <Header />
