@@ -1,8 +1,8 @@
 import { Canteen } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
-import { MaterialTopTabs } from "@/components/MaterialTopTabs";
+import { MaterialTopTabs } from "@/components/tabs/MaterialTopTabs";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
-import { Stack, useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams } from "expo-router";
 import React from "react";
 import { View, Text } from "react-native";
 
@@ -14,7 +14,7 @@ export default function CanteensLayout() {
     React.useContext(CanteenCollectionContext);
 
   const canteen: Canteen | undefined = canteenCollection.items.find(
-    (canteen) => canteen.id === id
+    canteen => canteen.id === id
   );
 
   if (canteen === undefined) {
@@ -30,15 +30,15 @@ export default function CanteensLayout() {
 
       <MaterialTopTabs>
         <MaterialTopTabs.Screen
-          name="index"
+          name="stalls"
           options={{
-            title: "Stalls",
+            title: "Stalls"
           }}
         />
         <MaterialTopTabs.Screen
           name="reviews"
           options={{
-            title: "Reviews",
+            title: "Reviews"
           }}
         />
       </MaterialTopTabs>

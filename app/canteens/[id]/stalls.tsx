@@ -1,23 +1,20 @@
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import React from "react";
-import { View, Text, Pressable, FlatList } from "react-native";
-import { Link, useLocalSearchParams } from "expo-router";
+import { View, FlatList } from "react-native";
+import { useGlobalSearchParams } from "expo-router";
 import ErrorView from "@/components/ErrorView";
 import { Canteen } from "@/app/types";
-import OutletReviewCard from "@/components/OutletReviewCard";
-import roundToNthDecimalPlace from "@/utils/roundToNthDecimalPlace";
-import StallPreview from "@/components/StallPreview";
-import { MaterialTopTabs } from "@/components/MaterialTopTabs";
+import StallPreview from "@/components/stall/StallPreview";
 
-export default function CanteenPage() {
-  const params = useLocalSearchParams();
+export default function CanteenStalls() {
+  const params = useGlobalSearchParams();
   const id = parseInt(params.id as string);
 
   const { canteenCollection, dispatchCanteenCollectionAction } =
     React.useContext(CanteenCollectionContext);
 
   const canteen: Canteen | undefined = canteenCollection.items.find(
-    (canteen) => canteen.id === id
+    canteen => canteen.id === id
   );
 
   if (canteen === undefined) {

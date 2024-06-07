@@ -5,7 +5,7 @@ import fetchCanteens from "@/api/canteens/fetchCanteens";
 import { Canteen } from "@/app/types";
 
 type CanteenCollectionProviderProps = {
-  children: React.ReactNode;
+  children: React.ReactElement;
 };
 
 export default function CanteenCollectionProvider(props: CanteenCollectionProviderProps) {

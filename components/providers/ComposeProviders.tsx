@@ -1,8 +1,8 @@
-import { ReactNode } from "react";
+import { ReactElement } from "react";
 
 type ComposeProvidersProps = {
-    providers: React.FunctionComponent<{ children: ReactNode }>[];
-    children: React.ReactNode;
+    providers: React.FunctionComponent<{ children: ReactElement }>[];
+    children: React.ReactElement;
 }
 
 export default function ComposeProviders(props: ComposeProvidersProps) {

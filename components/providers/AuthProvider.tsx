@@ -5,7 +5,7 @@ import React from "react";
 import { auth as firebaseAuth } from "../../firebaseConfig";
 
 type AuthProviderProps = {
-  children: React.ReactNode;
+  children: React.ReactElement;
 };
 
 export default function AuthProvider(props: AuthProviderProps) {
