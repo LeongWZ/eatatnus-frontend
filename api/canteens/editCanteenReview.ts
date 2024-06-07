@@ -1,17 +1,17 @@
 import { User } from "firebase/auth";
 
-type PostData = {
-    canteenId: number,
+type PutData = {
+    reviewId: number;
     rating: number,
     description: string | null;
     cleanliness: number;
     seatAvailability: number;
 }
 
-export default async function submitCanteenReview(user: User, data: PostData) {
+export default async function editCanteenReview(user: User, data: PutData) {
     return user.getIdToken()
         .then(token => fetch(`https://eatatnus-backend.onrender.com/api/canteens/review`, {
-            method: "POST",
+            method: "PUT",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
@@ -25,5 +25,5 @@ export default async function submitCanteenReview(user: User, data: PostData) {
                 throw new Error(JSON.stringify(result.error));
             }
             return result;
-        });;
+        });
 }

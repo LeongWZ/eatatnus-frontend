@@ -2,17 +2,11 @@ import { Link } from "expo-router";
 import { Text, View, Pressable, FlatList, ActivityIndicator, RefreshControl, Button } from "react-native";
 import { User } from "firebase/auth";
 import React, { useContext } from "react";
-import { Canteen } from "../types";
-import CanteenPreview from "@/components/CanteenPreview";
+import CanteenPreview from "@/components/canteen/CanteenPreview";
 import AuthContext from "@/contexts/AuthContext";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import StallCollectionContext from "@/contexts/StallCollectionContext";
-import StallPreview from "@/components/StallPreview";
 import fetchCanteens from "@/api/canteens/fetchCanteens";
-
-type HeaderProps = {
-  user: User | null;
-}
 
 function Header() {
   const { user } = useContext(AuthContext).auth;
@@ -56,18 +50,23 @@ export default function Index() {
   const { stallCollection, dispatchStallCollectionAction } = React.useContext(StallCollectionContext);
 
   const onRefresh = () => {
-    dispatchCanteenCollectionAction({ type: "FETCH" })
+    dispatchCanteenCollectionAction({ type: "FETCH" });
+    
     fetchCanteens()
       .then(canteens => dispatchCanteenCollectionAction({
         type: "PUT",
         payload: {
           items: canteens
         }
+      }))
+      .catch(error => dispatchCanteenCollectionAction({
+        type: "ERROR",
+        payload: { error_message: error }
       }));
   }
 
 
-  if (canteens.length === 0 && (canteenCollection.loading || stallCollection.loading)) {
+  if (canteens.length === 0 && canteenCollection.loading) {
     return (
       <View className="flex-1 justify-center items-center">
         <Text className="text-6xl p-6">
@@ -76,13 +75,6 @@ export default function Index() {
          <ActivityIndicator size="large" className="p-4"/>
          <Button onPress={onRefresh} title="Refresh" />
       </View>
-      /*
-      <View className="flex-1 justify-center items-center">
-        <Text className="text-6xl p-6">eat@NUS</Text>
-        <ActivityIndicator size="large" className="p-4"/>
-        <Button onPress={onRefresh} title="Refresh" />
-      </View> 
-      */  
     );
   }
   

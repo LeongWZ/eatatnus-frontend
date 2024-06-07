@@ -16,5 +16,12 @@ export default async function submitStallReview(user: User, data: PostData) {
                 "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify(data)
-        }));
+        }))
+        .then(response => response.json())
+        .then(result => {
+            if (result["error"]) {
+                throw new Error(JSON.stringify(result.error));
+            }
+            return result;
+        });;
 }

@@ -5,7 +5,7 @@ import fetchStalls from "@/api/stalls/fetchStalls";
 import { Stall } from "@/app/types";
 
 type StallCollectionProviderProps = {
-  children: React.ReactNode;
+  children: React.ReactElement;
 };
 
 export default function StallCollectionProvider(props: StallCollectionProviderProps) {
