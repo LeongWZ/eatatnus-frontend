@@ -1,5 +1,5 @@
 import { Link } from "expo-router";
-import { Text, View, Pressable, FlatList, ActivityIndicator, RefreshControl, Button } from "react-native";
+import { Text, View, Pressable, FlatList, ActivityIndicator, RefreshControl, Button, ScrollView } from "react-native";
 import { User } from "firebase/auth";
 import React, { useContext } from "react";
 import CanteenPreview from "@/components/canteen/CanteenPreview";
@@ -7,6 +7,8 @@ import AuthContext from "@/contexts/AuthContext";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import StallCollectionContext from "@/contexts/StallCollectionContext";
 import fetchCanteens from "@/api/canteens/fetchCanteens";
+import getAverageRating from "@/utils/getAverageRating";
+import StallPreview from "@/components/stall/StallPreview";
 
 function Header() {
   const { user } = useContext(AuthContext).auth;
@@ -48,6 +50,9 @@ export default function Index() {
   const canteens = canteenCollection.items;
 
   const { stallCollection, dispatchStallCollectionAction } = React.useContext(StallCollectionContext);
+  const topRatedStalls = stallCollection.items.sort(
+    (a, b) => getAverageRating(b.stallReviews) - getAverageRating(a.stallReviews)
+  ).slice(0, 5);
 
   const onRefresh = () => {
     dispatchCanteenCollectionAction({ type: "FETCH" });
@@ -81,18 +86,16 @@ export default function Index() {
   return (
     <View>
       <Header />
-      <FlatList
-        data={canteens}
-        renderItem={({item}) => <CanteenPreview canteen={item}/>}
-        keyExtractor={item => item.id.toString()}
-        extraData={canteens}
-        refreshControl={
-          <RefreshControl
-            refreshing={canteenCollection.loading}
-            onRefresh={onRefresh}
-            />
-        }
-        />
+      <ScrollView>
+        <View className="p-2" id="canteens">
+          <Text className="text-2xl">Canteens</Text>
+          {canteens.map(canteen => <CanteenPreview canteen={canteen} key={canteen.id} />)}
+        </View>
+        <View className="p-2 pb-28" id="stalls">
+          <Text className="text-2xl">Top-rated stalls</Text>
+          {topRatedStalls.map(stall => <StallPreview stall={stall} includeCanteenName={true} key={stall.id} />)}
+        </View>
+      </ScrollView>
     </View>
   );
 }

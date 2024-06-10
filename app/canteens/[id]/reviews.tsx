@@ -76,7 +76,7 @@ export default function CanteenReviews() {
                 }
                 keyExtractor={item => item.id.toString()}
                 extraData={canteen}
-                contentContainerStyle={{ padding: 12, paddingBottom: 200, }}
+                contentContainerStyle={{ padding: 12, paddingBottom: 300, }}
                 onRefresh={onRefresh}
                 refreshing={canteenCollection.loading}
                 />
