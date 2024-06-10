@@ -1,7 +1,7 @@
 import { StallReview } from "@/app/types";
-import React from "react";
+import React, { useCallback } from "react";
 import { View, Text, TextInput, Button } from "react-native";
-import { AirbnbRating } from 'react-native-ratings';
+import { Rating } from '@kolking/react-native-rating';
 
 export type FormData = {
     rating: number;
@@ -25,11 +25,11 @@ export default function StallReviewForm(props: StallReviewFormProps) {
         <View>
             <View className="items-center border m-2">
                 <Text className="text-2xl">Rating</Text>
-                <AirbnbRating
-                    count={5}
-                    defaultRating={formData.rating}
+                <Rating
+                    rating={formData.rating}
                     size={30}
-                    onFinishRating={input => setFormData({ ...formData, rating: input })}
+                    onChange={(value: number) => setFormData({ ...formData, rating: value })}
+                    style={{padding: 10}}
                     />
             </View>
 

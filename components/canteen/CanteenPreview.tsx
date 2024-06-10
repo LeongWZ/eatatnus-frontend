@@ -25,8 +25,10 @@ export default function CanteenPreview({canteen}: CanteenPreviewProps) {
             params: { id: canteen.id }
             }} asChild>
             <Pressable className={`
-                border-b
+                border
+                rounded-lg
                 px-2
+                my-2
                 active:bg-slate-400
                 `}>
                 <Text>{canteen.name}</Text>

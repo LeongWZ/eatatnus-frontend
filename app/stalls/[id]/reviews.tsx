@@ -77,7 +77,7 @@ export default function StallReviews() {
                                 />}
                     keyExtractor={item => item.id.toString()}
                     extraData={stall}
-                    contentContainerStyle={{ paddingBottom: 200 }}
+                    contentContainerStyle={{ paddingBottom: 300 }}
                     onRefresh={onRefresh}
                     refreshing={stallCollection.loading}
                     />

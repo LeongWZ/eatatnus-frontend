@@ -1,7 +1,7 @@
 import { OutletReview } from "@/app/types";
-import React from "react";
+import React, { useCallback } from "react";
 import { View, Text, TextInput, Button } from "react-native";
-import { AirbnbRating } from 'react-native-ratings';
+import { Rating } from '@kolking/react-native-rating';
 
 export type FormData = {
     rating: number;
@@ -29,11 +29,10 @@ export default function OutletReviewForm(props: OutletReviewFormProps) {
         <View>
             <View className="items-center border m-2">
                 <Text className="text-2xl">Rating</Text>
-                <AirbnbRating
-                    count={5}
-                    defaultRating={formData.rating}
-                    size={26}
-                    onFinishRating={input => setFormData({ ...formData, rating: input })}
+                <Rating
+                    rating={formData.rating}
+                    onChange={(value: number) => setFormData({ ...formData, rating: value })}
+                    style={{padding: 10}}
                     />
             </View>
 
@@ -50,20 +49,18 @@ export default function OutletReviewForm(props: OutletReviewFormProps) {
             <View className="flex-row justify-between m-2">
                 <View className="items-center border w-1/2">
                     <Text className="text-xl">Cleanliness</Text>
-                    <AirbnbRating
-                        count={5}
-                        defaultRating={formData.cleanliness}
-                        size={20}
-                        onFinishRating={input => setFormData({ ...formData, cleanliness: input })}
-                    />
+                    <Rating
+                        rating={formData.cleanliness}
+                        onChange={(value: number) => setFormData({ ...formData, cleanliness: value })}
+                        style={{padding: 10}}
+                        />
                 </View>
                 <View className="items-center border border-l-0 w-1/2">
                     <Text className="text-xl">Seat Availability</Text>
-                    <AirbnbRating
-                        count={5}
-                        defaultRating={formData.seatAvailability}
-                        size={20}
-                        onFinishRating={input => setFormData({ ...formData, seatAvailability: input })}
+                    <Rating
+                        rating={formData.seatAvailability}
+                        onChange={(value: number) => setFormData({ ...formData, seatAvailability: value })}
+                        style={{padding: 10}}
                         />
                 </View>
             </View>
