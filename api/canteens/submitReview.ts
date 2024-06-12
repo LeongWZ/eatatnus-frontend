@@ -1,14 +1,14 @@
 import { User } from "firebase/auth";
 
 type PostData = {
-    stallId: number,
+    canteenId: number,
     rating: number,
     description: string | null;
 }
 
-export default async function submitStallReview(user: User, data: PostData) {
+export default async function submitReview(user: User, data: PostData) {
     return user.getIdToken()
-        .then(token => fetch(`https://eatatnus-backend.onrender.com/api/stalls/review`, {
+        .then(token => fetch(`https://eatatnus-backend.onrender.com/api/canteens/review`, {
             method: "POST",
             headers: {
                 "Accept": "application/json",

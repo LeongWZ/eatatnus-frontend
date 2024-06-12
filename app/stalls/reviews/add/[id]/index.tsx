@@ -1,7 +1,7 @@
 import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
-import submitStallReview from "@/api/stalls/submitStallReview";
+import submitReview from "@/api/stalls/submitReview";
 import ErrorView from "@/components/ErrorView";
-import StallReviewForm, { FormData } from "@/components/stall/StallReviewForm";
+import ReviewForm, { FormData } from "@/components/review/ReviewForm";
 import AuthContext from "@/contexts/AuthContext";
 import StallCollectionContext from "@/contexts/StallCollectionContext";
 import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
@@ -29,8 +29,8 @@ export default function StallAddReview() {
 
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     
-    const submitStallReviewForm = (formData: FormData) => {
-        submitStallReview(user, { ...formData, stallId: stallId })
+    const submitReviewForm = (formData: FormData) => {
+        submitReview(user, { ...formData, stallId: stallId })
             .then(async res => {
                 setErrorMessage(null);
                 
@@ -58,7 +58,7 @@ export default function StallAddReview() {
             <Text className="text-3xl">Review stall</Text>
             <Text className="text-2xl">{stall.name}</Text>
 
-            <StallReviewForm submitStallReviewForm={submitStallReviewForm}/>
+            <ReviewForm submitReviewForm={submitReviewForm}/>
 
             {errorMessage && (
                 <Text className="text-red-500 m-2">{errorMessage}</Text>
