@@ -1,13 +1,12 @@
 import fetchIndividualCanteen from "@/api/canteens/fetchIndividualCanteen";
-import submitCanteenReview from "@/api/canteens/submitCanteenReview";
+import submitCanteenReview from "@/api/canteens/submitReview";
 import ErrorView from "@/components/ErrorView";
-import OutletReviewForm from "@/components/outlet/OutletReviewForm";
+import ReviewForm, { FormData } from "@/components/review/ReviewForm";
 import AuthContext from "@/contexts/AuthContext";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";
 import React, { useContext } from "react";
 import { View, Text, TextInput, Button } from "react-native";
-import { FormData } from "@/components/outlet/OutletReviewForm";
 
 export default function CanteenAddReview() {
     const params = useGlobalSearchParams();
@@ -30,7 +29,7 @@ export default function CanteenAddReview() {
 
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     
-    const submitOutletReviewForm = (formData: FormData) => {
+    const submitReviewForm = (formData: FormData) => {
         submitCanteenReview(user, { ...formData, canteenId: canteenId })
             .then(async res => {
                 setErrorMessage(null);
@@ -42,7 +41,7 @@ export default function CanteenAddReview() {
                     }
                 });
             })
-            .then(() => router.replace(`canteens/${canteenId}/reviews`))
+            .then(() => router.back())
             .catch(error => setErrorMessage(error.toString()));
     }
     
@@ -51,7 +50,7 @@ export default function CanteenAddReview() {
             <View className="items-center">
                 <Text className="text-3xl p-2">{canteen.name}</Text>
             </View>
-            <OutletReviewForm submitOutletReviewForm={submitOutletReviewForm}/>
+            <ReviewForm submitReviewForm={submitReviewForm}/>
 
             {errorMessage && (
                 <Text className="text-red-500 m-2">{errorMessage}</Text>

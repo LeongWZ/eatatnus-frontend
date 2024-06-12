@@ -51,7 +51,7 @@ export default function Index() {
 
   const { stallCollection, dispatchStallCollectionAction } = React.useContext(StallCollectionContext);
   const topRatedStalls = stallCollection.items.sort(
-    (a, b) => getAverageRating(b.stallReviews) - getAverageRating(a.stallReviews)
+    (a, b) => getAverageRating(b.reviews) - getAverageRating(a.reviews)
   ).slice(0, 5);
 
   const onRefresh = () => {

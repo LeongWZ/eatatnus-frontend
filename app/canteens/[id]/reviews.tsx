@@ -1,8 +1,8 @@
-import deleteCanteenReview from "@/api/canteens/deleteCanteenReview";
+import deleteReview from "@/api/reviews/deleteReview";
 import fetchIndividualCanteen from "@/api/canteens/fetchIndividualCanteen";
-import { Canteen, OutletReview } from "@/app/types";
+import { Canteen, Review } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
-import OutletReviewCard from "@/components/outlet/OutletReviewCard";
+import ReviewCard from "@/components/review/ReviewCard";
 import AuthContext from "@/contexts/AuthContext";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import roundToNthDecimalPlace from "@/utils/roundToNthDecimalPlace";
@@ -46,12 +46,10 @@ export default function CanteenReviews() {
         <View>
             <View className="flex-row justify-between border-b m-2">
                 <View>
-                    <Text>{canteen.outletReviews.length} reviews</Text>
-                    {canteen.outletReviews.length > 0 && (
+                    <Text>{canteen.reviews.length} reviews</Text>
+                    {canteen.reviews.length > 0 && (
                         <>
-                        <Text>Average rating: {getAverageRating(canteen.outletReviews)}/5</Text>
-                        <Text>Average seat availability: {getAverageSeatAvailability(canteen.outletReviews)}/5</Text>
-                        <Text>Average cleanliness: {getAverageClealiness(canteen.outletReviews)}/5</Text>
+                        <Text>Average rating: {getAverageRating(canteen.reviews)}/5</Text>
                         </>
                     )}
                 </View>
@@ -65,13 +63,13 @@ export default function CanteenReviews() {
                 </View>
             </View>
             <FlatList
-                data={canteen.outletReviews.sort((a, b) => a.id < b.id ? 1 : -1)}
+                data={canteen.reviews.sort((a, b) => a.id < b.id ? 1 : -1)}
                 renderItem={({item}) =>
-                    <OutletReviewCard
-                        outletReview={item}
+                    <ReviewCard
+                        review={item}
                         user={auth.user}
                         onEdit={() => {auth.user && router.push(`canteens/reviews/edit/${canteen.id}/${item.id}`)}}
-                        onDelete={() => {auth.user && deleteCanteenReview(auth.user, item.id).then(onRefresh)}}
+                        onDelete={() => {auth.user && deleteReview(auth.user, item.id).then(onRefresh)}}
                         />
                 }
                 keyExtractor={item => item.id.toString()}
@@ -84,26 +82,10 @@ export default function CanteenReviews() {
     );
 }
 
-function getAverageRating(outletReviews: OutletReview[]) {
+function getAverageRating(reviews: Review[]) {
     return roundToNthDecimalPlace(
-        outletReviews.map(outletReview => outletReview.rating)
-            .reduce((acc, x) => acc + x, 0) / Math.max(outletReviews.length, 1),
+        reviews.map(review => review.rating)
+            .reduce((acc, x) => acc + x, 0) / Math.max(reviews.length, 1),
         1
-    );
-}
-
-function getAverageSeatAvailability(outletReviews: OutletReview[]) {
-    return roundToNthDecimalPlace(
-        outletReviews.map(outletReview => outletReview.seatAvailability)
-            .reduce((acc, x) => acc + x, 0) / Math.max(outletReviews.length, 1),
-        1
-    );
-}
-
-function getAverageClealiness(outletReviews: OutletReview[]) {
-    return roundToNthDecimalPlace(
-        outletReviews.map(outletReview => outletReview.cleanliness)
-            .reduce((acc, x) => acc + x, 0) / Math.max(outletReviews.length, 1),
-        1,
     );
 }

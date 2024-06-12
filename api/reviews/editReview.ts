@@ -1,15 +1,20 @@
 import { User } from "firebase/auth";
 
-export default async function deleteCanteenReview(user: User, reviewId: number) {
+type PutData = {
+    rating: number,
+    description: string | null;
+}
+
+export default async function editStallReview(user: User, reviewId: number, data: PutData) {
     return user.getIdToken()
-        .then(token => fetch(`https://eatatnus-backend.onrender.com/api/canteens/review`, {
-            method: "DELETE",
+        .then(token => fetch(`https://eatatnus-backend.onrender.com/api/reviews/${reviewId}`, {
+            method: "PATCH",
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
                 "Authorization": `Bearer ${token}`
             },
-            body: JSON.stringify({ reviewId: reviewId })
+            body: JSON.stringify(data)
         }))
         .then(response => response.json())
         .then(result => {

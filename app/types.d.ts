@@ -7,7 +7,7 @@ export type Canteen = {
     locationId: number;
     location: Location;
     stalls: Stall[];
-    outletReviews: OutletReview[];
+    reviews: Review[];
 };
 
 export type Location = {
@@ -25,7 +25,7 @@ export type Stall = {
     updatedAt: string;
     ownerId: null,
     canteenId: number;
-    stallReviews: StallReview[];
+    reviews: Review[];
 }
 
 export type Review = {
@@ -37,14 +37,8 @@ export type Review = {
     reviewType: string;
     userId: number;
     user: { name: string };
+    canteenId?: number;
+    canteen?: Canteen;
+    stallId?: number;
+    stall?: Stall;
 }
-
-export type OutletReview = {
-    cleanliness: number;
-    seatAvailability: number;
-    canteenId: number;
-} & Review
-
-export type StallReview = {
-    stallId: number;
-} & Review

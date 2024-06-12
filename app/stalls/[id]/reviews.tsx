@@ -3,12 +3,12 @@ import React from "react";
 import { View, Text, Pressable, FlatList } from "react-native";
 import { Link, useGlobalSearchParams, useRouter } from 'expo-router';
 import ErrorView from "@/components/ErrorView";
-import { Stall, StallReview } from "@/app/types";
-import StallReviewCard from "@/components/stall/StallReviewCard";
+import { Review, Stall } from "@/app/types";
+import ReviewCard from "@/components/review/ReviewCard";
 import roundToNthDecimalPlace from "@/utils/roundToNthDecimalPlace";
 import AuthContext from "@/contexts/AuthContext";
 import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
-import deleteStallReview from "@/api/stalls/deleteStallReview";
+import deleteReview from "@/api/reviews/deleteReview";
 
 export default function StallReviews() {
     const params = useGlobalSearchParams();
@@ -26,9 +26,9 @@ export default function StallReviews() {
         return <ErrorView />;
     }
 
-    const reviewCount = stall.stallReviews.length;
+    const reviewCount = stall.reviews.length;
 
-    const averageRating = getAverageRating(stall.stallReviews);
+    const averageRating = getAverageRating(stall.reviews);
 
     const onRefresh = () => {
         dispatchStallCollectionAction({ type: "FETCH" });
@@ -67,13 +67,13 @@ export default function StallReviews() {
                 <Text className="text-2xl m-2">Reviews</Text>
                 
                 <FlatList
-                    data={stall.stallReviews.sort((a, b) => a.id < b.id ? 1 : -1)}
+                    data={stall.reviews.sort((a, b) => a.id < b.id ? 1 : -1)}
                     renderItem={({item}) =>
-                            <StallReviewCard
-                                stallReview={item}
+                            <ReviewCard
+                                review={item}
                                 user={auth.user}
                                 onEdit={() => {router.push(`stalls/reviews/edit/${stall.id}/${item.id}`)}}
-                                onDelete={() => {auth.user && deleteStallReview(auth.user, item.id).then(onRefresh)}}
+                                onDelete={() => {auth.user && deleteReview(auth.user, item.id).then(onRefresh)}}
                                 />}
                     keyExtractor={item => item.id.toString()}
                     extraData={stall}
@@ -86,7 +86,7 @@ export default function StallReviews() {
     );
 }
 
-function getAverageRating(stallReviews: StallReview[]) {
+function getAverageRating(stallReviews: Review[]) {
     return roundToNthDecimalPlace(
         stallReviews.map(stallReview => stallReview.rating)
             .reduce((acc, x) => acc + x, 0) / Math.max(stallReviews.length, 1),

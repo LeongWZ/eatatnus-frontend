@@ -1,4 +1,4 @@
-import { StallReview } from "@/app/types";
+import { Review } from "@/app/types";
 import React, { useCallback } from "react";
 import { View, Text, TextInput, Button } from "react-native";
 import { Rating } from '@kolking/react-native-rating';
@@ -8,17 +8,17 @@ export type FormData = {
     description: string | null;
 }
 
-type StallReviewFormProps = {
-    stallReview?: StallReview;
-    submitStallReviewForm: (data: FormData) => void;
+type ReviewFormProps = {
+    review?: Review;
+    submitReviewForm: (data: FormData) => void;
 }
 
-export default function StallReviewForm(props: StallReviewFormProps) {
-    const { stallReview, submitStallReviewForm } = props;
+export default function ReviewForm(props: ReviewFormProps) {
+    const { review, submitReviewForm } = props;
 
     const [formData, setFormData] = React.useState<FormData>({
-        rating: stallReview?.rating ?? 3,
-        description: stallReview?.description ?? null
+        rating: review?.rating ?? 3,
+        description: review?.description ?? null
     })
     
     return (
@@ -47,7 +47,7 @@ export default function StallReviewForm(props: StallReviewFormProps) {
             </View>
 
             <View className="flex items-end m-2">
-                <Button title="Submit" onPress={() => submitStallReviewForm(formData)}/>
+                <Button title="Submit" onPress={() => submitReviewForm(formData)}/>
             </View>
         </View>
     );

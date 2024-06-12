@@ -1,7 +1,7 @@
 import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
-import editStallReview from "@/api/stalls/editStallReview";
+import editReview from "@/api/reviews/editReview";
 import ErrorView from "@/components/ErrorView";
-import StallReviewForm, { FormData } from "@/components/stall/StallReviewForm";
+import ReviewForm, { FormData } from "@/components/review/ReviewForm";
 import AuthContext from "@/contexts/AuthContext";
 import StallCollectionContext from "@/contexts/StallCollectionContext";
 import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";
@@ -28,16 +28,16 @@ export default function StallEditReview() {
         return <ErrorView />;
     }
 
-    const stallReview = stall.stallReviews.find(stallReview => stallReview.id === reviewId);
+    const review = stall.reviews.find(review => review.id === reviewId);
 
-    if (!stallReview) {
+    if (!review) {
         return <ErrorView />;
     }
 
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     
-    const submitStallReviewForm = (formData: FormData) => {
-        editStallReview(user, { ...formData, reviewId: reviewId })
+    const submitReviewForm = (formData: FormData) => {
+        editReview(user, reviewId, formData)
             .then(async res => {
                 setErrorMessage(null);
                 
@@ -57,9 +57,9 @@ export default function StallEditReview() {
             <Text className="text-3xl">Review stall</Text>
             <Text className="text-2xl">{stall.name}</Text>
 
-            <StallReviewForm
-                stallReview={stallReview}
-                submitStallReviewForm={submitStallReviewForm}
+            <ReviewForm
+                review={review}
+                submitReviewForm={submitReviewForm}
                 />
 
             {errorMessage && (

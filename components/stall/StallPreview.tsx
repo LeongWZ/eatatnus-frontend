@@ -34,7 +34,7 @@ export default function StallPreview(props: StallPreviewProps) {
                 {includeCanteenName && <Text className="text-l">{canteen?.name}</Text>}
                 <Rating
                     size={20}
-                    rating={getAverageRating(stall.stallReviews)}
+                    rating={getAverageRating(stall.reviews)}
                     onChange={(() => {})}
                     disabled={true}
                     style={{ paddingVertical: 4 }}/>
