@@ -2,7 +2,7 @@ import { User } from "firebase/auth";
 
 export default async function deleteStallReview(user: User, reviewId: number) {
     return user.getIdToken()
-        .then(token => fetch(`https://eatatnus-backend.onrender.com/api/reviews/${reviewId}`, {
+        .then(token => fetch(`https://eatatnus-backend-xchix.ondigitalocean.app/api/reviews/${reviewId}`, {
             method: "DELETE",
             headers: {
                 "Accept": "application/json",

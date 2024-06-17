@@ -47,7 +47,9 @@
     "react-native-screens": "^3.31.1",
     "react-native-tab-view": "^3.5.2",
     "react-native-unimodules": "^0.13.1",
-    "react-native-web": "~0.19.10"
+    "react-native-web": "~0.19.10",
+    "expo-image-picker": "~15.0.5",
+    "expo-image": "~1.12.12"
   },
   "devDependencies": {
     "@babel/core": "^7.24.0",

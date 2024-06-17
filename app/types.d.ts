@@ -37,8 +37,15 @@ export type Review = {
     reviewType: string;
     userId: number;
     user: { name: string };
+    images: Image[];
     canteenId?: number;
     canteen?: Canteen;
     stallId?: number;
     stall?: Stall;
+}
+
+export type Image = {
+    id: number;
+    url: string;
+    createAt: string;
 }
