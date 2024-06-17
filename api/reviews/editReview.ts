@@ -7,7 +7,7 @@ type PutData = {
 
 export default async function editStallReview(user: User, reviewId: number, data: PutData) {
     return user.getIdToken()
-        .then(token => fetch(`https://eatatnus-backend.onrender.com/api/reviews/${reviewId}`, {
+        .then(token => fetch(`https://eatatnus-backend-xchix.ondigitalocean.app/api/reviews/${reviewId}`, {
             method: "PATCH",
             headers: {
                 "Accept": "application/json",

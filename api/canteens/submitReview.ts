@@ -12,7 +12,7 @@ type PostData = {
 
 export default async function submitReview(user: User, data: PostData) {
     return user.getIdToken()
-        .then(token => fetch(`https://eatatnus-backend.onrender.com/api/canteens/review`, {
+        .then(token => fetch(`https://eatatnus-backend-xchix.ondigitalocean.app/api/canteens/review`, {
             method: "POST",
             headers: {
                 "Accept": "application/json",
