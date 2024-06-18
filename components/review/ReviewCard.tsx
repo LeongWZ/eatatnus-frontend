@@ -42,7 +42,7 @@ export default function ReviewCard(props: ReviewProps) {
                 <Text>Description: { review.description }</Text>
                 <FlatList
                     data={review.images}
-                    renderItem={({ item }) => <Image source={item.url} style={{width:100,height:100}} />}
+                    renderItem={({ item }) => <Image source={item.url} style={{width:100,height:100}} placeholder="Image not found" />}
                     keyExtractor={item => item.id.toString()}
                     horizontal
                     showsHorizontalScrollIndicator={true}
