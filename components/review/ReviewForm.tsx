@@ -1,5 +1,5 @@
 import { Review } from "@/app/types";
-import React, { useCallback } from "react";
+import React from "react";
 import { View, Text, TextInput, Button, Pressable, FlatList } from "react-native";
 import { Rating } from '@kolking/react-native-rating';
 import * as ImagePicker from 'expo-image-picker';
@@ -23,7 +23,7 @@ export default function ReviewForm(props: ReviewFormProps) {
     const [formData, setFormData] = React.useState<FormData>({
         rating: review?.rating ?? 3,
         description: review?.description ?? null,
-        imageUris: []
+        imageUris: review?.images.map(image => image.url) ?? []
     })
 
     const pickImage = () => {
@@ -39,7 +39,6 @@ export default function ReviewForm(props: ReviewFormProps) {
                     imageUris: assets.map(asset => asset.uri).concat(formData.imageUris)
                 }
             ));
-
     }
     
     return (
@@ -69,7 +68,7 @@ export default function ReviewForm(props: ReviewFormProps) {
 
             <FlatList
                 data={formData.imageUris}
-                renderItem={({ item }) => <Image source={{ uri: item }} style={{width:100,height:100}} />}
+                renderItem={({ item }) => <Image source={{ uri: item }} style={{width:100,height:100}} placeholder="Image not found" />}
                 keyExtractor={item => item}
                 extraData={formData}
                 horizontal

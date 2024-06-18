@@ -49,7 +49,10 @@ export default function CanteenEditReview() {
                 });
             })
             .then(() => router.back())
-            .catch(error => setErrorMessage(error.toString()));
+            .catch(error => {
+                setErrorMessage(error.toString());
+                console.error(error);
+            });
     }
     
     return (

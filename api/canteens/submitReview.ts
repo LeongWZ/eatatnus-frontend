@@ -2,15 +2,16 @@ import { Review } from "@/app/types";
 import fetchImageFromUri from "@/utils/fetchImageFromUri";
 import { User } from "firebase/auth";
 import s3Put from "../s3/s3Put";
+import path from "path"
 
-type PostData = {
+type SubmitReviewData = {
     canteenId: number,
     rating: number,
     description: string | null;
     imageUris: string[]
 }
 
-export default async function submitReview(user: User, data: PostData) {
+export default async function submitReview(user: User, data: SubmitReviewData) {
     return user.getIdToken()
         .then(token => fetch(`https://eatatnus-backend-xchix.ondigitalocean.app/api/canteens/review`, {
             method: "POST",
@@ -23,7 +24,7 @@ export default async function submitReview(user: User, data: PostData) {
                 canteenId: data.canteenId,
                 rating: data.rating,
                 description: data.description,
-                imageFilenames: data.imageUris.map(getFilenameFromUri)
+                imageFilenames: data.imageUris.map(uri => path.basename(uri))
             })
         }))
         .then(response => response.json())
@@ -40,7 +41,7 @@ export default async function submitReview(user: User, data: PostData) {
             await Promise.all(
                 data.imageUris.map(uri => fetchImageFromUri(uri)
                     .then(image => {
-                        const url = urls.find(url => url.includes(getFilenameFromUri(uri)));
+                        const url = urls.find(url => url.includes(path.basename(uri)));
                         if (url) {
                             return s3Put(url, image);
                         }
@@ -50,8 +51,4 @@ export default async function submitReview(user: User, data: PostData) {
 
             return review;
         });
-}
-
-function getFilenameFromUri(uri: string) {
-    return uri.split("/").at(-1) ?? uri;
 }
