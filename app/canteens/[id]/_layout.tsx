@@ -4,7 +4,8 @@ import { MaterialTopTabs } from "@/components/tabs/MaterialTopTabs";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
-import { View, Text } from "react-native";
+import { View, Text, Linking, TouchableOpacity, StyleSheet } from "react-native";
+import MapScreen from "@/components/MapScreen";
 
 export default function CanteensLayout() {
   const params = useLocalSearchParams();
@@ -21,11 +22,20 @@ export default function CanteensLayout() {
     return <ErrorView />;
   }
 
+  const openAddressInMaps = () => {
+    const address = encodeURIComponent(canteen.location.address);
+    const url = `https://www.google.com/maps/search/?api=1&query=${address}`;
+    Linking.openURL(url).catch((err) => console.error("An error occurred", err));
+  };
+
+  // className="p-3"
   return (
     <>
-      <View className="p-3">
+      <View style={styles.container}> 
         <Text className="text-4xl">{canteen.name}</Text>
-        <Text className="text-xl mb-2">{canteen.location.address}</Text>
+        <TouchableOpacity onPress={openAddressInMaps}>
+          <Text className="text-xl mb-2">{canteen.location.address}</Text>
+        </TouchableOpacity>
       </View>
 
       <MaterialTopTabs>
@@ -41,7 +51,31 @@ export default function CanteensLayout() {
             title: "Reviews"
           }}
         />
+        <MaterialTopTabs.Screen
+          name="map"
+          options={{
+            title: "Map"
+          }}
+          //component={MapScreen}
+          initialParams={{ canteen }}
+        />
       </MaterialTopTabs>
     </>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 12,
+  },
+  canteenName: {
+    fontSize: 32,
+    fontWeight: 'bold',
+  },
+  canteenAddress: {
+    fontSize: 18,
+    color: 'blue',
+    marginBottom: 8,
+    textDecorationLine: 'underline',
+  },
+});
