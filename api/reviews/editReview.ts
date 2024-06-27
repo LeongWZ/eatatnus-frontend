@@ -48,5 +48,5 @@ export default async function editStallReview(user: User, reviewId: number, data
             );
 
             return review;
-        });;
+        });
 }

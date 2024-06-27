@@ -44,6 +44,8 @@ export default function StallReviews() {
             }))
     }
 
+    React.useEffect(onRefresh, []);
+
     return (
         <>
             <View className="flex-row justify-between border-b p-2">

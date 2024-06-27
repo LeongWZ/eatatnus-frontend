@@ -4,7 +4,6 @@ import ErrorView from "@/components/ErrorView";
 import ReviewForm, { FormData } from "@/components/review/ReviewForm";
 import AuthContext from "@/contexts/AuthContext";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
-import fetchImageFromUri from "@/utils/fetchImageFromUri";
 import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";
 import React, { useContext } from "react";
 import { View, Text, TextInput, Button } from "react-native";
