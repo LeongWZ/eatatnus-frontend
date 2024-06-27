@@ -42,6 +42,8 @@ export default function CanteenReviews() {
             }))
     }
 
+    React.useEffect(onRefresh, []);
+
     return (
         <View>
             <View className="flex-row justify-between border-b m-2">
