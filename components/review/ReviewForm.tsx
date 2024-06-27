@@ -1,9 +1,9 @@
 import { Review } from "@/app/types";
 import React from "react";
-import { View, Text, TextInput, Button, Pressable, FlatList } from "react-native";
+import { View, Text, TextInput, Button, Pressable, FlatList, TouchableOpacity, ImageBackground } from "react-native";
 import { Rating } from '@kolking/react-native-rating';
 import * as ImagePicker from 'expo-image-picker';
-import { Image } from 'expo-image';
+import Ionicons from '@expo/vector-icons/Ionicons';
 
 
 export type FormData = {
@@ -68,7 +68,15 @@ export default function ReviewForm(props: ReviewFormProps) {
 
             <FlatList
                 data={formData.imageUris}
-                renderItem={({ item }) => <Image source={{ uri: item }} style={{width:100,height:100}} placeholder="Image not found" />}
+                renderItem={
+                    ({ item }) => (
+                        <ImageView
+                            uri={item}
+                            onDelete={() => setFormData({ ...formData, imageUris: formData.imageUris.filter(uri => uri !== item)})}
+                            key={item}
+                            />
+                    )
+                }
                 keyExtractor={item => item}
                 extraData={formData}
                 horizontal
@@ -87,4 +95,25 @@ export default function ReviewForm(props: ReviewFormProps) {
             </View>
         </View>
     );
+}
+
+type ImageViewProps = {
+    uri: string;
+    onDelete: () => void;
+}
+
+function ImageView(props: ImageViewProps) {
+    const { uri, onDelete } = props;
+
+    return (
+        <View>
+            <ImageBackground source={{ uri: uri }} style={{width:200,height:200}}>
+                <View className="items-end">
+                    <Pressable className="active:bg-slate-600" onPress={onDelete}>
+                        <Ionicons name="close-circle-outline" style={{ color: "red" }} size={32} />
+                    </Pressable>
+                </View>
+            </ImageBackground>
+        </View>
+    )
 }
