@@ -21,19 +21,15 @@ export default function StallReviews() {
 
     const stall: Stall | undefined = stallCollection.items
         .find(stall => stall.id === id);
-    
-    if (stall === undefined) {
-        return <ErrorView />;
-    }
 
-    const reviewCount = stall.reviews.length;
+    const reviewCount = stall?.reviews.length ?? 0;
 
-    const averageRating = getAverageRating(stall.reviews);
+    const averageRating = getAverageRating(stall?.reviews ?? []);
 
     const onRefresh = () => {
         dispatchStallCollectionAction({ type: "FETCH" });
 
-        fetchIndividualStall(stall.id)
+        stall && fetchIndividualStall(stall.id)
             .then(stall => dispatchStallCollectionAction({
                 type: "PATCH",
                 payload: { item: stall }
@@ -45,6 +41,10 @@ export default function StallReviews() {
     }
 
     React.useEffect(onRefresh, []);
+
+    if (stall === undefined) {
+        return <ErrorView />;
+    }
 
     return (
         <>
@@ -76,6 +76,7 @@ export default function StallReviews() {
                                 user={auth.user}
                                 onEdit={() => {router.push(`stalls/reviews/edit/${stall.id}/${item.id}`)}}
                                 onDelete={() => {auth.user && deleteReview(auth.user, item.id).then(onRefresh)}}
+                                onImagePress={(uri) => {router.push(`stalls/photos/${stall.id}/?uri=${uri}`)}}
                                 />}
                     keyExtractor={item => item.id.toString()}
                     extraData={stall}

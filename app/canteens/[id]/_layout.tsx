@@ -28,10 +28,9 @@ export default function CanteensLayout() {
     Linking.openURL(url).catch((err) => console.error("An error occurred", err));
   };
 
-  // className="p-3"
   return (
     <>
-      <View style={styles.container}> 
+      <View className="p-5"> 
         <Text className="text-4xl">{canteen.name}</Text>
         <TouchableOpacity onPress={openAddressInMaps}>
           <Text className="text-xl mb-2">{canteen.location.address}</Text>
@@ -63,19 +62,3 @@ export default function CanteensLayout() {
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 12,
-  },
-  canteenName: {
-    fontSize: 32,
-    fontWeight: 'bold',
-  },
-  canteenAddress: {
-    fontSize: 18,
-    color: 'blue',
-    marginBottom: 8,
-    textDecorationLine: 'underline',
-  },
-});

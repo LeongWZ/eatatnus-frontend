@@ -16,21 +16,12 @@ export default function StallAddReview() {
 
     const { user } = useContext(AuthContext).auth;
 
-    if (!user) {
-        return <Redirect href="/signin" />;
-    }
-
     const {stallCollection, dispatchStallCollectionAction} = useContext(StallCollectionContext);
     const stall = stallCollection.items.find(stall => stall.id === stallId);
-
-    if (stall === undefined) {
-        return <ErrorView />
-    }
-
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     
     const submitReviewForm = (formData: FormData) => {
-        submitReview(user, { ...formData, stallId: stallId })
+        user && submitReview(user, { ...formData, stallId: stallId })
             .then(async res => {
                 setErrorMessage(null);
                 

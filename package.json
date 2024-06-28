@@ -42,6 +42,7 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-native": "0.74.2",
+    "react-native-awesome-gallery": "^0.4.0",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-hold-menu": "github:Nasseratic/react-native-hold-menu-upgrade-expo-49#expo-49-needed-fixes",
     "react-native-maps": "^1.15.6",
