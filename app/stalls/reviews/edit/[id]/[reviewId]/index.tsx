@@ -17,27 +17,15 @@ export default function StallEditReview() {
 
     const { user } = useContext(AuthContext).auth;
 
-    if (!user) {
-        return <Redirect href="/signin" />;
-    }
-
     const {stallCollection, dispatchStallCollectionAction} = useContext(StallCollectionContext);
     const stall = stallCollection.items.find(stall => stall.id === stallId);
 
-    if (!stall) {
-        return <ErrorView />;
-    }
-
-    const review = stall.reviews.find(review => review.id === reviewId);
-
-    if (!review) {
-        return <ErrorView />;
-    }
+    const review = stall?.reviews.find(review => review.id === reviewId);
 
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     
     const submitReviewForm = (formData: FormData) => {
-        editReview(user, reviewId, formData)
+        user && editReview(user, reviewId, formData)
             .then(async res => {
                 setErrorMessage(null);
                 
@@ -50,6 +38,14 @@ export default function StallEditReview() {
             })
             .then(() => router.back())
             .catch(error => setErrorMessage(error.toString()));
+    }
+
+    if (!user) {
+        return <Redirect href="/signin" />;
+    }
+
+    if (!stall || !review) {
+        return <ErrorView />;
     }
     
     return (

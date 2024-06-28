@@ -21,17 +21,13 @@ export default function CanteenReviews() {
 
     const canteen: Canteen | undefined = canteenCollection.items
         .find(canteen => canteen.id === id);
-    
-    if (canteen === undefined) {
-        return <ErrorView />;
-    }
 
     const onRefresh = () => {
         dispatchCanteenCollectionAction({
             type: "FETCH"
         });
 
-        fetchIndividualCanteen(canteen.id)
+        canteen && fetchIndividualCanteen(canteen.id)
             .then(canteen => dispatchCanteenCollectionAction({
                 type: "PATCH",
                 payload: { item: canteen }
@@ -43,6 +39,10 @@ export default function CanteenReviews() {
     }
 
     React.useEffect(onRefresh, []);
+
+    if (canteen === undefined) {
+        return <ErrorView />;
+    }
 
     return (
         <View>
@@ -72,6 +72,7 @@ export default function CanteenReviews() {
                         user={auth.user}
                         onEdit={() => {auth.user && router.push(`canteens/reviews/edit/${canteen.id}/${item.id}`)}}
                         onDelete={() => {auth.user && deleteReview(auth.user, item.id).then(onRefresh)}}
+                        onImagePress={(uri) => {router.push(`canteens/photos/${canteen.id}/?uri=${uri}`)}}
                         />
                 }
                 keyExtractor={item => item.id.toString()}

@@ -16,21 +16,13 @@ export default function CanteenAddReview() {
 
     const { user } = useContext(AuthContext).auth;
 
-    if (!user) {
-        return <Redirect href="/signin" />;
-    }
-
     const {canteenCollection, dispatchCanteenCollectionAction} = useContext(CanteenCollectionContext);
     const canteen = canteenCollection.items.find(canteen => canteen.id === canteenId)
-
-    if (!canteen) {
-        return <ErrorView />;
-    }
 
     const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
     
     const submitReviewForm = (formData: FormData) => {
-        submitCanteenReview(user, { ...formData, canteenId: canteenId })
+        user && submitCanteenReview(user, { ...formData, canteenId: canteenId })
             .then(async res => {
                 setErrorMessage(null);
 
@@ -43,6 +35,14 @@ export default function CanteenAddReview() {
             })
             .then(() => router.back())
             .catch(error => setErrorMessage(error.toString()));
+    }
+
+    if (!user) {
+        return <Redirect href="/signin" />;
+    }
+
+    if (!canteen) {
+        return <ErrorView />;
     }
     
     return (
