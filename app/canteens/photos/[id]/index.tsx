@@ -20,10 +20,7 @@ import Animated, {
   FadeOutUp,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import {
-  useGlobalSearchParams,
-  useRouter,
-} from "expo-router";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 
 const renderItem = ({
@@ -60,8 +57,8 @@ export default function CanteenPhotos() {
   const [index, setIndex] = React.useState(
     Math.max(
       0,
-      images.findIndex((uri) => uri.includes(params.uri ?? "undefined"))
-    )
+      images.findIndex((uri) => uri.includes(params.uri ?? "undefined")),
+    ),
   );
   const gallery = useRef<GalleryRef>(null);
   const [mounted, setMounted] = useState(false);
@@ -86,7 +83,7 @@ export default function CanteenPhotos() {
         setIndex(index);
       }
     },
-    [isFocused, setParams]
+    [isFocused, setParams],
   );
 
   const onTap = () => {
@@ -151,7 +148,7 @@ export default function CanteenPhotos() {
               style={styles.textContainer}
               onPress={() =>
                 gallery.current?.setIndex(
-                  index === 0 ? Math.max(0, images.length - 1) : index - 1
+                  index === 0 ? Math.max(0, images.length - 1) : index - 1,
                 )
               }
             >
@@ -162,7 +159,7 @@ export default function CanteenPhotos() {
               onPress={() =>
                 gallery.current?.setIndex(
                   index === images.length - 1 ? 0 : index + 1,
-                  true
+                  true,
                 )
               }
             >

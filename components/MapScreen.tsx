@@ -1,17 +1,22 @@
-import React from 'react';
-import { StyleSheet, View, Text } from 'react-native';
-import MapView, { Marker } from 'react-native-maps';
-import { RouteProp } from '@react-navigation/native';
-import { RouteParams } from '@/components/canteen/types';
+import React from "react";
+import { StyleSheet, View, Text } from "react-native";
+import MapView, { Marker } from "react-native-maps";
+import { RouteProp } from "@react-navigation/native";
+import { RouteParams } from "@/components/canteen/types";
 
 interface MapScreenProps {
-  route: RouteProp<{ params: RouteParams }, 'params'>;
+  route: RouteProp<{ params: RouteParams }, "params">;
 }
 
 export default function MapScreen({ route }: MapScreenProps) {
   const { canteen } = route.params;
 
-  if (!canteen || !canteen.location || !canteen.location.latitude || !canteen.location.longitude) {
+  if (
+    !canteen ||
+    !canteen.location ||
+    !canteen.location.latitude ||
+    !canteen.location.longitude
+  ) {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>Invalid location data</Text>
@@ -52,11 +57,11 @@ const styles = StyleSheet.create({
   },
   errorContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   errorText: {
     fontSize: 18,
-    color: 'red',
+    color: "red",
   },
 });

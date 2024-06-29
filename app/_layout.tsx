@@ -10,17 +10,14 @@ const providers = [
   CanteenCollectionProvider,
   StallCollectionProvider,
   HoldMenuProvider,
-  AuthProvider
+  AuthProvider,
 ];
 
 export default function RootLayout() {
   return (
     <ComposeProviders providers={providers}>
       <Stack>
-        <Stack.Screen
-          name="(main)/index"
-          options={{ title: "eat@NUS" }}
-          />
+        <Stack.Screen name="(main)/index" options={{ title: "eat@NUS" }} />
       </Stack>
     </ComposeProviders>
   );

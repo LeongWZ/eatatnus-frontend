@@ -6,55 +6,58 @@ import AuthContext from "@/contexts/AuthContext";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";
 import React, { useContext } from "react";
-import { View, Text, TextInput, Button } from "react-native";
+import { View, Text } from "react-native";
 
 export default function CanteenAddReview() {
-    const params = useGlobalSearchParams();
-    const canteenId = parseInt(params.id as string);
+  const params = useGlobalSearchParams();
+  const canteenId = parseInt(params.id as string);
 
-    const router = useRouter();
+  const router = useRouter();
 
-    const { user } = useContext(AuthContext).auth;
+  const { user } = useContext(AuthContext).auth;
 
-    const {canteenCollection, dispatchCanteenCollectionAction} = useContext(CanteenCollectionContext);
-    const canteen = canteenCollection.items.find(canteen => canteen.id === canteenId)
+  const { canteenCollection, dispatchCanteenCollectionAction } = useContext(
+    CanteenCollectionContext,
+  );
+  const canteen = canteenCollection.items.find(
+    (canteen) => canteen.id === canteenId,
+  );
 
-    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-    
-    const submitReviewForm = (formData: FormData) => {
-        user && submitCanteenReview(user, { ...formData, canteenId: canteenId })
-            .then(async res => {
-                setErrorMessage(null);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
-                dispatchCanteenCollectionAction({
-                    type: "PATCH",
-                    payload: {
-                        item: await fetchIndividualCanteen(canteenId)
-                    }
-                });
-            })
-            .then(() => router.back())
-            .catch(error => setErrorMessage(error.toString()));
-    }
+  const submitReviewForm = (formData: FormData) => {
+    user &&
+      submitCanteenReview(user, { ...formData, canteenId: canteenId })
+        .then(async (res) => {
+          setErrorMessage(null);
 
-    if (!user) {
-        return <Redirect href="/signin" />;
-    }
+          dispatchCanteenCollectionAction({
+            type: "PATCH",
+            payload: {
+              item: await fetchIndividualCanteen(canteenId),
+            },
+          });
+        })
+        .then(() => router.back())
+        .catch((error) => setErrorMessage(error.toString()));
+  };
 
-    if (!canteen) {
-        return <ErrorView />;
-    }
-    
-    return (
-        <View>
-            <View className="items-center">
-                <Text className="text-3xl p-2">{canteen.name}</Text>
-            </View>
-            <ReviewForm submitReviewForm={submitReviewForm}/>
+  if (!user) {
+    return <Redirect href="/signin" />;
+  }
 
-            {errorMessage && (
-                <Text className="text-red-500 m-2">{errorMessage}</Text>
-            )}
-        </View>
-    );
+  if (!canteen) {
+    return <ErrorView />;
+  }
+
+  return (
+    <View>
+      <View className="items-center">
+        <Text className="text-3xl p-2">{canteen.name}</Text>
+      </View>
+      <ReviewForm submitReviewForm={submitReviewForm} />
+
+      {errorMessage && <Text className="text-red-500 m-2">{errorMessage}</Text>}
+    </View>
+  );
 }

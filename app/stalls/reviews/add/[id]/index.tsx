@@ -9,51 +9,52 @@ import React, { useContext } from "react";
 import { View, Text } from "react-native";
 
 export default function StallAddReview() {
-    const params = useLocalSearchParams();
-    const stallId = parseInt(params.id as string);
+  const params = useLocalSearchParams();
+  const stallId = parseInt(params.id as string);
 
-    const router = useRouter();
+  const router = useRouter();
 
-    const { user } = useContext(AuthContext).auth;
+  const { user } = useContext(AuthContext).auth;
 
-    const {stallCollection, dispatchStallCollectionAction} = useContext(StallCollectionContext);
-    const stall = stallCollection.items.find(stall => stall.id === stallId);
-    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-    
-    const submitReviewForm = (formData: FormData) => {
-        user && submitReview(user, { ...formData, stallId: stallId })
-            .then(async res => {
-                setErrorMessage(null);
-                
-                dispatchStallCollectionAction({
-                    type: "PATCH",
-                    payload: {
-                        item: await fetchIndividualStall(stallId)
-                    }
-                });
-            })
-            .then(() => router.back())
-            .catch(error => setErrorMessage(error.toString()));
-    }
+  const { stallCollection, dispatchStallCollectionAction } = useContext(
+    StallCollectionContext,
+  );
+  const stall = stallCollection.items.find((stall) => stall.id === stallId);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
-    if (!user) {
-        return <Redirect href="/signin" />;
-    }
-    
-    if (stall === undefined) {
-        return <ErrorView />
-    }
-    
-    return (
-        <View>
-            <Text className="text-3xl">Review stall</Text>
-            <Text className="text-2xl">{stall.name}</Text>
+  const submitReviewForm = (formData: FormData) => {
+    user &&
+      submitReview(user, { ...formData, stallId: stallId })
+        .then(async (res) => {
+          setErrorMessage(null);
 
-            <ReviewForm submitReviewForm={submitReviewForm}/>
+          dispatchStallCollectionAction({
+            type: "PATCH",
+            payload: {
+              item: await fetchIndividualStall(stallId),
+            },
+          });
+        })
+        .then(() => router.back())
+        .catch((error) => setErrorMessage(error.toString()));
+  };
 
-            {errorMessage && (
-                <Text className="text-red-500 m-2">{errorMessage}</Text>
-            )}
-        </View>
-    );
+  if (!user) {
+    return <Redirect href="/signin" />;
+  }
+
+  if (stall === undefined) {
+    return <ErrorView />;
+  }
+
+  return (
+    <View>
+      <Text className="text-3xl">Review stall</Text>
+      <Text className="text-2xl">{stall.name}</Text>
+
+      <ReviewForm submitReviewForm={submitReviewForm} />
+
+      {errorMessage && <Text className="text-red-500 m-2">{errorMessage}</Text>}
+    </View>
+  );
 }

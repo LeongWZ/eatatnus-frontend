@@ -4,7 +4,7 @@ import { MaterialTopTabs } from "@/components/tabs/MaterialTopTabs";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import { useLocalSearchParams } from "expo-router";
 import React from "react";
-import { View, Text, Linking, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, Linking, TouchableOpacity } from "react-native";
 import MapScreen from "@/components/MapScreen";
 
 export default function CanteensLayout() {
@@ -15,7 +15,7 @@ export default function CanteensLayout() {
     React.useContext(CanteenCollectionContext);
 
   const canteen: Canteen | undefined = canteenCollection.items.find(
-    canteen => canteen.id === id
+    (canteen) => canteen.id === id,
   );
 
   if (canteen === undefined) {
@@ -25,12 +25,14 @@ export default function CanteensLayout() {
   const openAddressInMaps = () => {
     const address = encodeURIComponent(canteen.location.address);
     const url = `https://www.google.com/maps/search/?api=1&query=${address}`;
-    Linking.openURL(url).catch((err) => console.error("An error occurred", err));
+    Linking.openURL(url).catch((err) =>
+      console.error("An error occurred", err),
+    );
   };
 
   return (
     <>
-      <View className="p-5"> 
+      <View className="p-5">
         <Text className="text-4xl">{canteen.name}</Text>
         <TouchableOpacity onPress={openAddressInMaps}>
           <Text className="text-xl mb-2">{canteen.location.address}</Text>
@@ -41,19 +43,19 @@ export default function CanteensLayout() {
         <MaterialTopTabs.Screen
           name="stalls"
           options={{
-            title: "Stalls"
+            title: "Stalls",
           }}
         />
         <MaterialTopTabs.Screen
           name="reviews"
           options={{
-            title: "Reviews"
+            title: "Reviews",
           }}
         />
         <MaterialTopTabs.Screen
           name="map"
           options={{
-            title: "Map"
+            title: "Map",
           }}
           //component={MapScreen}
           initialParams={{ canteen }}

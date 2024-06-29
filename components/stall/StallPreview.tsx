@@ -7,39 +7,47 @@ import { Text, Pressable } from "react-native";
 import { Rating } from "@kolking/react-native-rating";
 
 type StallPreviewProps = {
-    stall: Stall;
-    includeCanteenName?: boolean;
-}
+  stall: Stall;
+  includeCanteenName?: boolean;
+};
 
 export default function StallPreview(props: StallPreviewProps) {
-    const { stall, includeCanteenName } = props;
-    const { canteenCollection, dispatchCanteenCollectionAction } = React.useContext(CanteenCollectionContext);
-    const canteen: Canteen | undefined = canteenCollection.items
-        .find(canteen => canteen.id === stall.canteenId);
+  const { stall, includeCanteenName } = props;
+  const { canteenCollection, dispatchCanteenCollectionAction } =
+    React.useContext(CanteenCollectionContext);
+  const canteen: Canteen | undefined = canteenCollection.items.find(
+    (canteen) => canteen.id === stall.canteenId,
+  );
 
-    return (
-        <Link href={{
-            pathname: "/stalls/[id]",
-            params: { id: stall.id }
-            }} asChild>
-            <Pressable className={`
+  return (
+    <Link
+      href={{
+        pathname: "/stalls/[id]",
+        params: { id: stall.id },
+      }}
+      asChild
+    >
+      <Pressable
+        className={`
                 border
                 px-2
                 py-4
                 my-2
                 rounded-xl
                 active:bg-slate-400
-                `}>
-                <Text className="text-xl">{stall.name}</Text>
-                {includeCanteenName && <Text className="text-l">{canteen?.name}</Text>}
-                <Rating
-                    size={20}
-                    rating={getAverageRating(stall.reviews)}
-                    onChange={(() => {})}
-                    disabled={true}
-                    style={{ paddingVertical: 4 }}/>
-                <Text>{stall.description}</Text>
-            </Pressable>
-        </Link>
-    );
+                `}
+      >
+        <Text className="text-xl">{stall.name}</Text>
+        {includeCanteenName && <Text className="text-l">{canteen?.name}</Text>}
+        <Rating
+          size={20}
+          rating={getAverageRating(stall.reviews)}
+          onChange={() => {}}
+          disabled={true}
+          style={{ paddingVertical: 4 }}
+        />
+        <Text>{stall.description}</Text>
+      </Pressable>
+    </Link>
+  );
 }

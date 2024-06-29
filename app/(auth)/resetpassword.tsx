@@ -23,7 +23,7 @@ export default function ResetPassword() {
     resetPasswordWithEmail(formData.email)
       .then(() => setResetStatus({ data: true, error_message: null }))
       .catch((error) =>
-        setResetStatus({ data: false, error_message: error.message })
+        setResetStatus({ data: false, error_message: error.message }),
       );
   };
 
@@ -40,13 +40,17 @@ export default function ResetPassword() {
         />
 
         <View className="mt-4 w-1/4">
-          <Button title="Submit" onPress={onSubmit}
-            disabled={formData.email === ""}/>
+          <Button
+            title="Submit"
+            onPress={onSubmit}
+            disabled={formData.email === ""}
+          />
         </View>
 
         {resetStatus.data && (
           <Text className="mt-2">
-            An email has been sent to you with instructions on how to reset your password.
+            An email has been sent to you with instructions on how to reset your
+            password.
           </Text>
         )}
 
