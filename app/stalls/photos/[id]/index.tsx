@@ -20,10 +20,7 @@ import Animated, {
   FadeOutUp,
 } from "react-native-reanimated";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import {
-  useGlobalSearchParams,
-  useRouter,
-} from "expo-router";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 import StallCollectionContext from "@/contexts/StallCollectionContext";
 
 const renderItem = ({
@@ -50,8 +47,9 @@ export default function StallPhotos() {
   const goBack = router.back;
   const isFocused = useIsFocused();
   const params = useGlobalSearchParams<{ id: string; uri: string }>();
-  const { stallCollection, dispatchStallCollectionAction } =
-    React.useContext(StallCollectionContext);
+  const { stallCollection, dispatchStallCollectionAction } = React.useContext(
+    StallCollectionContext,
+  );
   const images =
     stallCollection.items
       .find((stall) => stall.id === parseInt(params.id ?? ""))
@@ -60,8 +58,8 @@ export default function StallPhotos() {
   const [index, setIndex] = React.useState(
     Math.max(
       0,
-      images.findIndex((uri) => uri === params.uri)
-    )
+      images.findIndex((uri) => uri === params.uri),
+    ),
   );
   const gallery = useRef<GalleryRef>(null);
   const [mounted, setMounted] = useState(false);
@@ -86,7 +84,7 @@ export default function StallPhotos() {
         setIndex(index);
       }
     },
-    [isFocused, setParams]
+    [isFocused, setParams],
   );
 
   const onTap = () => {
@@ -151,7 +149,7 @@ export default function StallPhotos() {
               style={styles.textContainer}
               onPress={() =>
                 gallery.current?.setIndex(
-                  index === 0 ? Math.max(0, images.length - 1) : index - 1
+                  index === 0 ? Math.max(0, images.length - 1) : index - 1,
                 )
               }
             >
@@ -162,7 +160,7 @@ export default function StallPhotos() {
               onPress={() =>
                 gallery.current?.setIndex(
                   index === images.length - 1 ? 0 : index + 1,
-                  true
+                  true,
                 )
               }
             >

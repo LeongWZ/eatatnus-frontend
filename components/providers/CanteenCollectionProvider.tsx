@@ -8,25 +8,31 @@ type CanteenCollectionProviderProps = {
   children: React.ReactElement;
 };
 
-export default function CanteenCollectionProvider(props: CanteenCollectionProviderProps) {
-  const [canteenCollection, dispatchCanteenCollectionAction] = useIdentifiableCollectionReducer<Canteen>({
-    items: [],
-    loading: false,
-    error_message: null,
-  });
+export default function CanteenCollectionProvider(
+  props: CanteenCollectionProviderProps,
+) {
+  const [canteenCollection, dispatchCanteenCollectionAction] =
+    useIdentifiableCollectionReducer<Canteen>({
+      items: [],
+      loading: false,
+      error_message: null,
+    });
 
   React.useEffect(() => {
     dispatchCanteenCollectionAction({ type: "FETCH" });
 
     fetchCanteens()
-      .then(canteens =>
+      .then((canteens) =>
         dispatchCanteenCollectionAction({
           type: "PUT",
           payload: { items: canteens },
-        })
+        }),
       )
       .catch((error) => {
-        dispatchCanteenCollectionAction({ type: "ERROR", payload: { error_message: error } });
+        dispatchCanteenCollectionAction({
+          type: "ERROR",
+          payload: { error_message: error },
+        });
       });
   }, []);
 

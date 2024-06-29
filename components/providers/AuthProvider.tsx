@@ -26,7 +26,7 @@ export default function AuthProvider(props: AuthProviderProps) {
         // For debugging purposes
         //(async () => console.log(await user?.getIdToken()))()
       }),
-    []
+    [],
   );
 
   return (

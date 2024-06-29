@@ -8,25 +8,31 @@ type StallCollectionProviderProps = {
   children: React.ReactElement;
 };
 
-export default function StallCollectionProvider(props: StallCollectionProviderProps) {
-  const [stallCollection, dispatchStallCollectionAction] = useIdentifiableCollectionReducer<Stall>({
-    items: [],
-    loading: false,
-    error_message: null,
-  });
+export default function StallCollectionProvider(
+  props: StallCollectionProviderProps,
+) {
+  const [stallCollection, dispatchStallCollectionAction] =
+    useIdentifiableCollectionReducer<Stall>({
+      items: [],
+      loading: false,
+      error_message: null,
+    });
 
   React.useEffect(() => {
     dispatchStallCollectionAction({ type: "FETCH" });
 
     fetchStalls()
-      .then(stalls =>
+      .then((stalls) =>
         dispatchStallCollectionAction({
           type: "PUT",
           payload: { items: stalls },
-        })
+        }),
       )
       .catch((error) => {
-        dispatchStallCollectionAction({ type: "ERROR", payload: { error_message: error } });
+        dispatchStallCollectionAction({
+          type: "ERROR",
+          payload: { error_message: error },
+        });
       });
   }, []);
 

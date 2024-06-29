@@ -10,11 +10,12 @@ export default function SignOut() {
   const onSignOut = () => {
     dispatchAuth({ type: "SIGN_OUT" });
 
-    signOut()
-      .catch(error => dispatchAuth({
-          type: "ERROR",
-          payload: { error_message: error.message }
-      }));
+    signOut().catch((error) =>
+      dispatchAuth({
+        type: "ERROR",
+        payload: { error_message: error.message },
+      }),
+    );
   };
 
   if (auth.status === "NOT_AUTHENTICATED") {
@@ -37,7 +38,7 @@ export default function SignOut() {
 
           <Link href="/" className="grow bg-gray-500 p-2 items-center" asChild>
             <Pressable>
-                <Text className="text-white uppercase">Cancel</Text>
+              <Text className="text-white uppercase">Cancel</Text>
             </Pressable>
           </Link>
         </View>

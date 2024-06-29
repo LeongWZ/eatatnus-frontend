@@ -4,59 +4,62 @@ import ErrorView from "@/components/ErrorView";
 import ReviewForm, { FormData } from "@/components/review/ReviewForm";
 import AuthContext from "@/contexts/AuthContext";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
-import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";
+import { useGlobalSearchParams, useRouter } from "expo-router";
 import React, { useContext } from "react";
-import { View, Text, TextInput, Button } from "react-native";
+import { View, Text } from "react-native";
 
 export default function CanteenEditReview() {
-    const params = useGlobalSearchParams();
-    const canteenId = parseInt(params.id as string);
-    const reviewId = parseInt(params.reviewId as string);
+  const params = useGlobalSearchParams();
+  const canteenId = parseInt(params.id as string);
+  const reviewId = parseInt(params.reviewId as string);
 
-    const router = useRouter();
+  const router = useRouter();
 
-    const { user } = useContext(AuthContext).auth;
+  const { user } = useContext(AuthContext).auth;
 
-    const {canteenCollection, dispatchCanteenCollectionAction} = useContext(CanteenCollectionContext);
-    const canteen = canteenCollection.items.find(canteen => canteen.id === canteenId)
+  const { canteenCollection, dispatchCanteenCollectionAction } = useContext(
+    CanteenCollectionContext,
+  );
+  const canteen = canteenCollection.items.find(
+    (canteen) => canteen.id === canteenId,
+  );
 
-    const review = canteen?.reviews.find(review => review.id === reviewId);
+  const review = canteen?.reviews.find((review) => review.id === reviewId);
 
-    const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-    
-    const submitReviewForm = (formData: FormData) => {
-        user && editReview(user, reviewId, formData)
-            .then(async res => {
-                setErrorMessage(null);
+  const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
-                dispatchCanteenCollectionAction({
-                    type: "PATCH",
-                    payload: {
-                        item: await fetchIndividualCanteen(canteenId)
-                    }
-                });
-            })
-            .then(() => router.back())
-            .catch(error => {
-                setErrorMessage(error.toString());
-                console.error(error);
-            });
-    }
+  const submitReviewForm = (formData: FormData) => {
+    user &&
+      editReview(user, reviewId, formData)
+        .then(async (res) => {
+          setErrorMessage(null);
 
-    if (!canteen || !review) {
-        return <ErrorView />;
-    }
-    
-    return (
-        <View>
-            <View className="items-center">
-                <Text className="text-3xl p-2">{canteen.name}</Text>
-            </View>
-            <ReviewForm review={review} submitReviewForm={submitReviewForm}/>
+          dispatchCanteenCollectionAction({
+            type: "PATCH",
+            payload: {
+              item: await fetchIndividualCanteen(canteenId),
+            },
+          });
+        })
+        .then(() => router.back())
+        .catch((error) => {
+          setErrorMessage(error.toString());
+          console.error(error);
+        });
+  };
 
-            {errorMessage && (
-                <Text className="text-red-500 m-2">{errorMessage}</Text>
-            )}
-        </View>
-    );
+  if (!canteen || !review) {
+    return <ErrorView />;
+  }
+
+  return (
+    <View>
+      <View className="items-center">
+        <Text className="text-3xl p-2">{canteen.name}</Text>
+      </View>
+      <ReviewForm review={review} submitReviewForm={submitReviewForm} />
+
+      {errorMessage && <Text className="text-red-500 m-2">{errorMessage}</Text>}
+    </View>
+  );
 }
