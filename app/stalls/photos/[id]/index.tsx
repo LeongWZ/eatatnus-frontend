@@ -58,7 +58,7 @@ export default function StallPhotos() {
   const [index, setIndex] = React.useState(
     Math.max(
       0,
-      images.findIndex((uri) => uri === params.uri),
+      images.findIndex((uri) => uri.includes(`${params.uri}`)),
     ),
   );
   const gallery = useRef<GalleryRef>(null);

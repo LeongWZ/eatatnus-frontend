@@ -57,7 +57,7 @@ export default function CanteenPhotos() {
   const [index, setIndex] = React.useState(
     Math.max(
       0,
-      images.findIndex((uri) => uri.includes(params.uri ?? "undefined")),
+      images.findIndex((uri) => uri.includes(`${params.uri}`)),
     ),
   );
   const gallery = useRef<GalleryRef>(null);
