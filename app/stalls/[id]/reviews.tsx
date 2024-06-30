@@ -3,12 +3,12 @@ import React from "react";
 import { View, Text, Pressable, FlatList } from "react-native";
 import { Link, useGlobalSearchParams, useRouter } from "expo-router";
 import ErrorView from "@/components/ErrorView";
-import { Review, Stall } from "@/app/types";
+import { Stall } from "@/app/types";
 import ReviewCard from "@/components/review/ReviewCard";
-import roundToNthDecimalPlace from "@/utils/roundToNthDecimalPlace";
 import AuthContext from "@/contexts/AuthContext";
 import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
 import deleteReview from "@/api/reviews/deleteReview";
+import getAverageRating from "@/utils/getAverageRating";
 
 export default function StallReviews() {
   const params = useGlobalSearchParams();
@@ -76,8 +76,6 @@ export default function StallReviews() {
       </View>
 
       <View className="mx-3">
-        <Text className="text-2xl m-2">Reviews</Text>
-
         <FlatList
           data={stall.reviews.sort((a, b) => (a.id < b.id ? 1 : -1))}
           renderItem={({ item }) => (
@@ -103,14 +101,5 @@ export default function StallReviews() {
         />
       </View>
     </>
-  );
-}
-
-function getAverageRating(stallReviews: Review[]) {
-  return roundToNthDecimalPlace(
-    stallReviews
-      .map((stallReview) => stallReview.rating)
-      .reduce((acc, x) => acc + x, 0) / Math.max(stallReviews.length, 1),
-    1,
   );
 }

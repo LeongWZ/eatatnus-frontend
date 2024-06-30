@@ -46,6 +46,6 @@ export type Review = {
 
 export type Image = {
   id: number;
-  url: string;
+  url?: string;
   createAt: string;
 };

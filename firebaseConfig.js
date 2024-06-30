@@ -1,6 +1,7 @@
 import { initializeApp } from "firebase/app";
 // eslint-disable-next-line import/named
 import { initializeAuth, getReactNativePersistence } from "firebase/auth";
+import { getFunctions } from "firebase/functions";
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
 
 // Initialize Firebase
@@ -23,4 +24,6 @@ const auth = initializeAuth(app, {
   persistence: getReactNativePersistence(ReactNativeAsyncStorage),
 });
 
-export { auth };
+const functions = getFunctions(app, "asia-southeast1");
+
+export { auth, functions };

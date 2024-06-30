@@ -1,11 +1,9 @@
-import { Canteen, Stall } from "@/app/types";
+import { Stall } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
 import { MaterialTopTabs } from "@/components/tabs/MaterialTopTabs";
-import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import StallCollectionContext from "@/contexts/StallCollectionContext";
-import { useLocalSearchParams } from "expo-router";
+import { useLocalSearchParams, useNavigation } from "expo-router";
 import React from "react";
-import { View, Text } from "react-native";
 
 export default function StallsLayout() {
   const params = useLocalSearchParams();
@@ -14,36 +12,47 @@ export default function StallsLayout() {
   const { stallCollection, dispatchStallCollectionAction } = React.useContext(
     StallCollectionContext,
   );
-  const { canteenCollection, dispatchCanteenCollectionAction } =
-    React.useContext(CanteenCollectionContext);
 
   const stall: Stall | undefined = stallCollection.items.find(
     (stall) => stall.id === id,
   );
 
+  const navigation = useNavigation();
+
+  React.useEffect(() => {
+    if (stall === undefined) {
+      return;
+    }
+
+    navigation.setOptions({
+      title: stall.name,
+    });
+  }, [stall, navigation]);
+
   if (stall === undefined) {
     return <ErrorView />;
   }
 
-  const canteen: Canteen | undefined = canteenCollection.items.find(
-    (canteen) => canteen.id === stall.canteenId,
-  );
-
   return (
-    <>
-      <View className="p-2">
-        <Text className="text-4xl">{stall.name}</Text>
-        <Text className="text-xl mb-2">{canteen?.name}</Text>
-      </View>
-
-      <MaterialTopTabs>
-        <MaterialTopTabs.Screen
-          name="reviews"
-          options={{
-            title: "Reviews",
-          }}
-        />
-      </MaterialTopTabs>
-    </>
+    <MaterialTopTabs>
+      <MaterialTopTabs.Screen
+        name="about"
+        options={{
+          title: "About",
+        }}
+      />
+      <MaterialTopTabs.Screen
+        name="reviews"
+        options={{
+          title: "Reviews",
+        }}
+      />
+      <MaterialTopTabs.Screen
+        name="photos"
+        options={{
+          title: "Photos",
+        }}
+      />
+    </MaterialTopTabs>
   );
 }
