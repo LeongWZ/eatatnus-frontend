@@ -50,15 +50,17 @@ export default function StallPhotos() {
   const { stallCollection, dispatchStallCollectionAction } = React.useContext(
     StallCollectionContext,
   );
+
   const images =
     stallCollection.items
       .find((stall) => stall.id === parseInt(params.id ?? ""))
       ?.reviews.flatMap((review) => review.images)
-      .map((image) => image.url) ?? [];
+      .flatMap((image) => (image.url ? [image.url] : [])) ?? [];
+
   const [index, setIndex] = React.useState(
     Math.max(
       0,
-      images.findIndex((uri) => uri === params.uri),
+      images.findIndex((uri) => uri && uri.includes(`${params.uri}`)),
     ),
   );
   const gallery = useRef<GalleryRef>(null);
@@ -84,7 +86,7 @@ export default function StallPhotos() {
         setIndex(index);
       }
     },
-    [isFocused, setParams],
+    [images, isFocused, setParams],
   );
 
   const onTap = () => {

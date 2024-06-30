@@ -30,7 +30,8 @@ export default function ReviewForm(props: ReviewFormProps) {
   const [formData, setFormData] = React.useState<FormData>({
     rating: review?.rating ?? 3,
     description: review?.description ?? null,
-    imageUris: review?.images.map((image) => image.url) ?? [],
+    imageUris:
+      review?.images.flatMap((image) => (image.url ? [image.url] : [])) ?? [],
   });
 
   const pickImage = () => {

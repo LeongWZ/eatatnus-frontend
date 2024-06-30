@@ -43,7 +43,7 @@ export default function ReviewCard(props: ReviewProps) {
 
   const renderItem = ({ item }: { item: ImageType }) => {
     return (
-      <Pressable onPress={() => onImagePress(item.url)}>
+      <Pressable onPress={() => item.url && onImagePress(item.url)}>
         <Image
           source={item.url}
           style={{ width: 200, height: 200 }}
@@ -65,7 +65,7 @@ export default function ReviewCard(props: ReviewProps) {
           keyExtractor={(item) => item.id.toString()}
           horizontal
           showsHorizontalScrollIndicator={true}
-          style={{ marginVertical: 8, marginLeft: 8 }}
+          style={{ marginVertical: 8 }}
         />
       </View>
     </HoldItem>

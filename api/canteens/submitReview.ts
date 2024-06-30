@@ -47,7 +47,9 @@ export default async function submitReview(user: User, data: SubmitReviewData) {
       await Promise.all(
         data.imageUris.map((uri) =>
           fetchImageFromUri(uri).then((image) => {
-            const url = urls.find((url) => url.includes(path.basename(uri)));
+            const url = urls.find(
+              (url) => url && url.includes(path.basename(uri)),
+            );
             if (url) {
               return s3Put(url, image);
             }
