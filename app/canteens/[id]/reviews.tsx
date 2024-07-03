@@ -5,10 +5,10 @@ import ErrorView from "@/components/ErrorView";
 import ReviewCard from "@/components/review/ReviewCard";
 import AuthContext from "@/contexts/AuthContext";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
-import roundToNthDecimalPlace from "@/utils/roundToNthDecimalPlace";
 import { Link, useGlobalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { View, Text, Pressable, FlatList } from "react-native";
+import getAverageRating from "@/utils/getAverageRating";
 
 export default function CanteenReviews() {
   const params = useGlobalSearchParams();
@@ -45,7 +45,22 @@ export default function CanteenReviews() {
         );
   };
 
-  React.useEffect(onRefresh, []);
+  const renderItem = ({ item }: { item: Review }) => (
+    <ReviewCard
+      review={item}
+      user={auth.user}
+      onEdit={() => {
+        auth.user &&
+          router.push(`canteens/reviews/edit/${canteen?.id}/${item.id}`);
+      }}
+      onDelete={() => {
+        auth.user && deleteReview(auth.user, item.id).then(onRefresh);
+      }}
+      onImagePress={(image) => {
+        router.push(`canteens/photos/${canteen?.id}/?image_id=${image.id}`);
+      }}
+    />
+  );
 
   if (canteen === undefined) {
     return <ErrorView />;
@@ -77,24 +92,7 @@ export default function CanteenReviews() {
       </View>
       <FlatList
         data={canteen.reviews.sort((a, b) => (a.id < b.id ? 1 : -1))}
-        renderItem={({ item }) => (
-          <ReviewCard
-            review={item}
-            user={auth.user}
-            onEdit={() => {
-              auth.user &&
-                router.push(`canteens/reviews/edit/${canteen.id}/${item.id}`);
-            }}
-            onDelete={() => {
-              auth.user && deleteReview(auth.user, item.id).then(onRefresh);
-            }}
-            onImagePress={(image) => {
-              router.push(
-                `canteens/photos/${canteen.id}/?image_id=${image.id}`,
-              );
-            }}
-          />
-        )}
+        renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         extraData={canteen}
         contentContainerStyle={{ padding: 12, paddingBottom: 300 }}
@@ -102,13 +100,5 @@ export default function CanteenReviews() {
         refreshing={canteenCollection.loading}
       />
     </View>
-  );
-}
-
-function getAverageRating(reviews: Review[]) {
-  return roundToNthDecimalPlace(
-    reviews.map((review) => review.rating).reduce((acc, x) => acc + x, 0) /
-      Math.max(reviews.length, 1),
-    1,
   );
 }
