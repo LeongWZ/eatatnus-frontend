@@ -1,3 +1,4 @@
+import fetchIndividualCanteen from "@/api/canteens/fetchIndividualCanteen";
 import { Canteen } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
 import { MaterialTopTabs } from "@/components/tabs/MaterialTopTabs";
@@ -18,6 +19,27 @@ export default function CanteensLayout() {
 
   const navigation = useNavigation();
 
+  const onRefresh = () => {
+    dispatchCanteenCollectionAction({
+      type: "FETCH",
+    });
+
+    canteen &&
+      fetchIndividualCanteen(canteen.id)
+        .then((canteen) =>
+          dispatchCanteenCollectionAction({
+            type: "PATCH",
+            payload: { item: canteen },
+          }),
+        )
+        .catch((error) =>
+          dispatchCanteenCollectionAction({
+            type: "ERROR",
+            payload: { error_message: error },
+          }),
+        );
+  };
+
   React.useEffect(() => {
     if (canteen === undefined) {
       return;
@@ -26,7 +48,9 @@ export default function CanteensLayout() {
     navigation.setOptions({
       title: canteen.name,
     });
-  }, [canteen, navigation]);
+
+    onRefresh();
+  }, []);
 
   if (canteen === undefined) {
     return <ErrorView />;

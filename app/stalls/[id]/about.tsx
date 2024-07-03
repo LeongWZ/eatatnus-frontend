@@ -63,8 +63,8 @@ export default function StallAbout() {
     setMenuImagesAsync();
 
     async function setMenuImagesAsync() {
-      if (menuImages.loading) {
-        // prevent race condition
+      if (menuImages.loading || images.length === 0) {
+        // prevent race condition or do not process empty array
         return;
       }
 
