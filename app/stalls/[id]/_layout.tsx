@@ -1,3 +1,4 @@
+import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
 import { Stall } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
 import { MaterialTopTabs } from "@/components/tabs/MaterialTopTabs";
@@ -19,6 +20,27 @@ export default function StallsLayout() {
 
   const navigation = useNavigation();
 
+  const onRefresh = () => {
+    if (stall === undefined) {
+      return;
+    }
+
+    dispatchStallCollectionAction({ type: "FETCH" });
+    fetchIndividualStall(stall.id)
+      .then((stall) =>
+        dispatchStallCollectionAction({
+          type: "PATCH",
+          payload: { item: stall },
+        }),
+      )
+      .catch((error) =>
+        dispatchStallCollectionAction({
+          type: "ERROR",
+          payload: { error_message: error },
+        }),
+      );
+  };
+
   React.useEffect(() => {
     if (stall === undefined) {
       return;
@@ -27,7 +49,9 @@ export default function StallsLayout() {
     navigation.setOptions({
       title: stall.name,
     });
-  }, [stall, navigation]);
+
+    onRefresh();
+  }, []);
 
   if (stall === undefined) {
     return <ErrorView />;

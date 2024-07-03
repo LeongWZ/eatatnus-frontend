@@ -26,7 +26,7 @@ export default function CanteenPhotos() {
       <Pressable
         onPress={() =>
           canteen &&
-          router.push(`canteens/photos/${canteen.id}/?uri=${item.url}`)
+          router.push(`canteens/photos/${canteen.id}/?image_id=${item.id}`)
         }
       >
         <Image

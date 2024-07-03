@@ -26,7 +26,7 @@ export default function StallPhotos() {
     return (
       <Pressable
         onPress={() =>
-          stall && router.push(`stalls/photos/${stall.id}/?uri=${item.url}`)
+          stall && router.push(`stalls/photos/${stall.id}/?image_id=${item.id}`)
         }
       >
         <Image

@@ -3,7 +3,7 @@ import React from "react";
 import { View, Text, Pressable, FlatList } from "react-native";
 import { Link, useGlobalSearchParams, useRouter } from "expo-router";
 import ErrorView from "@/components/ErrorView";
-import { Stall } from "@/app/types";
+import { Stall, Image } from "@/app/types";
 import ReviewCard from "@/components/review/ReviewCard";
 import AuthContext from "@/contexts/AuthContext";
 import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
@@ -30,25 +30,25 @@ export default function StallReviews() {
   const averageRating = getAverageRating(stall?.reviews ?? []);
 
   const onRefresh = () => {
+    if (stall === undefined) {
+      return;
+    }
+
     dispatchStallCollectionAction({ type: "FETCH" });
-
-    stall &&
-      fetchIndividualStall(stall.id)
-        .then((stall) =>
-          dispatchStallCollectionAction({
-            type: "PATCH",
-            payload: { item: stall },
-          }),
-        )
-        .catch((error) =>
-          dispatchStallCollectionAction({
-            type: "ERROR",
-            payload: { error_message: error },
-          }),
-        );
+    fetchIndividualStall(stall.id)
+      .then((stall) =>
+        dispatchStallCollectionAction({
+          type: "PATCH",
+          payload: { item: stall },
+        }),
+      )
+      .catch((error) =>
+        dispatchStallCollectionAction({
+          type: "ERROR",
+          payload: { error_message: error },
+        }),
+      );
   };
-
-  React.useEffect(onRefresh, []);
 
   if (stall === undefined) {
     return <ErrorView />;
@@ -88,8 +88,8 @@ export default function StallReviews() {
               onDelete={() => {
                 auth.user && deleteReview(auth.user, item.id).then(onRefresh);
               }}
-              onImagePress={(uri) => {
-                router.push(`stalls/photos/${stall.id}/?uri=${uri}`);
+              onImagePress={(image: Image) => {
+                router.push(`stalls/photos/${stall.id}/?image_id=${image.id}`);
               }}
             />
           )}

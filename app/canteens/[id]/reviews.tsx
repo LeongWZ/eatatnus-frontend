@@ -88,8 +88,10 @@ export default function CanteenReviews() {
             onDelete={() => {
               auth.user && deleteReview(auth.user, item.id).then(onRefresh);
             }}
-            onImagePress={(uri) => {
-              router.push(`canteens/photos/${canteen.id}/?uri=${uri}`);
+            onImagePress={(image) => {
+              router.push(
+                `canteens/photos/${canteen.id}/?image_id=${image.id}`,
+              );
             }}
           />
         )}
