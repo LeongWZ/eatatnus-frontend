@@ -41,4 +41,17 @@ const annotateImage = httpsCallable<
   AnnotateImageResponse[]
 >(functions, "annotateImage");
 
-export default annotateImage;
+export type BatchAnnotateImagesRequest = {
+  requests: AnnotateImageRequest[];
+};
+
+export type BatchAnnotateImagesResponse = {
+  responses: AnnotateImageResponse[];
+};
+
+const batchAnnotateImages = httpsCallable<
+  BatchAnnotateImagesRequest,
+  BatchAnnotateImagesResponse[]
+>(functions, "batchAnnotateImage");
+
+export { annotateImage, batchAnnotateImages };

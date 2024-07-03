@@ -1,5 +1,5 @@
 import { HttpsCallableResult } from "firebase/functions";
-import annotateImage, { AnnotateImageResponse } from "./annotateImage";
+import { annotateImage, AnnotateImageResponse } from "./annotateImage";
 
 export default async function isMenu(uri: string): Promise<boolean> {
   const getResponse = async () => {
@@ -27,7 +27,6 @@ export default async function isMenu(uri: string): Promise<boolean> {
 
   try {
     const result: AnnotateImageResponse = response.data[0];
-
     const labels: string[] = result.labelAnnotations.map(
       (annotation) => annotation.description,
     );

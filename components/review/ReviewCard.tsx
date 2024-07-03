@@ -14,7 +14,7 @@ type ReviewProps = {
   user: User | null;
   onEdit: () => void;
   onDelete: () => void;
-  onImagePress: (uri: string) => void;
+  onImagePress: (image: ImageType) => void;
 };
 
 export default function ReviewCard(props: ReviewProps) {
@@ -43,7 +43,7 @@ export default function ReviewCard(props: ReviewProps) {
 
   const renderItem = ({ item }: { item: ImageType }) => {
     return (
-      <Pressable onPress={() => item.url && onImagePress(item.url)}>
+      <Pressable onPress={() => onImagePress(item)}>
         <Image
           source={item.url}
           style={{ width: 200, height: 200 }}

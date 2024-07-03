@@ -3,10 +3,18 @@ import ErrorView from "@/components/ErrorView";
 import StallCollectionContext from "@/contexts/StallCollectionContext";
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { View, Text, Pressable, FlatList, ScrollView } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  FlatList,
+  ScrollView,
+  ActivityIndicator,
+} from "react-native";
 import { Image } from "expo-image";
-import isMenu from "@/api/firebase-functions/isMenu";
+import getMenuImages from "@/api/firebase-functions/getMenuImages";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
+import useIdentifiableCollectionReducer from "@/hooks/useIdentifiableCollectionReducer";
 
 export default function StallAbout() {
   const params = useGlobalSearchParams();
@@ -30,7 +38,7 @@ export default function StallAbout() {
     return (
       <Pressable
         onPress={() =>
-          stall && router.push(`stalls/photos/${stall.id}/?uri=${item.url}`)
+          stall && router.push(`stalls/photos/${stall.id}/?image_id=${item.id}`)
         }
       >
         <Image
@@ -42,22 +50,32 @@ export default function StallAbout() {
     );
   };
 
-  const [menuImages, setMenuImages] = React.useState<ImageType[]>([]);
+  const images = stall?.reviews.flatMap((review) => review.images) ?? [];
+
+  const [menuImages, dispatcheMenuImagesAction] =
+    useIdentifiableCollectionReducer<ImageType>({
+      items: [],
+      loading: false,
+      error_message: "",
+    });
 
   React.useEffect(() => {
-    if (stall === undefined) {
-      return;
-    }
-
-    const setMenuImagesAsync = async () => {
-      const images = stall.reviews.flatMap((review) => review.images);
-
-      const menuImages = await getMenuImages(images);
-      setMenuImages(menuImages);
-    };
-
     setMenuImagesAsync();
-  }, [stall]);
+
+    async function setMenuImagesAsync() {
+      if (menuImages.loading) {
+        // prevent race condition
+        return;
+      }
+
+      dispatcheMenuImagesAction({ type: "FETCH" });
+
+      dispatcheMenuImagesAction({
+        type: "PUT",
+        payload: { items: await getMenuImages(images) },
+      });
+    }
+  }, [images]);
 
   if (stall === undefined) {
     return <ErrorView />;
@@ -75,9 +93,16 @@ export default function StallAbout() {
         <Text>
           Contribute by submitting a review along with an image of a menu.
         </Text>
-        {menuImages.length === 0 && <Text>No menu found.</Text>}
+        {!menuImages.loading && menuImages.items.length === 0 && (
+          <View className="items-center">
+            <Text className="p-4">No menu found.</Text>
+          </View>
+        )}
+        {menuImages.loading && menuImages.items.length === 0 && (
+          <ActivityIndicator className="my-4" />
+        )}
         <FlatList
-          data={menuImages}
+          data={menuImages.items}
           renderItem={renderItem}
           keyExtractor={(item) => item.id.toString()}
           horizontal
@@ -87,19 +112,4 @@ export default function StallAbout() {
       </View>
     </ScrollView>
   );
-}
-
-async function getMenuImages(images: ImageType[]): Promise<ImageType[]> {
-  if (images.length === 0) {
-    return [];
-  }
-
-  return Promise.all(
-    images.map(async (image) => {
-      if (image.url && (await isMenu(image.url))) {
-        return image;
-      }
-      return null;
-    }),
-  ).then((images) => images.flatMap((image) => (image ? [image] : [])));
 }
