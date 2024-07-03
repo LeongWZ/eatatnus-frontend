@@ -1,7 +1,7 @@
 import { Stall, Image as ImageType, Canteen } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
 import StallCollectionContext from "@/contexts/StallCollectionContext";
-import { useGlobalSearchParams, useRouter } from "expo-router";
+import { Link, useGlobalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import {
   View,
@@ -15,12 +15,15 @@ import { Image } from "expo-image";
 import getMenuImages from "@/api/firebase-functions/getMenuImages";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import useIdentifiableCollectionReducer from "@/hooks/useIdentifiableCollectionReducer";
+import AuthContext from "@/contexts/AuthContext";
 
 export default function StallAbout() {
   const params = useGlobalSearchParams();
   const id = parseInt(params.id as string);
 
   const router = useRouter();
+
+  const { auth } = React.useContext(AuthContext);
 
   const { stallCollection } = React.useContext(StallCollectionContext);
 
@@ -63,17 +66,29 @@ export default function StallAbout() {
     setMenuImagesAsync();
 
     async function setMenuImagesAsync() {
-      if (menuImages.loading || images.length === 0) {
+      if (menuImages.loading || images.length === 0 || !auth.user) {
         // prevent race condition or do not process empty array
+        // or do not process if user is not authenticated
         return;
       }
 
       dispatcheMenuImagesAction({ type: "FETCH" });
 
-      dispatcheMenuImagesAction({
-        type: "PUT",
-        payload: { items: await getMenuImages(images) },
-      });
+      try {
+        const menuImages = await getMenuImages(images);
+        dispatcheMenuImagesAction({
+          type: "PUT",
+          payload: { items: menuImages },
+        });
+      } catch (error) {
+        console.error(error);
+        dispatcheMenuImagesAction({
+          type: "ERROR",
+          payload: {
+            error_message: error instanceof Error ? error.message : `${error}`,
+          },
+        });
+      }
     }
   }, [images]);
 
@@ -93,7 +108,19 @@ export default function StallAbout() {
         <Text>
           Contribute by submitting a review along with an image of a menu.
         </Text>
-        {!menuImages.loading && menuImages.items.length === 0 && (
+        {!auth.user && (
+          <View className="items-center border-dashed border-2 border-red-500 p-2 m-4 ">
+            <Text className="p-4">
+              Only signed in users may view menu images
+            </Text>
+            <Link href={`signin`} className="bg-blue-500" asChild>
+              <Pressable className="p-2">
+                <Text className="text-xl">Sign in</Text>
+              </Pressable>
+            </Link>
+          </View>
+        )}
+        {!menuImages.loading && menuImages.items.length === 0 && auth.user && (
           <View className="items-center">
             <Text className="p-4">No menu found.</Text>
           </View>

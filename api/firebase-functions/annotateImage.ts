@@ -52,6 +52,6 @@ export type BatchAnnotateImagesResponse = {
 const batchAnnotateImages = httpsCallable<
   BatchAnnotateImagesRequest,
   BatchAnnotateImagesResponse[]
->(functions, "batchAnnotateImage");
+>(functions, "batchAnnotateImages");
 
 export { annotateImage, batchAnnotateImages };
