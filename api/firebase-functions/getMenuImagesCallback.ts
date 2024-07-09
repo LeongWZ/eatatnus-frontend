@@ -2,23 +2,23 @@ import { batchAnnotateImages } from "./annotateImage";
 import { Image } from "@/app/types";
 
 export default function getMenuImagesAsyncCallback() {
-  const memo = new Map<string, Image[]>();
+  const memo = new Map<number, boolean>();
 
   async function getMenuImagesAsync(images: Image[]): Promise<Image[]> {
     const validImages = images.filter((image) => image.url !== undefined);
 
-    if (validImages.length === 0) {
-      return [];
-    }
+    const menuImages = validImages.filter(
+      (image) => memo.get(image.id) ?? false,
+    );
 
-    const key = JSON.stringify(validImages.map((image) => image.id));
+    const remainingImages = validImages.filter((image) => !memo.has(image.id));
 
-    if (memo.has(key)) {
-      return memo.get(key) as Image[];
+    if (remainingImages.length === 0) {
+      return menuImages;
     }
 
     return batchAnnotateImages({
-      requests: validImages.map((image) => ({
+      requests: remainingImages.map((image) => ({
         image: {
           source: {
             imageUri: image.url as string,
@@ -30,17 +30,23 @@ export default function getMenuImagesAsyncCallback() {
       .then((response) =>
         response.data[0].responses.map((result) => result.labelAnnotations),
       )
-      .then((annotations) =>
-        annotations.flatMap((annotation, index) =>
-          annotation.some((annotation) => annotation.description === "Menu")
-            ? [validImages[index]]
-            : [],
-        ),
-      )
-      .then((menuImages) => {
-        // cache the result
-        memo.set(key, menuImages);
-        return menuImages;
+      .then((annotations) => {
+        const newMenuImages = remainingImages.filter((image, index) =>
+          annotations[index].some(
+            (annotation) => annotation.description === "Menu",
+          ),
+        );
+
+        const nonMenuImages = remainingImages.filter((image, index) =>
+          annotations[index].every(
+            (annotation) => annotation.description !== "Menu",
+          ),
+        );
+
+        newMenuImages.forEach((image) => memo.set(image.id, true));
+        nonMenuImages.forEach((image) => memo.set(image.id, false));
+
+        return newMenuImages.concat(menuImages);
       })
       .catch((error) => {
         console.error(error.message);
