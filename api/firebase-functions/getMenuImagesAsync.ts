@@ -1,7 +1,7 @@
 import { batchAnnotateImages } from "./annotateImage";
 import { Image } from "@/app/types";
 
-export default function getMenuImagesAsyncCallback() {
+function getMenuImagesAsyncCallback() {
   const memo = new Map<number, boolean>();
 
   async function getMenuImagesAsync(images: Image[]): Promise<Image[]> {
@@ -56,3 +56,7 @@ export default function getMenuImagesAsyncCallback() {
 
   return getMenuImagesAsync;
 }
+
+const getMenuImagesAsync = getMenuImagesAsyncCallback();
+
+export default getMenuImagesAsync;
