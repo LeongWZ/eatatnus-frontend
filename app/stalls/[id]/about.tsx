@@ -14,7 +14,7 @@ import {
 import { Image } from "expo-image";
 import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import useIdentifiableCollectionReducer from "@/hooks/useIdentifiableCollectionReducer";
-import GetMenuImagesAsyncContext from "@/contexts/GetMenuImagesAsyncContext";
+import getMenuImagesAsync from "@/api/firebase-functions/getMenuImagesAsync";
 
 export default function StallAbout() {
   const params = useGlobalSearchParams();
@@ -56,9 +56,6 @@ export default function StallAbout() {
       loading: false,
       error_message: "",
     });
-
-  // memoized function
-  const getMenuImagesAsync = React.useContext(GetMenuImagesAsyncContext);
 
   React.useEffect(() => {
     setMenuImagesAsync();
