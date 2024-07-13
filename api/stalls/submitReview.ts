@@ -16,7 +16,7 @@ export default async function submitReview(user: User, data: PostData) {
     .getIdToken()
     .then((token) =>
       fetch(
-        `https://eatatnus-backend-xchix.ondigitalocean.app/api/stalls/review`,
+        `https://eatatnus-backend-xchix.ondigitalocean.app/api/stalls/${data.stallId}/review`,
         {
           method: "POST",
           headers: {
@@ -25,7 +25,6 @@ export default async function submitReview(user: User, data: PostData) {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            stallId: data.stallId,
             rating: data.rating,
             description: data.description,
             imageFilenames: data.imageUris.map((uri) => path.basename(uri)),
@@ -47,7 +46,9 @@ export default async function submitReview(user: User, data: PostData) {
       await Promise.all(
         data.imageUris.map((uri) =>
           fetchImageFromUri(uri).then((image) => {
-            const url = urls.find((url) => url.includes(path.basename(uri)));
+            const url = urls.find(
+              (url) => url?.includes(path.basename(uri)) ?? false,
+            );
             if (url) {
               return s3Put(url, image);
             }

@@ -51,7 +51,9 @@ export default async function editStallReview(
       await Promise.all(
         data.imageUris.map((uri) =>
           fetchImageFromUri(uri).then((image) => {
-            const url = urls.find((url) => url.includes(path.basename(uri)));
+            const url = urls.find(
+              (url) => url?.includes(path.basename(uri)) ?? false,
+            );
             if (url) {
               return s3Put(url, image);
             }

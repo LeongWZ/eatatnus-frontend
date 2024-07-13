@@ -16,7 +16,7 @@ export default async function submitReview(user: User, data: SubmitReviewData) {
     .getIdToken()
     .then((token) =>
       fetch(
-        `https://eatatnus-backend-xchix.ondigitalocean.app/api/canteens/review`,
+        `https://eatatnus-backend-xchix.ondigitalocean.app/api/canteens/${data.canteenId}/review`,
         {
           method: "POST",
           headers: {
@@ -25,7 +25,6 @@ export default async function submitReview(user: User, data: SubmitReviewData) {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            canteenId: data.canteenId,
             rating: data.rating,
             description: data.description,
             imageFilenames: data.imageUris.map((uri) => path.basename(uri)),
