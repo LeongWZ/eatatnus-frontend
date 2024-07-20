@@ -1,10 +1,11 @@
 import { Canteen, Stall } from "@/app/types";
-import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import getAverageRating from "@/utils/getAverageRating";
 import { Link } from "expo-router";
 import React from "react";
 import { Text, Pressable } from "react-native";
 import { Rating } from "@kolking/react-native-rating";
+import { RootState } from "@/store";
+import { useSelector } from "react-redux";
 
 type StallPreviewProps = {
   stall: Stall;
@@ -13,8 +14,10 @@ type StallPreviewProps = {
 
 export default function StallPreview(props: StallPreviewProps) {
   const { stall, includeCanteenName } = props;
-  const { canteenCollection, dispatchCanteenCollectionAction } =
-    React.useContext(CanteenCollectionContext);
+  const canteenCollection = useSelector(
+    (state: RootState) => state.canteenCollection,
+  );
+
   const canteen: Canteen | undefined = canteenCollection.items.find(
     (canteen) => canteen.id === stall.canteenId,
   );

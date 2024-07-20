@@ -1,7 +1,13 @@
-import { User } from "firebase/auth";
+import { User as FirebaseUser, getAuth } from "firebase/auth";
 
-export default async function deleteStallReview(user: User, reviewId: number) {
-  return user
+export default async function deleteStallReview(reviewId: number) {
+  const firebaseUser: FirebaseUser | null = getAuth().currentUser;
+
+  if (!firebaseUser) {
+    throw new Error("User is not signed in");
+  }
+
+  return firebaseUser
     .getIdToken()
     .then((token) =>
       fetch(

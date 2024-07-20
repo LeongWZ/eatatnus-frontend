@@ -1,8 +1,10 @@
 import { Link, Redirect, useRouter } from "expo-router";
 import { Text, View, TextInput, Button } from "react-native";
-import React, { useContext } from "react";
+import React from "react";
 import signInWithEmail from "@/api/auth/signInWithEmail";
-import AuthContext from "@/contexts/AuthContext";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/store";
+import { errorAuthAction, loadAuthAction } from "@/store/reducers/auth";
 
 type FormData = {
   email: string;
@@ -10,7 +12,8 @@ type FormData = {
 };
 
 export default function SignIn() {
-  const { auth, dispatchAuth } = useContext(AuthContext);
+  const auth = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
 
   const router = useRouter();
 
@@ -20,19 +23,22 @@ export default function SignIn() {
   });
 
   const onSubmit = () => {
-    dispatchAuth({ type: "SIGN_IN" });
+    dispatch(loadAuthAction());
 
     signInWithEmail(formData.email, formData.password)
-      .then((result) => router.back())
-      .catch((error) =>
-        dispatchAuth({
-          type: "ERROR",
-          payload: { error_message: error.message },
-        }),
-      );
+      .then((result) =>
+        router.canGoBack() ? router.back() : router.replace("/"),
+      )
+      .catch((err) => {
+        dispatch(
+          errorAuthAction({
+            errorMessage: "Failed to sign in:\n" + err.message,
+          }),
+        );
+      });
   };
 
-  if (auth.status === "AUTHENTICATED") {
+  if (auth.isAuthenticated) {
     return <Redirect href="/" />;
   }
 
@@ -80,10 +86,10 @@ export default function SignIn() {
           Don't have an account? Register
         </Link>
 
-        {auth.status === "LOADING" && <Text className="mt-2">Loading...</Text>}
+        {auth.loading && <Text className="mt-2">Loading...</Text>}
 
-        {auth.error_message && (
-          <Text className="text-red-500 mt-2">{auth.error_message}</Text>
+        {auth.errorMessage && (
+          <Text className="text-red-500 mt-2">{auth.errorMessage}</Text>
         )}
       </View>
     </View>

@@ -2,16 +2,24 @@ import fetchIndividualCanteen from "@/api/canteens/fetchIndividualCanteen";
 import { Canteen } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
 import { MaterialTopTabs } from "@/components/tabs/MaterialTopTabs";
-import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
+import { RootState } from "@/store";
+import {
+  loadCanteenCollectionAction,
+  patchCanteenCollectionAction,
+  errorCanteenCollectionAction,
+} from "@/store/reducers/canteenCollection";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React from "react";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function CanteensLayout() {
   const params = useLocalSearchParams();
   const id = parseInt(params.id as string);
 
-  const { canteenCollection, dispatchCanteenCollectionAction } =
-    React.useContext(CanteenCollectionContext);
+  const dispatch = useDispatch();
+  const canteenCollection = useSelector(
+    (state: RootState) => state.canteenCollection,
+  );
 
   const canteen: Canteen | undefined = canteenCollection.items.find(
     (canteen) => canteen.id === id,
@@ -20,23 +28,19 @@ export default function CanteensLayout() {
   const navigation = useNavigation();
 
   const onRefresh = () => {
-    dispatchCanteenCollectionAction({
-      type: "FETCH",
-    });
+    dispatch(loadCanteenCollectionAction());
 
     canteen &&
       fetchIndividualCanteen(canteen.id)
         .then((canteen) =>
-          dispatchCanteenCollectionAction({
-            type: "PATCH",
-            payload: { item: canteen },
-          }),
+          dispatch(patchCanteenCollectionAction({ item: canteen })),
         )
         .catch((error) =>
-          dispatchCanteenCollectionAction({
-            type: "ERROR",
-            payload: { error_message: error },
-          }),
+          dispatch(
+            errorCanteenCollectionAction({
+              errorMessage: "Failed to fetch canteen: " + error,
+            }),
+          ),
         );
   };
 

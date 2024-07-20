@@ -2,44 +2,46 @@ import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
 import submitReview from "@/api/stalls/submitReview";
 import ErrorView from "@/components/ErrorView";
 import ReviewForm, { FormData } from "@/components/review/ReviewForm";
-import AuthContext from "@/contexts/AuthContext";
-import StallCollectionContext from "@/contexts/StallCollectionContext";
+import { RootState } from "@/store";
 import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
-import React, { useContext } from "react";
+import React from "react";
 import { View, Text } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { patchStallCollectionAction } from "@/store/reducers/stallCollection";
 
 export default function StallAddReview() {
   const params = useLocalSearchParams();
   const stallId = parseInt(params.id as string);
 
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const { user } = useContext(AuthContext).auth;
+  const auth = useSelector((state: RootState) => state.auth);
 
-  const { stallCollection, dispatchStallCollectionAction } = useContext(
-    StallCollectionContext,
+  const stallCollection = useSelector(
+    (state: RootState) => state.stallCollection,
   );
+
   const stall = stallCollection.items.find((stall) => stall.id === stallId);
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
   const submitReviewForm = (formData: FormData) => {
-    user &&
-      submitReview(user, { ...formData, stallId: stallId })
+    auth.isAuthenticated &&
+      submitReview({ ...formData, stallId: stallId })
         .then(async (res) => {
           setErrorMessage(null);
 
-          dispatchStallCollectionAction({
-            type: "PATCH",
-            payload: {
+          dispatch(
+            patchStallCollectionAction({
               item: await fetchIndividualStall(stallId),
-            },
-          });
+            }),
+          );
         })
         .then(() => router.back())
         .catch((error) => setErrorMessage(error.toString()));
   };
 
-  if (!user) {
+  if (!auth.isAuthenticated) {
     return <Redirect href="/signin" />;
   }
 

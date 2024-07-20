@@ -1,6 +1,6 @@
 import { Review } from "@/app/types";
 import fetchImageFromUri from "@/utils/fetchImageFromUri";
-import { User } from "firebase/auth";
+import { User as FirebaseUser, getAuth } from "firebase/auth";
 import s3Put from "../s3/s3Put";
 import path from "path";
 
@@ -11,8 +11,14 @@ type PostData = {
   imageUris: string[];
 };
 
-export default async function submitReview(user: User, data: PostData) {
-  return user
+export default async function submitReview(data: PostData) {
+  const firebaseUser: FirebaseUser | null = getAuth().currentUser;
+
+  if (!firebaseUser) {
+    throw new Error("User is not signed in");
+  }
+
+  return firebaseUser
     .getIdToken()
     .then((token) =>
       fetch(

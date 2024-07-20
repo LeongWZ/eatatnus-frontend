@@ -1,21 +1,13 @@
 import React from "react";
-
-type Identifiable = {
-  id: number;
-};
-
-export interface IdentifiableCollection<T extends Identifiable> {
-  items: T[];
-  loading: boolean;
-  error_message: string | null;
-}
+import Identifiable from "@/store/interfaces/Identifiable";
+import IdentifiableCollection from "@/store/interfaces/IdentifiableCollection";
 
 export interface IdentifiableCollectionAction<T extends Identifiable> {
-  type: "FETCH" | "PUT" | "PATCH" | "ERROR";
+  type: "LOAD" | "PUT" | "PATCH" | "ERROR";
   payload?: {
     items?: T[];
     item?: T;
-    error_message?: string;
+    errorMessage?: string;
   };
 }
 
@@ -24,13 +16,13 @@ function identifiableCollectionReducer<T extends Identifiable>(
   action: IdentifiableCollectionAction<T>,
 ): IdentifiableCollection<T> {
   switch (action.type) {
-    case "FETCH":
-      return { ...state, loading: true, error_message: null };
+    case "LOAD":
+      return { ...state, loading: true, errorMessage: null };
     case "PUT":
       return {
         items: action.payload?.items ?? [],
         loading: false,
-        error_message: null,
+        errorMessage: null,
       };
     case "PATCH":
       return {
@@ -38,10 +30,10 @@ function identifiableCollectionReducer<T extends Identifiable>(
           item.id === action.payload?.item?.id ? action.payload?.item : item,
         ),
         loading: false,
-        error_message: null,
+        errorMessage: null,
       };
     case "ERROR":
-      return { ...state, error_message: action.payload?.error_message ?? null };
+      return { ...state, errorMessage: action.payload?.errorMessage ?? null };
     default:
       throw new Error(
         `Invalid action type: ${action.type} in identifiableCollectionReducer`,

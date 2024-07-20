@@ -1,6 +1,6 @@
 import { Review } from "@/app/types";
 import fetchImageFromUri from "@/utils/fetchImageFromUri";
-import { User } from "firebase/auth";
+import { User as FirebaseUser, getAuth } from "firebase/auth";
 import path from "path";
 import s3Put from "../s3/s3Put";
 
@@ -10,12 +10,14 @@ type PutData = {
   imageUris: string[];
 };
 
-export default async function editStallReview(
-  user: User,
-  reviewId: number,
-  data: PutData,
-) {
-  return user
+export default async function editStallReview(reviewId: number, data: PutData) {
+  const firebaseUser: FirebaseUser | null = getAuth().currentUser;
+
+  if (!firebaseUser) {
+    throw new Error("User is not signed in");
+  }
+
+  return firebaseUser
     .getIdToken()
     .then((token) =>
       fetch(

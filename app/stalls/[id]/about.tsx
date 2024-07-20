@@ -1,6 +1,5 @@
 import { Stall, Image as ImageType, Canteen } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
-import StallCollectionContext from "@/contexts/StallCollectionContext";
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import {
@@ -12,9 +11,11 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { Image } from "expo-image";
-import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import useIdentifiableCollectionReducer from "@/hooks/useIdentifiableCollectionReducer";
 import getMenuImagesAsync from "@/api/firebase-functions/getMenuImagesAsync";
+import FoodView from "@/components/menu/FoodView";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 export default function StallAbout() {
   const params = useGlobalSearchParams();
@@ -22,19 +23,30 @@ export default function StallAbout() {
 
   const router = useRouter();
 
-  const { stallCollection } = React.useContext(StallCollectionContext);
+  const stallCollection = useSelector(
+    (state: RootState) => state.stallCollection,
+  );
 
   const stall: Stall | undefined = stallCollection.items.find(
     (stall) => stall.id === id,
   );
 
-  const { canteenCollection } = React.useContext(CanteenCollectionContext);
+  const canteenCollection = useSelector(
+    (state: RootState) => state.canteenCollection,
+  );
 
   const canteen: Canteen | undefined = canteenCollection.items.find(
     (canteen) => canteen.id === stall?.canteenId,
   );
 
-  const renderItem = ({ item }: { item: ImageType }) => {
+  const [menuImages, dispatchMenuImagesAction] =
+    useIdentifiableCollectionReducer<ImageType>({
+      items: [],
+      loading: false,
+      errorMessage: "",
+    });
+
+  const renderMenuImage = ({ item }: { item: ImageType }) => {
     return (
       <Pressable
         onPress={() =>
@@ -50,13 +62,6 @@ export default function StallAbout() {
     );
   };
 
-  const [menuImages, dispatchMenuImagesAction] =
-    useIdentifiableCollectionReducer<ImageType>({
-      items: [],
-      loading: false,
-      error_message: "",
-    });
-
   React.useEffect(() => {
     setMenuImagesAsync();
 
@@ -66,7 +71,7 @@ export default function StallAbout() {
         return;
       }
 
-      dispatchMenuImagesAction({ type: "FETCH" });
+      dispatchMenuImagesAction({ type: "LOAD" });
 
       try {
         const images = stall?.reviews.flatMap((review) => review.images) ?? [];
@@ -81,7 +86,7 @@ export default function StallAbout() {
         dispatchMenuImagesAction({
           type: "ERROR",
           payload: {
-            error_message: error instanceof Error ? error.message : `${error}`,
+            errorMessage: error instanceof Error ? error.message : `${error}`,
           },
         });
       }
@@ -114,12 +119,15 @@ export default function StallAbout() {
         )}
         <FlatList
           data={menuImages.items}
-          renderItem={renderItem}
+          renderItem={renderMenuImage}
           keyExtractor={(item) => item.id.toString()}
           horizontal
           showsHorizontalScrollIndicator={true}
           style={{ marginVertical: 8, marginLeft: 8 }}
         />
+        {stall.menu?.items.map((item) => (
+          <FoodView food={item} key={item.id} />
+        ))}
       </View>
     </ScrollView>
   );

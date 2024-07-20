@@ -2,23 +2,26 @@ import fetchIndividualCanteen from "@/api/canteens/fetchIndividualCanteen";
 import submitCanteenReview from "@/api/canteens/submitReview";
 import ErrorView from "@/components/ErrorView";
 import ReviewForm, { FormData } from "@/components/review/ReviewForm";
-import AuthContext from "@/contexts/AuthContext";
-import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
+import { RootState } from "@/store";
 import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";
-import React, { useContext } from "react";
+import React from "react";
 import { View, Text } from "react-native";
+import { useDispatch, useSelector } from "react-redux";
+import { patchCanteenCollectionAction } from "@/store/reducers/canteenCollection";
 
 export default function CanteenAddReview() {
   const params = useGlobalSearchParams();
   const canteenId = parseInt(params.id as string);
 
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const { user } = useContext(AuthContext).auth;
+  const auth = useSelector((state: RootState) => state.auth);
 
-  const { canteenCollection, dispatchCanteenCollectionAction } = useContext(
-    CanteenCollectionContext,
+  const canteenCollection = useSelector(
+    (state: RootState) => state.canteenCollection,
   );
+
   const canteen = canteenCollection.items.find(
     (canteen) => canteen.id === canteenId,
   );
@@ -26,23 +29,25 @@ export default function CanteenAddReview() {
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
   const submitReviewForm = (formData: FormData) => {
-    user &&
-      submitCanteenReview(user, { ...formData, canteenId: canteenId })
+    auth.isAuthenticated &&
+      submitCanteenReview({
+        ...formData,
+        canteenId: canteenId,
+      })
         .then(async (res) => {
           setErrorMessage(null);
 
-          dispatchCanteenCollectionAction({
-            type: "PATCH",
-            payload: {
+          dispatch(
+            patchCanteenCollectionAction({
               item: await fetchIndividualCanteen(canteenId),
-            },
-          });
+            }),
+          );
         })
         .then(() => router.back())
         .catch((error) => setErrorMessage(error.toString()));
   };
 
-  if (!user) {
+  if (!auth.isAuthenticated) {
     return <Redirect href="/signin" />;
   }
 

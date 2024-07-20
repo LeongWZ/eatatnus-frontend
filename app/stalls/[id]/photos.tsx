@@ -1,10 +1,11 @@
 import { Stall, Image as ImageType } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
-import StallCollectionContext from "@/contexts/StallCollectionContext";
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { View, Text, Pressable, FlatList } from "react-native";
 import { Image } from "expo-image";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 export default function StallPhotos() {
   const params = useGlobalSearchParams();
@@ -12,8 +13,8 @@ export default function StallPhotos() {
 
   const router = useRouter();
 
-  const { stallCollection, dispatchStallCollectionAction } = React.useContext(
-    StallCollectionContext,
+  const stallCollection = useSelector(
+    (state: RootState) => state.stallCollection,
   );
 
   const stall: Stall | undefined = stallCollection.items.find(
