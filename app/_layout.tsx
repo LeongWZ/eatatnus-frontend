@@ -27,7 +27,21 @@ import {
 import fetchStalls from "@/api/stalls/fetchStalls";
 import fetchUserPersonalData from "@/api/auth/fetchUserPersonalData";
 
-const providers = [HoldMenuProvider];
+export default function RootLayout() {
+  return (
+    <Provider store={store}>
+      <HydrateAuth />
+      <HydrateCanteenCollection />
+      <HydrateStallCollection />
+
+      <ComposeProviders providers={[HoldMenuProvider]}>
+        <Stack>
+          <Stack.Screen name="(main)/index" options={{ title: "eat@NUS" }} />
+        </Stack>
+      </ComposeProviders>
+    </Provider>
+  );
+}
 
 function HydrateAuth() {
   const dispatch = useDispatch();
@@ -98,19 +112,4 @@ function HydrateStallCollection() {
   }, []);
 
   return <></>;
-}
-
-export default function RootLayout() {
-  return (
-    <Provider store={store}>
-      <HydrateAuth />
-      <HydrateCanteenCollection />
-      <HydrateStallCollection />
-      <ComposeProviders providers={providers}>
-        <Stack>
-          <Stack.Screen name="(main)/index" options={{ title: "eat@NUS" }} />
-        </Stack>
-      </ComposeProviders>
-    </Provider>
-  );
 }

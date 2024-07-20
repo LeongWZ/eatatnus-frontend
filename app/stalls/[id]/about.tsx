@@ -1,4 +1,4 @@
-import { Stall, Image as ImageType, Canteen } from "@/app/types";
+import { Stall, Image as ImageType, Canteen, Role, Food } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import React from "react";
@@ -14,14 +14,26 @@ import { Image } from "expo-image";
 import useIdentifiableCollectionReducer from "@/hooks/useIdentifiableCollectionReducer";
 import getMenuImagesAsync from "@/api/firebase-functions/getMenuImagesAsync";
 import FoodView from "@/components/menu/FoodView";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
+import AddFoodView from "@/components/menu/AddFoodView";
+import updateMenu from "@/api/menus/updateMenu";
+import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
+import {
+  errorStallCollectionAction,
+  loadStallCollectionAction,
+  patchStallCollectionAction,
+} from "@/store/reducers/stallCollection";
+import createMenu from "@/api/menus/createMenu";
 
 export default function StallAbout() {
   const params = useGlobalSearchParams();
   const id = parseInt(params.id as string);
 
   const router = useRouter();
+  const dispatch = useDispatch();
+
+  const auth = useSelector((state: RootState) => state.auth);
 
   const stallCollection = useSelector(
     (state: RootState) => state.stallCollection,
@@ -46,6 +58,10 @@ export default function StallAbout() {
       errorMessage: "",
     });
 
+  const menuFoodItems = [...(stall?.menu?.items ?? [])].sort(
+    (a, b) => b.id - a.id,
+  );
+
   const renderMenuImage = ({ item }: { item: ImageType }) => {
     return (
       <Pressable
@@ -60,6 +76,59 @@ export default function StallAbout() {
         />
       </Pressable>
     );
+  };
+
+  const onRefresh = () => {
+    if (stall === undefined) {
+      return;
+    }
+
+    dispatch(loadStallCollectionAction());
+    fetchIndividualStall(stall.id)
+      .then((stall) => dispatch(patchStallCollectionAction({ item: stall })))
+      .catch((error) =>
+        dispatch(
+          errorStallCollectionAction({
+            errorMessage: "Failed to fetch stall: " + error,
+          }),
+        ),
+      );
+  };
+
+  const onEditFood = (food: Food) => {
+    if (!stall?.menu) {
+      return;
+    }
+
+    updateMenu(
+      stall.menu.id,
+      stall.menu.items.map((item) => (item.id === food.id ? food : item)),
+    )
+      .then(onRefresh)
+      .catch((error) => console.error(error));
+  };
+
+  const onDeleteFood = (food: Food) => {
+    if (!stall?.menu) {
+      return;
+    }
+
+    updateMenu(
+      stall.menu.id,
+      stall?.menu.items.filter((item) => item.id !== food.id),
+    )
+      .then(onRefresh)
+      .catch((error) => console.error(error));
+  };
+
+  const onAddFood = (food: Omit<Food, "id">) => {
+    if (stall?.menu) {
+      updateMenu(stall.menu.id, [...stall?.menu.items, food])
+        .then(onRefresh)
+        .catch(console.error);
+    } else if (stall) {
+      createMenu(stall.id, [food]).then(onRefresh).then(console.error);
+    }
   };
 
   React.useEffect(() => {
@@ -106,17 +175,23 @@ export default function StallAbout() {
 
       <View>
         <Text className="text-2xl">Menu</Text>
+
         <Text>
           Contribute by submitting a review along with an image of a menu.
         </Text>
-        {!menuImages.loading && menuImages.items.length === 0 && (
-          <View className="items-center">
-            <Text className="p-4">No menu found.</Text>
-          </View>
-        )}
+
+        {!menuImages.loading &&
+          !stall.menu &&
+          menuImages.items.length === 0 && (
+            <View className="items-center">
+              <Text className="p-4">No menu found.</Text>
+            </View>
+          )}
+
         {menuImages.loading && menuImages.items.length === 0 && (
           <ActivityIndicator className="my-4" />
         )}
+
         <FlatList
           data={menuImages.items}
           renderItem={renderMenuImage}
@@ -125,8 +200,18 @@ export default function StallAbout() {
           showsHorizontalScrollIndicator={true}
           style={{ marginVertical: 8, marginLeft: 8 }}
         />
-        {stall.menu?.items.map((item) => (
-          <FoodView food={item} key={item.id} />
+        {(auth.user?.id === stall.ownerId ||
+          auth.user?.role === Role.Admin) && (
+          <AddFoodView submitCreate={onAddFood} />
+        )}
+        {menuFoodItems.map((item) => (
+          <FoodView
+            food={item}
+            ownerId={stall.ownerId}
+            submitDelete={onDeleteFood}
+            submitEdit={onEditFood}
+            key={item.id}
+          />
         ))}
       </View>
     </ScrollView>
