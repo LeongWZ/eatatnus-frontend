@@ -2,11 +2,12 @@ import fetchIndividualCanteen from "@/api/canteens/fetchIndividualCanteen";
 import editReview from "@/api/reviews/editReview";
 import ErrorView from "@/components/ErrorView";
 import ReviewForm, { FormData } from "@/components/review/ReviewForm";
-import AuthContext from "@/contexts/AuthContext";
-import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
-import { useGlobalSearchParams, useRouter } from "expo-router";
-import React, { useContext } from "react";
+import { RootState } from "@/store";
+import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";
+import React from "react";
 import { View, Text } from "react-native";
+import { useSelector, useDispatch } from "react-redux";
+import { patchCanteenCollectionAction } from "@/store/reducers/canteenCollection";
 
 export default function CanteenEditReview() {
   const params = useGlobalSearchParams();
@@ -14,12 +15,14 @@ export default function CanteenEditReview() {
   const reviewId = parseInt(params.reviewId as string);
 
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const { user } = useContext(AuthContext).auth;
+  const auth = useSelector((state: RootState) => state.auth);
 
-  const { canteenCollection, dispatchCanteenCollectionAction } = useContext(
-    CanteenCollectionContext,
+  const canteenCollection = useSelector(
+    (state: RootState) => state.canteenCollection,
   );
+
   const canteen = canteenCollection.items.find(
     (canteen) => canteen.id === canteenId,
   );
@@ -29,17 +32,16 @@ export default function CanteenEditReview() {
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
   const submitReviewForm = (formData: FormData) => {
-    user &&
-      editReview(user, reviewId, formData)
+    auth.isAuthenticated &&
+      editReview(reviewId, formData)
         .then(async (res) => {
           setErrorMessage(null);
 
-          dispatchCanteenCollectionAction({
-            type: "PATCH",
-            payload: {
+          dispatch(
+            patchCanteenCollectionAction({
               item: await fetchIndividualCanteen(canteenId),
-            },
-          });
+            }),
+          );
         })
         .then(() => router.back())
         .catch((error) => {
@@ -47,6 +49,10 @@ export default function CanteenEditReview() {
           console.error(error);
         });
   };
+
+  if (!auth.isAuthenticated) {
+    return <Redirect href="/signin" />;
+  }
 
   if (!canteen || !review) {
     return <ErrorView />;

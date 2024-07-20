@@ -7,23 +7,26 @@ import {
   Button,
   ScrollView,
 } from "react-native";
-import React, { useContext } from "react";
+import React from "react";
 import CanteenPreview from "@/components/canteen/CanteenPreview";
-import AuthContext from "@/contexts/AuthContext";
-import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
-import StallCollectionContext from "@/contexts/StallCollectionContext";
 import fetchCanteens from "@/api/canteens/fetchCanteens";
 import getAverageRating from "@/utils/getAverageRating";
 import StallPreview from "@/components/stall/StallPreview";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/store";
+import {
+  putCanteenCollectionAction,
+  loadCanteenCollectionAction,
+  errorCanteenCollectionAction,
+} from "@/store/reducers/canteenCollection";
 
 function Header() {
-  const { user } = useContext(AuthContext).auth;
+  const auth = useSelector((state: RootState) => state.auth);
+  const user = auth.user;
 
   return (
     <View className="flex-row justify-between p-2 border-b">
-      <Text className="py-2">
-        Welcome, {user ? user.displayName || user.email : "Guest"}
-      </Text>
+      <Text className="py-2">Welcome, {user ? user.name : "Guest"}</Text>
       {user === null ? (
         <View className="flex-row gap-2">
           <Link href="/signin" className="bg-blue-500 p-2" asChild>
@@ -49,34 +52,30 @@ function Header() {
 }
 
 export default function Index() {
-  const { canteenCollection, dispatchCanteenCollectionAction } =
-    React.useContext(CanteenCollectionContext);
+  const dispatch = useDispatch();
+
+  const canteenCollection = useSelector(
+    (state: RootState) => state.canteenCollection,
+  );
   const canteens = canteenCollection.items;
 
-  const { stallCollection, dispatchStallCollectionAction } = React.useContext(
-    StallCollectionContext,
+  const stallCollection = useSelector(
+    (state: RootState) => state.stallCollection,
   );
-  const topRatedStalls = stallCollection.items
+
+  const topRatedStalls = [...stallCollection.items]
     .sort((a, b) => getAverageRating(b.reviews) - getAverageRating(a.reviews))
     .slice(0, 5);
 
   const onRefresh = () => {
-    dispatchCanteenCollectionAction({ type: "FETCH" });
+    dispatch(loadCanteenCollectionAction());
 
     fetchCanteens()
       .then((canteens) =>
-        dispatchCanteenCollectionAction({
-          type: "PUT",
-          payload: {
-            items: canteens,
-          },
-        }),
+        dispatch(putCanteenCollectionAction({ items: canteens })),
       )
-      .catch((error) =>
-        dispatchCanteenCollectionAction({
-          type: "ERROR",
-          payload: { error_message: error },
-        }),
+      .catch((error: Error) =>
+        dispatch(errorCanteenCollectionAction({ errorMessage: error.message })),
       );
   };
 
@@ -115,4 +114,7 @@ export default function Index() {
       </ScrollView>
     </View>
   );
+}
+function toSorted(arg0: (a: any, b: any) => number) {
+  throw new Error("Function not implemented.");
 }

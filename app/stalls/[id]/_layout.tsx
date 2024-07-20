@@ -2,16 +2,24 @@ import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
 import { Stall } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
 import { MaterialTopTabs } from "@/components/tabs/MaterialTopTabs";
-import StallCollectionContext from "@/contexts/StallCollectionContext";
+import { RootState } from "@/store";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  loadStallCollectionAction,
+  patchStallCollectionAction,
+  errorStallCollectionAction,
+} from "@/store/reducers/stallCollection";
 
 export default function StallsLayout() {
   const params = useLocalSearchParams();
   const id = parseInt(params.id as string);
 
-  const { stallCollection, dispatchStallCollectionAction } = React.useContext(
-    StallCollectionContext,
+  const dispatch = useDispatch();
+
+  const stallCollection = useSelector(
+    (state: RootState) => state.stallCollection,
   );
 
   const stall: Stall | undefined = stallCollection.items.find(
@@ -25,19 +33,15 @@ export default function StallsLayout() {
       return;
     }
 
-    dispatchStallCollectionAction({ type: "FETCH" });
+    dispatch(loadStallCollectionAction());
     fetchIndividualStall(stall.id)
-      .then((stall) =>
-        dispatchStallCollectionAction({
-          type: "PATCH",
-          payload: { item: stall },
-        }),
-      )
+      .then((stall) => dispatch(patchStallCollectionAction({ item: stall })))
       .catch((error) =>
-        dispatchStallCollectionAction({
-          type: "ERROR",
-          payload: { error_message: error },
-        }),
+        dispatch(
+          errorStallCollectionAction({
+            errorMessage: "Failed to fetch stall: " + error,
+          }),
+        ),
       );
   };
 

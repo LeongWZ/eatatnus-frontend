@@ -1,9 +1,9 @@
-import { Review } from "@/app/types";
-import { User } from "firebase/auth";
+import { Review, Role, Image as ImageType } from "@/app/types";
 import { View, Text, FlatList, Pressable } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { Image } from "expo-image";
-import { Image as ImageType } from "@/app/types";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 // @ts-expect-error: No declaration file for module
 // eslint-disable-next-line import/no-unresolved
@@ -11,14 +11,16 @@ import { HoldItem } from "react-native-hold-menu";
 
 type ReviewProps = {
   review: Review;
-  user: User | null;
   onEdit: () => void;
   onDelete: () => void;
   onImagePress: (image: ImageType) => void;
 };
 
 export default function ReviewCard(props: ReviewProps) {
-  const { review, user, onEdit, onDelete, onImagePress } = props;
+  const { review, onEdit, onDelete, onImagePress } = props;
+
+  const auth = useSelector((state: RootState) => state.auth);
+  const user = auth.user;
 
   const copyToClipboard = () => {
     Clipboard.setStringAsync(`${review.user.name}: ${review.description}`);
@@ -26,11 +28,9 @@ export default function ReviewCard(props: ReviewProps) {
 
   const MenuItems = [
     { text: "Copy", icon: "copy", onPress: copyToClipboard },
-    ...(user?.displayName === review.user.name
-      ? [{ text: "Edit", icon: "edit", onPress: onEdit }]
-      : []),
-    ...(user?.displayName === review.user.name
+    ...(user?.id === review.userId || user?.role === Role.Admin
       ? [
+          { text: "Edit", icon: "edit", onPress: onEdit },
           {
             text: "Delete",
             icon: "trash",

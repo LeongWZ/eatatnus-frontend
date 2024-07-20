@@ -1,8 +1,10 @@
 import { Link, Redirect } from "expo-router";
 import { Text, View, TextInput, Button } from "react-native";
-import React, { useContext } from "react";
+import React from "react";
 import registerWithEmail from "@/api/auth/registerWithEmail";
-import AuthContext from "@/contexts/AuthContext";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/store";
+import { loadAuthAction, errorAuthAction } from "@/store/reducers/auth";
 
 type FormData = {
   email: string;
@@ -11,7 +13,8 @@ type FormData = {
 };
 
 export default function Register() {
-  const { auth, dispatchAuth } = useContext(AuthContext);
+  const auth = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch();
 
   const [formData, setFormData] = React.useState<FormData>({
     email: "",
@@ -20,21 +23,20 @@ export default function Register() {
   });
 
   const onSubmit = () => {
-    dispatchAuth({ type: "SIGN_IN" });
+    dispatch(loadAuthAction());
 
     registerWithEmail(
       formData.email,
       formData.password,
       formData.displayName,
-    ).catch((error) =>
-      dispatchAuth({
-        type: "ERROR",
-        payload: { error_message: error?.message },
-      }),
+    ).catch((err) =>
+      dispatch(
+        errorAuthAction({ errorMessage: "Failed to register: " + err.message }),
+      ),
     );
   };
 
-  if (auth.status === "AUTHENTICATED") {
+  if (auth.isAuthenticated) {
     return <Redirect href="/" />;
   }
 
@@ -88,10 +90,10 @@ export default function Register() {
           Already have an account? Sign in
         </Link>
 
-        {auth.status === "LOADING" && <Text className="mt-2">Loading...</Text>}
+        {auth.loading && <Text className="mt-2">Loading...</Text>}
 
-        {auth.error_message && (
-          <Text className="text-red-500 mt-2">{auth.error_message}</Text>
+        {auth.errorMessage && (
+          <Text className="text-red-500 mt-2">{auth.errorMessage}</Text>
         )}
       </View>
     </View>

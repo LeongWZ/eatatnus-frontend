@@ -1,10 +1,11 @@
 import { Canteen, Image as ImageType } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
-import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { View, Text, Pressable, FlatList } from "react-native";
 import { Image } from "expo-image";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 export default function CanteenPhotos() {
   const params = useGlobalSearchParams();
@@ -12,8 +13,9 @@ export default function CanteenPhotos() {
 
   const router = useRouter();
 
-  const { canteenCollection, dispatchCanteenCollectionAction } =
-    React.useContext(CanteenCollectionContext);
+  const canteenCollection = useSelector(
+    (state: RootState) => state.canteenCollection,
+  );
 
   const canteen: Canteen | undefined = canteenCollection.items.find(
     (canteen) => canteen.id === id,

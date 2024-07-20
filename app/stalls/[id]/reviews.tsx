@@ -1,25 +1,32 @@
-import StallCollectionContext from "@/contexts/StallCollectionContext";
 import React from "react";
 import { View, Text, Pressable, FlatList } from "react-native";
 import { Link, useGlobalSearchParams, useRouter } from "expo-router";
 import ErrorView from "@/components/ErrorView";
 import { Stall, Image } from "@/app/types";
 import ReviewCard from "@/components/review/ReviewCard";
-import AuthContext from "@/contexts/AuthContext";
 import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
 import deleteReview from "@/api/reviews/deleteReview";
 import getAverageRating from "@/utils/getAverageRating";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/store";
+import {
+  loadStallCollectionAction,
+  patchStallCollectionAction,
+  errorStallCollectionAction,
+} from "@/store/reducers/stallCollection";
 
 export default function StallReviews() {
   const params = useGlobalSearchParams();
   const id = parseInt(params.id as string);
 
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const { stallCollection, dispatchStallCollectionAction } = React.useContext(
-    StallCollectionContext,
+  const stallCollection = useSelector(
+    (state: RootState) => state.stallCollection,
   );
-  const { auth, dispatchAuth } = React.useContext(AuthContext);
+
+  const auth = useSelector((state: RootState) => state.auth);
 
   const stall: Stall | undefined = stallCollection.items.find(
     (stall) => stall.id === id,
@@ -34,19 +41,16 @@ export default function StallReviews() {
       return;
     }
 
-    dispatchStallCollectionAction({ type: "FETCH" });
+    dispatch(loadStallCollectionAction());
+
     fetchIndividualStall(stall.id)
-      .then((stall) =>
-        dispatchStallCollectionAction({
-          type: "PATCH",
-          payload: { item: stall },
-        }),
-      )
+      .then((stall) => dispatch(patchStallCollectionAction({ item: stall })))
       .catch((error) =>
-        dispatchStallCollectionAction({
-          type: "ERROR",
-          payload: { error_message: error },
-        }),
+        dispatch(
+          errorStallCollectionAction({
+            errorMessage: "Failed to fetch stall: " + error,
+          }),
+        ),
       );
   };
 
@@ -77,16 +81,15 @@ export default function StallReviews() {
 
       <View className="mx-3">
         <FlatList
-          data={stall.reviews.sort((a, b) => (a.id < b.id ? 1 : -1))}
+          data={[...stall.reviews].sort((a, b) => (a.id < b.id ? 1 : -1))}
           renderItem={({ item }) => (
             <ReviewCard
               review={item}
-              user={auth.user}
               onEdit={() => {
                 router.push(`stalls/reviews/edit/${stall.id}/${item.id}`);
               }}
               onDelete={() => {
-                auth.user && deleteReview(auth.user, item.id).then(onRefresh);
+                auth.isAuthenticated && deleteReview(item.id).then(onRefresh);
               }}
               onImagePress={(image: Image) => {
                 router.push(`stalls/photos/${stall.id}/?image_id=${image.id}`);

@@ -1,4 +1,3 @@
-import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import React from "react";
 import {
   View,
@@ -11,17 +10,19 @@ import { useGlobalSearchParams } from "expo-router";
 import ErrorView from "@/components/ErrorView";
 import { Canteen, Stall } from "@/app/types";
 import StallPreview from "@/components/stall/StallPreview";
-import StallCollectionContext from "@/contexts/StallCollectionContext";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 export default function CanteenStalls() {
   const params = useGlobalSearchParams();
   const id = parseInt(params.id as string);
 
-  const { canteenCollection, dispatchCanteenCollectionAction } =
-    React.useContext(CanteenCollectionContext);
+  const canteenCollection = useSelector(
+    (state: RootState) => state.canteenCollection,
+  );
 
-  const { stallCollection, dispatchStallCollectionAction } = React.useContext(
-    StallCollectionContext,
+  const stallCollection = useSelector(
+    (state: RootState) => state.stallCollection,
   );
 
   const canteen: Canteen | undefined = canteenCollection.items.find(

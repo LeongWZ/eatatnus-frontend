@@ -1,24 +1,31 @@
-import { Link, Redirect } from "expo-router";
+import { Link, Redirect, useRouter } from "expo-router";
 import { Text, View, Button, Pressable } from "react-native";
-import React, { useContext } from "react";
+import React from "react";
 import signOut from "@/api/auth/signOut";
-import AuthContext from "@/contexts/AuthContext";
+import { RootState } from "@/store";
+import { useDispatch, useSelector } from "react-redux";
+import { errorAuthAction, loadAuthAction } from "@/store/reducers/auth";
 
 export default function SignOut() {
-  const { auth, dispatchAuth } = useContext(AuthContext);
+  const auth = useSelector((state: RootState) => state.auth);
+  const router = useRouter();
+  const dispatch = useDispatch();
 
   const onSignOut = () => {
-    dispatchAuth({ type: "SIGN_OUT" });
+    dispatch(loadAuthAction());
 
-    signOut().catch((error) =>
-      dispatchAuth({
-        type: "ERROR",
-        payload: { error_message: error.message },
-      }),
-    );
+    signOut()
+      .then(() => (router.canGoBack() ? router.back() : router.push("/")))
+      .catch((err) =>
+        dispatch(
+          errorAuthAction({
+            errorMessage: "Failed to sign out: " + err.message,
+          }),
+        ),
+      );
   };
 
-  if (auth.status === "NOT_AUTHENTICATED") {
+  if (!auth.isAuthenticated) {
     return <Redirect href="/" />;
   }
 
@@ -43,12 +50,10 @@ export default function SignOut() {
           </Link>
         </View>
 
-        {auth.status === "LOADING" && (
-          <Text className="mt-2">Signing out now...</Text>
-        )}
+        {auth.loading && <Text className="mt-2">Signing out now...</Text>}
 
-        {auth.error_message && (
-          <Text className="text-red-500 mt-2">{auth.error_message}</Text>
+        {auth.errorMessage && (
+          <Text className="text-red-500 mt-2">{auth.errorMessage}</Text>
         )}
       </View>
     </View>

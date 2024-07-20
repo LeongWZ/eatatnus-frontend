@@ -1,15 +1,17 @@
 import * as React from "react";
 import { useGlobalSearchParams, useRouter } from "expo-router";
-import StallCollectionContext from "@/contexts/StallCollectionContext";
 import Gallery from "@/components/image/gallery";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 export default function StallPhotos() {
   const router = useRouter();
   const setParams = router.setParams;
   const goBack = router.back;
   const params = useGlobalSearchParams<{ id: string; image_id: string }>();
-  const { stallCollection, dispatchStallCollectionAction } = React.useContext(
-    StallCollectionContext,
+
+  const stallCollection = useSelector(
+    (state: RootState) => state.stallCollection,
   );
 
   const stall = stallCollection.items.find(

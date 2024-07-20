@@ -1,15 +1,18 @@
 import * as React from "react";
 import { useGlobalSearchParams, useRouter } from "expo-router";
-import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
 import Gallery from "@/components/image/gallery";
+import { useSelector } from "react-redux";
+import { RootState } from "@/store";
 
 export default function CanteenPhotos() {
   const router = useRouter();
   const setParams = router.setParams;
   const goBack = router.back;
   const params = useGlobalSearchParams<{ id: string; image_id: string }>();
-  const { canteenCollection, dispatchCanteenCollectionAction } =
-    React.useContext(CanteenCollectionContext);
+
+  const canteenCollection = useSelector(
+    (state: RootState) => state.canteenCollection,
+  );
 
   const canteen = canteenCollection.items.find(
     (canteen) => canteen.id === parseInt(params.id ?? ""),

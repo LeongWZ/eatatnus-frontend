@@ -3,58 +3,61 @@ import fetchIndividualCanteen from "@/api/canteens/fetchIndividualCanteen";
 import { Canteen, Review } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
 import ReviewCard from "@/components/review/ReviewCard";
-import AuthContext from "@/contexts/AuthContext";
-import CanteenCollectionContext from "@/contexts/CanteenCollectionContext";
+import {
+  loadCanteenCollectionAction,
+  patchCanteenCollectionAction,
+  errorCanteenCollectionAction,
+} from "@/store/reducers/canteenCollection";
 import { Link, useGlobalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { View, Text, Pressable, FlatList } from "react-native";
 import getAverageRating from "@/utils/getAverageRating";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/store";
 
 export default function CanteenReviews() {
   const params = useGlobalSearchParams();
   const id = parseInt(params.id as string);
 
   const router = useRouter();
+  const dispatch = useDispatch();
 
-  const { canteenCollection, dispatchCanteenCollectionAction } =
-    React.useContext(CanteenCollectionContext);
-  const { auth, dispatchAuth } = React.useContext(AuthContext);
+  const canteenCollection = useSelector(
+    (state: RootState) => state.canteenCollection,
+  );
+
+  const auth = useSelector((state: RootState) => state.auth);
 
   const canteen: Canteen | undefined = canteenCollection.items.find(
     (canteen) => canteen.id === id,
   );
 
   const onRefresh = () => {
-    dispatchCanteenCollectionAction({
-      type: "FETCH",
-    });
+    dispatch(loadCanteenCollectionAction());
 
     canteen &&
       fetchIndividualCanteen(canteen.id)
         .then((canteen) =>
-          dispatchCanteenCollectionAction({
-            type: "PATCH",
-            payload: { item: canteen },
-          }),
+          dispatch(patchCanteenCollectionAction({ item: canteen })),
         )
         .catch((error) =>
-          dispatchCanteenCollectionAction({
-            type: "ERROR",
-            payload: { error_message: error },
-          }),
+          dispatch(
+            errorCanteenCollectionAction({
+              errorMessage: "Failed to fetch canteen: " + error,
+            }),
+          ),
         );
   };
 
   const renderItem = ({ item }: { item: Review }) => (
     <ReviewCard
       review={item}
-      user={auth.user}
       onEdit={() => {
-        auth.user &&
+        auth.isAuthenticated &&
           router.push(`canteens/reviews/edit/${canteen?.id}/${item.id}`);
       }}
       onDelete={() => {
-        auth.user && deleteReview(auth.user, item.id).then(onRefresh);
+        auth.isAuthenticated && deleteReview(item.id).then(onRefresh);
       }}
       onImagePress={(image) => {
         router.push(`canteens/photos/${canteen?.id}/?image_id=${image.id}`);
@@ -91,7 +94,7 @@ export default function CanteenReviews() {
         </View>
       </View>
       <FlatList
-        data={canteen.reviews.sort((a, b) => (a.id < b.id ? 1 : -1))}
+        data={[...canteen.reviews].sort((a, b) => (a.id < b.id ? 1 : -1))}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         extraData={canteen}
