@@ -76,19 +76,19 @@ export type Image = {
 export type Food = {
   id: number;
   name: string;
-  calories: number | null;
-  cholesterol: number | null;
-  dietaryFiber: number | null;
-  potassium: number | null;
-  protein: number | null;
-  saturatedFat: number | null;
-  servingQty: number | null;
-  servingUnit: string | null;
-  servingWeightGrams: number | null;
-  sodium: number | null;
-  sugars: number | null;
-  totalCarbohydrate: number | null;
-  totalFat: number | null;
+  calories?: number | null;
+  cholesterol?: number | null;
+  dietaryFiber?: number | null;
+  potassium?: number | null;
+  protein?: number | null;
+  saturatedFat?: number | null;
+  servingQty?: number | null;
+  servingUnit?: string | null;
+  servingWeightGrams?: number | null;
+  sodium?: number | null;
+  sugars?: number | null;
+  totalCarbohydrate?: number | null;
+  totalFat?: number | null;
 };
 
 export type Menu = {
