@@ -96,3 +96,17 @@ export type Menu = {
   items: Food[];
   stallId: number;
 };
+
+export type CaloricTracker = {
+  id: number;
+  caloricTrackerEntries: CaloricTrackerEntry[];
+  userId: number;
+};
+
+export type CaloricTrackerEntry = {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  foods: Food[];
+  caloricTrackerId: number;
+};

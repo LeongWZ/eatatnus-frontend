@@ -36,7 +36,7 @@ export default function RootLayout() {
 
       <ComposeProviders providers={[HoldMenuProvider]}>
         <Stack>
-          <Stack.Screen name="(main)/index" options={{ title: "eat@NUS" }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
       </ComposeProviders>
     </Provider>

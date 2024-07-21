@@ -95,42 +95,6 @@ export default function StallAbout() {
       );
   };
 
-  const onEditFood = (food: Food) => {
-    if (!stall?.menu) {
-      return;
-    }
-
-    updateMenu(
-      stall.menu.id,
-      stall.menu.items.map((item) => (item.id === food.id ? food : item)),
-    )
-      .then(onRefresh)
-      .catch((error) => console.error(error));
-  };
-
-  const onDeleteFood = (food: Food) => {
-    if (!stall?.menu) {
-      return;
-    }
-
-    updateMenu(
-      stall.menu.id,
-      stall?.menu.items.filter((item) => item.id !== food.id),
-    )
-      .then(onRefresh)
-      .catch((error) => console.error(error));
-  };
-
-  const onAddFood = (food: Omit<Food, "id">) => {
-    if (stall?.menu) {
-      updateMenu(stall.menu.id, [...stall?.menu.items, food])
-        .then(onRefresh)
-        .catch(console.error);
-    } else if (stall) {
-      createMenu(stall.id, [food]).then(onRefresh).then(console.error);
-    }
-  };
-
   React.useEffect(() => {
     setMenuImagesAsync();
 
@@ -173,7 +137,7 @@ export default function StallAbout() {
         <Text className="text-xl mb-2">{canteen?.name}</Text>
       </View>
 
-      <View>
+      <View className="pb-52">
         <Text className="text-2xl">Menu</Text>
 
         <Text>
@@ -202,18 +166,60 @@ export default function StallAbout() {
         />
         {(auth.user?.id === stall.ownerId ||
           auth.user?.role === Role.Admin) && (
-          <AddFoodView submitCreate={onAddFood} />
+          <AddFoodView submitCreate={addFoodFn(stall, onRefresh)} />
         )}
         {menuFoodItems.map((item) => (
           <FoodView
             food={item}
             ownerId={stall.ownerId}
-            submitDelete={onDeleteFood}
-            submitEdit={onEditFood}
+            submitDelete={deleteFoodFn(stall, onRefresh)}
+            submitEdit={editFoodFn(stall, onRefresh)}
             key={item.id}
           />
         ))}
       </View>
     </ScrollView>
   );
+}
+
+function editFoodFn(stall?: Stall, next?: () => void) {
+  return (food: Food) => {
+    if (!stall?.menu) {
+      return;
+    }
+
+    updateMenu(
+      stall.menu.id,
+      stall.menu.items.map((item) => (item.id === food.id ? food : item)),
+    )
+      .then(next)
+      .catch(console.error);
+  };
+}
+
+function deleteFoodFn(stall?: Stall, next?: () => void) {
+  return (food: Food) => {
+    if (!stall?.menu) {
+      return;
+    }
+
+    updateMenu(
+      stall.menu.id,
+      stall?.menu.items.filter((item) => item.id !== food.id),
+    )
+      .then(next)
+      .catch(console.error);
+  };
+}
+
+function addFoodFn(stall?: Stall, next?: () => void) {
+  return (food: Omit<Food, "id">) => {
+    if (stall?.menu) {
+      updateMenu(stall.menu.id, [...stall?.menu.items, food])
+        .then(next)
+        .catch(console.error);
+    } else if (stall) {
+      createMenu(stall.id, [food]).then(next).catch(console.error);
+    }
+  };
 }
