@@ -1,10 +1,15 @@
-import { Link, Redirect, useRouter } from "expo-router";
+import { Link, Redirect, useNavigation, useRouter } from "expo-router";
 import { Text, View, TextInput, Button } from "react-native";
 import React from "react";
 import signInWithEmail from "@/api/auth/signInWithEmail";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { errorAuthAction, loadAuthAction } from "@/store/reducers/auth";
+import {
+  errorAuthAction,
+  loadAuthAction,
+  putUserDataAction,
+} from "@/store/reducers/auth";
+import fetchUserPersonalData from "@/api/users/fetchUserPersonalData";
 
 type FormData = {
   email: string;
@@ -27,8 +32,17 @@ export default function SignIn() {
 
     signInWithEmail(formData.email, formData.password)
       .then((result) =>
-        router.canGoBack() ? router.back() : router.replace("/"),
+        fetchUserPersonalData()
+          .then((userData) => dispatch(putUserDataAction({ user: userData })))
+          .catch((error: Error) => {
+            dispatch(
+              errorAuthAction({
+                errorMessage: error.message,
+              }),
+            );
+          }),
       )
+      .then(() => (router.canGoBack() ? router.back() : router.replace("/")))
       .catch((err) => {
         dispatch(
           errorAuthAction({
@@ -38,13 +52,20 @@ export default function SignIn() {
       });
   };
 
+  const navigation = useNavigation();
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: "Sign in",
+    });
+  }, [navigation]);
+
   if (auth.isAuthenticated) {
     return <Redirect href="/" />;
   }
 
   return (
     <View className="flex-1 justify-center items-center">
-      <View className="bg-slate-200 w-4/5 h-4/5 p-4 border rounded-lg">
+      <View className="bg-slate-200 w-4/5 h-fit p-4 border rounded-lg">
         <Text className="text-2xl mb-2">Sign in</Text>
 
         <Text className="mt-2 mb-1">Email</Text>

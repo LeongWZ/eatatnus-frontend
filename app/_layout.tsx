@@ -25,7 +25,7 @@ import {
   errorStallCollectionAction,
 } from "@/store/reducers/stallCollection";
 import fetchStalls from "@/api/stalls/fetchStalls";
-import fetchUserPersonalData from "@/api/auth/fetchUserPersonalData";
+import fetchUserPersonalData from "@/api/users/fetchUserPersonalData";
 
 export default function RootLayout() {
   return (
@@ -58,7 +58,6 @@ function HydrateAuth() {
                 errorMessage: error.message,
               }),
             );
-            console.error(error);
           });
       } else {
         dispatch(signOutAction());

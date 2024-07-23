@@ -1,6 +1,7 @@
 import { Text, View, TextInput, Button } from "react-native";
 import React from "react";
 import resetPasswordWithEmail from "@/api/auth/resetPasswordWithEmail";
+import { useNavigation } from "expo-router";
 
 type FormData = {
   email: string;
@@ -27,9 +28,16 @@ export default function ResetPassword() {
       );
   };
 
+  const navigation = useNavigation();
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: "Reset password",
+    });
+  }, [navigation]);
+
   return (
     <View className="flex-1 justify-center items-center">
-      <View className="bg-slate-200 w-4/5 h-4/5 p-4 border rounded-lg">
+      <View className="bg-slate-200 w-4/5 h-fit p-4 border rounded-lg">
         <Text className="text-2xl mb-2">Reset password</Text>
 
         <Text className="mt-2 mb-1">Email</Text>

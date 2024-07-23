@@ -71,7 +71,7 @@ export default function CanteenReviews() {
 
   return (
     <View>
-      <View className="flex-row justify-between border-b m-2">
+      <View className="flex-row justify-between border-b p-2">
         <View>
           <Text>{canteen.reviews.length} reviews</Text>
           {canteen.reviews.length > 0 && (

@@ -2,7 +2,10 @@ import { User } from "@/app/types";
 import { User as FirebaseUser } from "firebase/auth";
 import { auth } from "@/firebaseConfig";
 
-export default async function fetchUserPersonalData(): Promise<User> {
+export default async function createUser(
+  name: string,
+  bio?: string,
+): Promise<User> {
   const firebaseUser: FirebaseUser | null = auth.currentUser;
 
   if (!firebaseUser) {
@@ -13,14 +16,24 @@ export default async function fetchUserPersonalData(): Promise<User> {
     .getIdToken()
     .then((token) =>
       fetch(`https://eatatnus-backend-xchix.ondigitalocean.app/api/users`, {
-        method: "GET",
+        method: "POST",
         headers: {
           Accept: "application/json",
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
+        body: JSON.stringify({
+          name: name,
+          bio: bio,
+        }),
       }),
     )
-    .then((response) => response.json())
-    .then((result) => result.data);
+    .then((res) => res.json())
+    .then((result) => {
+      if (result["error"]) {
+        throw new Error(JSON.stringify(result.error));
+      }
+
+      return result.data;
+    });
 }
