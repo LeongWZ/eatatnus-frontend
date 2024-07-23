@@ -4,6 +4,9 @@ import * as Clipboard from "expo-clipboard";
 import { Image } from "expo-image";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import { useRouter } from "expo-router";
+import UserPressable from "../users/UserPressable";
+import { Rating } from "@kolking/react-native-rating";
 
 // @ts-expect-error: No declaration file for module
 // eslint-disable-next-line import/no-unresolved
@@ -19,11 +22,13 @@ type ReviewProps = {
 export default function ReviewCard(props: ReviewProps) {
   const { review, onEdit, onDelete, onImagePress } = props;
 
+  const router = useRouter();
+
   const auth = useSelector((state: RootState) => state.auth);
   const user = auth.user;
 
   const copyToClipboard = () => {
-    Clipboard.setStringAsync(`${review.user.name}: ${review.description}`);
+    Clipboard.setStringAsync(`${review.description}`);
   };
 
   const MenuItems = [
@@ -56,9 +61,24 @@ export default function ReviewCard(props: ReviewProps) {
   return (
     <HoldItem items={MenuItems}>
       <View className="border mt-2 p-2 bg-white">
-        <Text>By {review.user.name}</Text>
-        <Text>Rating: {review.rating}</Text>
-        <Text>Description: {review.description}</Text>
+        <View className="items-start">
+          {review.user !== null ? (
+            <UserPressable
+              user={review.user}
+              onPress={() => router.push(`/users/${review.user?.id}`)}
+            />
+          ) : (
+            <Text>Deleted user</Text>
+          )}
+        </View>
+        <Rating
+          size={20}
+          rating={review.rating}
+          onChange={() => {}}
+          disabled={true}
+          style={{ paddingVertical: 4 }}
+        />
+        <Text className="my-2">{review.description}</Text>
         <FlatList
           data={review.images}
           renderItem={renderItem}

@@ -1,10 +1,15 @@
-import { Link, Redirect } from "expo-router";
+import { Link, Redirect, useNavigation } from "expo-router";
 import { Text, View, TextInput, Button } from "react-native";
 import React from "react";
 import registerWithEmail from "@/api/auth/registerWithEmail";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
-import { loadAuthAction, errorAuthAction } from "@/store/reducers/auth";
+import {
+  loadAuthAction,
+  errorAuthAction,
+  putUserDataAction,
+} from "@/store/reducers/auth";
+import createUser from "@/api/users/createUser";
 
 type FormData = {
   email: string;
@@ -25,16 +30,33 @@ export default function Register() {
   const onSubmit = () => {
     dispatch(loadAuthAction());
 
-    registerWithEmail(
-      formData.email,
-      formData.password,
-      formData.displayName,
-    ).catch((err) =>
-      dispatch(
-        errorAuthAction({ errorMessage: "Failed to register: " + err.message }),
-      ),
-    );
+    registerWithEmail(formData.email, formData.password)
+      .then(() =>
+        createUser(formData.displayName)
+          .then((userData) => dispatch(putUserDataAction({ user: userData })))
+          .catch((error: Error) => {
+            dispatch(
+              errorAuthAction({
+                errorMessage: error.message,
+              }),
+            );
+          }),
+      )
+      .catch((err) =>
+        dispatch(
+          errorAuthAction({
+            errorMessage: "Failed to register: " + err.message,
+          }),
+        ),
+      );
   };
+
+  const navigation = useNavigation();
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: "Register",
+    });
+  }, [navigation]);
 
   if (auth.isAuthenticated) {
     return <Redirect href="/" />;

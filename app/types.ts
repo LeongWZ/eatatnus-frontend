@@ -18,6 +18,7 @@ export type User = {
   createdAt: string;
   role: Role;
   profile: Profile | null;
+  reviews?: Review[];
 };
 
 export type Canteen = {
@@ -45,7 +46,7 @@ export type Stall = {
   description: string | null;
   createdAt: string;
   updatedAt: string;
-  ownerId: null;
+  ownerId: number | null;
   canteenId: number;
   reviews: Review[];
   menu: Menu | null;
@@ -58,8 +59,8 @@ export type Review = {
   createdAt: string;
   updatedAt: string;
   reviewType: string;
-  userId: number;
-  user: { name: string };
+  userId: number | null;
+  user: User | null;
   images: Image[];
   canteenId?: number;
   canteen?: Canteen;

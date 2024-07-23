@@ -1,4 +1,4 @@
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import {
   Text,
   View,
@@ -19,14 +19,25 @@ import {
   loadCanteenCollectionAction,
   errorCanteenCollectionAction,
 } from "@/store/reducers/canteenCollection";
+import UserPressable from "@/components/users/UserPressable";
 
 function Header() {
+  const router = useRouter();
+
   const auth = useSelector((state: RootState) => state.auth);
   const user = auth.user;
 
   return (
-    <View className="flex-row justify-between p-2 border-b">
-      <Text className="py-2">Welcome, {user ? user.name : "Guest"}</Text>
+    <View className="flex-row justify-between p-2 border-b border-neutral-300">
+      {user === null ? (
+        <Text className="py-2">Guest</Text>
+      ) : (
+        <UserPressable
+          user={user}
+          onPress={() => router.push(`/users/${user?.id}`)}
+        />
+      )}
+
       {user === null ? (
         <View className="flex-row gap-2">
           <Link href="/signin" className="bg-blue-500 p-2" asChild>
@@ -65,7 +76,7 @@ export default function Index() {
 
   const topRatedStalls = [...stallCollection.items]
     .sort((a, b) => getAverageRating(b.reviews) - getAverageRating(a.reviews))
-    .slice(0, 5);
+    .slice(0, 3);
 
   const onRefresh = () => {
     dispatch(loadCanteenCollectionAction());
@@ -95,13 +106,7 @@ export default function Index() {
     <View>
       <Header />
       <ScrollView>
-        <View className="p-2" id="canteens">
-          <Text className="text-2xl">Canteens</Text>
-          {canteens.map((canteen) => (
-            <CanteenPreview canteen={canteen} key={canteen.id} />
-          ))}
-        </View>
-        <View className="p-2 pb-28" id="stalls">
+        <View className="p-2" id="stalls">
           <Text className="text-2xl">Top-rated stalls</Text>
           {topRatedStalls.map((stall) => (
             <StallPreview
@@ -111,10 +116,13 @@ export default function Index() {
             />
           ))}
         </View>
+        <View className="p-2 pb-28" id="canteens">
+          <Text className="text-2xl">Canteens</Text>
+          {canteens.map((canteen) => (
+            <CanteenPreview canteen={canteen} key={canteen.id} />
+          ))}
+        </View>
       </ScrollView>
     </View>
   );
-}
-function toSorted(arg0: (a: any, b: any) => number) {
-  throw new Error("Function not implemented.");
 }
