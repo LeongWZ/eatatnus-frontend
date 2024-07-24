@@ -7,7 +7,10 @@ import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { View, Text } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
-import { patchCanteenCollectionAction } from "@/store/reducers/canteenCollection";
+import {
+  loadCanteenCollectionAction,
+  patchCanteenCollectionAction,
+} from "@/store/reducers/canteenCollection";
 
 export default function CanteenEditReview() {
   const params = useGlobalSearchParams();
@@ -36,7 +39,7 @@ export default function CanteenEditReview() {
       editReview(reviewId, formData)
         .then(async (res) => {
           setErrorMessage(null);
-
+          dispatch(loadCanteenCollectionAction());
           dispatch(
             patchCanteenCollectionAction({
               item: await fetchIndividualCanteen(canteenId),

@@ -12,7 +12,7 @@ export default function UserPressable(props: UserPressableProps) {
   return (
     <TouchableOpacity
       className="flex-row items-center space-x-2"
-      onPressOut={onPress}
+      onPress={onPress}
     >
       <Image
         source={

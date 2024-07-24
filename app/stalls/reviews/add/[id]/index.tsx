@@ -7,7 +7,10 @@ import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import { View, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { patchStallCollectionAction } from "@/store/reducers/stallCollection";
+import {
+  loadStallCollectionAction,
+  patchStallCollectionAction,
+} from "@/store/reducers/stallCollection";
 
 export default function StallAddReview() {
   const params = useLocalSearchParams();
@@ -30,7 +33,7 @@ export default function StallAddReview() {
       submitReview({ ...formData, stallId: stallId })
         .then(async (res) => {
           setErrorMessage(null);
-
+          dispatch(loadStallCollectionAction());
           dispatch(
             patchStallCollectionAction({
               item: await fetchIndividualStall(stallId),
@@ -50,9 +53,9 @@ export default function StallAddReview() {
   }
 
   return (
-    <View>
+    <View className="p-2">
       <Text className="text-3xl">Review stall</Text>
-      <Text className="text-2xl">{stall.name}</Text>
+      <Text className="text-2xl mb-2">{stall.name}</Text>
 
       <ReviewForm submitReviewForm={submitReviewForm} />
 

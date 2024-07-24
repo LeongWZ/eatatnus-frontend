@@ -8,6 +8,7 @@ import {
   Pressable,
   FlatList,
   ImageBackground,
+  TouchableOpacity,
 } from "react-native";
 import { Rating } from "@kolking/react-native-rating";
 import * as ImagePicker from "expo-image-picker";
@@ -51,9 +52,26 @@ export default function ReviewForm(props: ReviewFormProps) {
       );
   };
 
+  const addImage = () => {
+    ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    })
+      .then((result) => result.assets ?? [])
+      .then((assets) =>
+        setFormData({
+          ...formData,
+          imageUris: assets
+            .map((asset) => asset.uri)
+            .concat(formData.imageUris),
+        }),
+      );
+  };
+
   return (
     <View>
-      <View className="items-center border m-2">
+      <View className="items-center border">
         <Text className="text-2xl">Rating</Text>
         <Rating
           rating={formData.rating}
@@ -65,7 +83,7 @@ export default function ReviewForm(props: ReviewFormProps) {
         />
       </View>
 
-      <View className="m-2">
+      <View className="mt-2">
         <Text>Description</Text>
         <TextInput
           className="border p-2 rounded"
@@ -101,16 +119,22 @@ export default function ReviewForm(props: ReviewFormProps) {
         style={{ marginVertical: 8, marginLeft: 8 }}
       />
 
-      <View className="items-center m-2">
-        <Pressable
-          onPress={pickImage}
-          className="items-center border rounded-lg py-2 px-10 active:bg-slate-400"
+      <View className="flex-row justify-center space-x-2">
+        <TouchableOpacity
+          onPress={addImage}
+          className="flex-1 justify-center items-center border rounded-lg"
         >
-          <Text className="text-xl">Add images</Text>
-        </Pressable>
+          <Text className="text-xl">Add Image</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={pickImage}
+          className="flex-1 justify-center items-center border rounded-lg"
+        >
+          <Text className="text-xl text-center">Pick images from album</Text>
+        </TouchableOpacity>
       </View>
 
-      <View className="items-end m-2">
+      <View className="items-end mt-4">
         <Button
           title="Submit"
           onPress={async () => submitReviewForm(formData)}

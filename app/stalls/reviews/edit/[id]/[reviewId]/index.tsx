@@ -7,7 +7,10 @@ import React from "react";
 import { View, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { patchStallCollectionAction } from "@/store/reducers/stallCollection";
+import {
+  loadStallCollectionAction,
+  patchStallCollectionAction,
+} from "@/store/reducers/stallCollection";
 
 export default function StallEditReview() {
   const params = useGlobalSearchParams();
@@ -34,6 +37,7 @@ export default function StallEditReview() {
       editReview(reviewId, formData)
         .then(async (res) => {
           setErrorMessage(null);
+          dispatch(loadStallCollectionAction());
           dispatch(
             patchStallCollectionAction({
               item: await fetchIndividualStall(stallId),
