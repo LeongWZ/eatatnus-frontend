@@ -2,7 +2,7 @@ import { Canteen, Stall } from "@/app/types";
 import getAverageRating from "@/utils/getAverageRating";
 import { Link } from "expo-router";
 import React from "react";
-import { Text, Pressable } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import { Rating } from "@kolking/react-native-rating";
 import { RootState } from "@/store";
 import { useSelector } from "react-redux";
@@ -30,16 +30,7 @@ export default function StallPreview(props: StallPreviewProps) {
       }}
       asChild
     >
-      <Pressable
-        className={`
-                border
-                px-2
-                py-4
-                my-2
-                rounded-xl
-                active:bg-slate-400
-                `}
-      >
+      <TouchableOpacity className="border px-2 py-4 my-2 rounded-xl">
         <Text className="text-xl">{stall.name}</Text>
         {includeCanteenName && <Text className="text-l">{canteen?.name}</Text>}
         <Rating
@@ -50,7 +41,7 @@ export default function StallPreview(props: StallPreviewProps) {
           style={{ paddingVertical: 4 }}
         />
         <Text>{stall.description}</Text>
-      </Pressable>
+      </TouchableOpacity>
     </Link>
   );
 }

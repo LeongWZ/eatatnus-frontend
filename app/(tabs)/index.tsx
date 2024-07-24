@@ -90,7 +90,10 @@ export default function Index() {
       );
   };
 
-  if (canteens.length === 0 && canteenCollection.loading) {
+  if (
+    (canteenCollection.items.length === 0 && canteenCollection.loading) ||
+    (stallCollection.items.length === 0 && stallCollection.loading)
+  ) {
     return (
       <View className="flex-1 justify-center items-center">
         <Text className="text-6xl p-6">

@@ -8,6 +8,7 @@ import {
   Pressable,
   Image,
   ImageBackground,
+  TouchableOpacity,
 } from "react-native";
 import * as ImagePicker from "expo-image-picker";
 import Ionicons from "@expo/vector-icons/Ionicons";
@@ -45,9 +46,24 @@ export default function ProfileForm(props: ProfileFormProps) {
       );
   };
 
+  const addImage = () => {
+    ImagePicker.launchCameraAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      quality: 1,
+    })
+      .then((result) => result.assets ?? [])
+      .then((assets) =>
+        setFormData({
+          ...formData,
+          imageUri: assets.at(0)?.uri ?? null,
+        }),
+      );
+  };
+
   return (
-    <View>
-      <View className="m-2">
+    <View className="p-2">
+      <View>
         <Text>Bio</Text>
         <TextInput
           className="border p-2 rounded"
@@ -60,7 +76,7 @@ export default function ProfileForm(props: ProfileFormProps) {
         />
       </View>
 
-      <View className="items-center m-2">
+      <View className="items-center mx-2 my-4">
         {formData.imageUri ? (
           <ImageView
             uri={formData.imageUri}
@@ -77,12 +93,21 @@ export default function ProfileForm(props: ProfileFormProps) {
             style={{ width: 200, height: 200 }}
           />
         )}
-        <Pressable
-          onPress={pickImage}
-          className="items-center border rounded-lg py-2 px-10 m-2 active:bg-slate-400"
+      </View>
+
+      <View className="flex-row justify-center space-x-2">
+        <TouchableOpacity
+          onPress={addImage}
+          className="flex-1 justify-center items-center border rounded-lg"
         >
-          <Text className="text-xl">Add profile image</Text>
-        </Pressable>
+          <Text className="text-xl">Add Image</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={pickImage}
+          className="flex-1 justify-center items-center border rounded-lg"
+        >
+          <Text className="text-xl text-center">Pick images from album</Text>
+        </TouchableOpacity>
       </View>
 
       <View className="items-end m-2">
@@ -107,13 +132,13 @@ function ImageView(props: ImageViewProps) {
         style={{ width: 200, height: 200 }}
       >
         <View className="items-end">
-          <Pressable className="active:bg-slate-600" onPress={onDelete}>
+          <TouchableOpacity onPress={onDelete}>
             <Ionicons
               name="close-circle-outline"
               style={{ color: "red" }}
               size={32}
             />
-          </Pressable>
+          </TouchableOpacity>
         </View>
       </ImageBackground>
     </View>

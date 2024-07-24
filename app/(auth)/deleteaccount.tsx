@@ -45,8 +45,8 @@ export default function DeleteAccount() {
         <Text className="text-2xl mb-2">Delete account</Text>
 
         <Text className="mt-4">
-          Are you sure that you would like to delete your account? All your data
-          will be lost.
+          Are you sure that you would like to delete your account? This action
+          is irreversible.
         </Text>
 
         <View className="flex-row justify-center gap-x-4 mt-5">

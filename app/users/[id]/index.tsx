@@ -62,14 +62,18 @@ export default function UserPage() {
     setLoading(true);
     setErrorMessage(null);
 
-    fetchUser(id)
-      .then((user) => setUser(user))
-      .catch((error) => setErrorMessage("Failed to fetch user: " + error))
-      .then(() => setLoading(false));
+    if (id === auth.user?.id) {
+      setUser(auth.user);
+      setLoading(false);
+    } else {
+      fetchUser(id)
+        .then((user) => setUser(user))
+        .catch((error) => setErrorMessage("Failed to fetch user: " + error))
+        .then(() => setLoading(false));
+    }
   };
 
-  const isFocused = navigation.isFocused();
-  React.useEffect(onRefresh, [id, isFocused]);
+  React.useEffect(onRefresh, [id, auth]);
 
   React.useEffect(() => {
     navigation.setOptions({
@@ -99,7 +103,7 @@ export default function UserPage() {
             <TouchableOpacity>
               <Image
                 source={{ uri: user?.profile.image.url }}
-                className="rounded-full"
+                className="rounded-full m-2"
                 style={{ width: 100, height: 100 }}
               />
             </TouchableOpacity>
@@ -107,7 +111,7 @@ export default function UserPage() {
         ) : (
           <Image
             source={require("@/assets/images/person.png")}
-            className="rounded-full"
+            className="rounded-full m-2"
             style={{ width: 100, height: 100 }}
           />
         )}
@@ -115,7 +119,7 @@ export default function UserPage() {
         {user?.profile &&
           (auth.user?.id === id || auth.user?.role === Role.Admin) && (
             <Link href={`/users/${user?.id}/edit`} asChild>
-              <TouchableOpacity className="border rounded-lg p-2 my-1">
+              <TouchableOpacity className="border rounded-lg p-2 my-2">
                 <Text>Edit Profile</Text>
               </TouchableOpacity>
             </Link>
@@ -123,7 +127,7 @@ export default function UserPage() {
         {!user?.profile &&
           (auth.user?.id === id || auth.user?.role === Role.Admin) && (
             <Link href={`/users/${user?.id}/create`} asChild>
-              <TouchableOpacity className="border rounded-lg p-2 my-1">
+              <TouchableOpacity className="border rounded-lg p-2 my-2">
                 <Text>Create Profile</Text>
               </TouchableOpacity>
             </Link>
@@ -139,7 +143,7 @@ export default function UserPage() {
               asChild
             >
               <TouchableOpacity className="border rounded-lg p-4 my-1">
-                <Text>{canteen.name}</Text>
+                <Text className="text-lg">{canteen.name}</Text>
               </TouchableOpacity>
             </Link>
           );
@@ -151,7 +155,7 @@ export default function UserPage() {
           return (
             <Link key={stall.id} href={`/stalls/${stall.id}/reviews`} asChild>
               <TouchableOpacity className="border rounded-lg p-4 my-1">
-                <Text>{stall.name}</Text>
+                <Text className="text-xl">{stall.name}</Text>
               </TouchableOpacity>
             </Link>
           );

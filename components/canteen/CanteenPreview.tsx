@@ -1,7 +1,7 @@
 import { Canteen } from "@/app/types";
 import { Link } from "expo-router";
 import React from "react";
-import { Text, Pressable } from "react-native";
+import { Text, Pressable, TouchableOpacity } from "react-native";
 import getDistanceToUser from "@/utils/getDistanceToUser";
 
 type CanteenPreviewProps = {
@@ -26,15 +26,7 @@ export default function CanteenPreview({ canteen }: CanteenPreviewProps) {
       }}
       asChild
     >
-      <Pressable
-        className={`
-                border
-                rounded-lg
-                px-2
-                my-2
-                active:bg-slate-400
-                `}
-      >
+      <TouchableOpacity className="border rounded-lg px-2 my-2">
         <Text>{canteen.name}</Text>
         <Text>{canteen.description}</Text>
         <Text>{canteen.location.address}</Text>
@@ -43,7 +35,7 @@ export default function CanteenPreview({ canteen }: CanteenPreviewProps) {
             ? "Calculating distance..."
             : `Distance: ${distanceToUser} meters`}
         </Text>
-      </Pressable>
+      </TouchableOpacity>
     </Link>
   );
 }
