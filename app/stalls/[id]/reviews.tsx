@@ -81,7 +81,7 @@ export default function StallReviews() {
 
       <View className="mx-3">
         <FlatList
-          data={[...stall.reviews].sort((a, b) => (a.id < b.id ? 1 : -1))}
+          data={stall.reviews}
           renderItem={({ item }) => (
             <ReviewCard
               review={item}
