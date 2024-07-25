@@ -39,7 +39,7 @@ export default function CreateUserProfile() {
     }
   };
 
-  React.useEffect(onRefresh, [id]);
+  React.useEffect(onRefresh, [id, auth.user]);
 
   const navigation = useNavigation();
   React.useEffect(() => {

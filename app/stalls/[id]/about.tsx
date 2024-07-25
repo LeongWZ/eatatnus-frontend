@@ -9,8 +9,12 @@ import {
   FlatList,
   ScrollView,
   ActivityIndicator,
+  TouchableOpacity,
+  Alert,
 } from "react-native";
 import { Image } from "expo-image";
+import * as MailComposer from "expo-mail-composer";
+import * as Clipboard from "expo-clipboard";
 import useIdentifiableCollectionReducer from "@/hooks/useIdentifiableCollectionReducer";
 import getMenuImagesAsync from "@/api/firebase-functions/getMenuImagesAsync";
 import FoodView from "@/components/menu/FoodView";
@@ -78,6 +82,35 @@ export default function StallAbout() {
     );
   };
 
+  const sendEmail = () => {
+    MailComposer.composeAsync({
+      recipients: ["feedbackers6226@gmail.com"],
+      subject: `Claim ${stall?.name} as business owner`,
+    }).catch(() =>
+      Alert.alert("Unable To Send Feedback", undefined, [
+        {
+          text: "Copy email",
+          onPress: () => Clipboard.setStringAsync("feedbackers6226@gmail.com"),
+        },
+        { text: "Cancel" },
+      ]),
+    );
+  };
+
+  const createClaimAlert = () => {
+    Alert.alert(
+      "Claim this business",
+      "Email feedbackers6226@gmail.com to claim this stall.",
+      [
+        {
+          text: "Send email",
+          onPress: sendEmail,
+        },
+        { text: "Cancel" },
+      ],
+    );
+  };
+
   const onRefresh = () => {
     if (stall === undefined) {
       return;
@@ -115,7 +148,6 @@ export default function StallAbout() {
           payload: { items: menuImages },
         });
       } catch (error) {
-        console.error(error);
         dispatchMenuImagesAction({
           type: "ERROR",
           payload: {
@@ -134,10 +166,21 @@ export default function StallAbout() {
     <ScrollView className="p-2">
       <View>
         <Text className="text-4xl">{stall.name}</Text>
-        <Text className="text-xl mb-2">{canteen?.name}</Text>
+        <Text className="text-xl">{canteen?.name}</Text>
       </View>
 
-      <View className="pb-52">
+      {auth.isAuthenticated && auth.user?.id !== stall.ownerId && (
+        <View className="flex-row mt-4">
+          <TouchableOpacity
+            className="border rounded p-2"
+            onPress={createClaimAlert}
+          >
+            <Text className="text-sm">Claim this business</Text>
+          </TouchableOpacity>
+        </View>
+      )}
+
+      <View className="mt-4 pb-52">
         <Text className="text-2xl">Menu</Text>
 
         <Text>
