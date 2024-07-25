@@ -1,14 +1,22 @@
+import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
 import { Stall } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
 import { MaterialTopTabs } from "@/components/tabs/MaterialTopTabs";
 import { RootState } from "@/store";
+import {
+  errorStallCollectionAction,
+  loadStallCollectionAction,
+  patchStallCollectionAction,
+} from "@/store/reducers/stallCollection";
 import { useLocalSearchParams, useNavigation } from "expo-router";
 import React from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export default function StallsLayout() {
   const params = useLocalSearchParams();
   const id = parseInt(params.id as string);
+
+  const dispatch = useDispatch();
 
   const stallCollection = useSelector(
     (state: RootState) => state.stallCollection,
@@ -28,6 +36,21 @@ export default function StallsLayout() {
     navigation.setOptions({
       title: stall.name,
     });
+
+    const images = stall.reviews.flatMap((review) => review.images);
+
+    if (images.some((image) => image.url === undefined)) {
+      dispatch(loadStallCollectionAction());
+      fetchIndividualStall(stall.id)
+        .then((stall) => dispatch(patchStallCollectionAction({ item: stall })))
+        .catch((error) =>
+          dispatch(
+            errorStallCollectionAction({
+              errorMessage: "Failed to fetch stall: " + error,
+            }),
+          ),
+        );
+    }
   }, []);
 
   if (stall === undefined) {
