@@ -94,7 +94,7 @@ export default function CanteenReviews() {
         </View>
       </View>
       <FlatList
-        data={[...canteen.reviews].sort((a, b) => (a.id < b.id ? 1 : -1))}
+        data={canteen.reviews}
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         extraData={canteen}

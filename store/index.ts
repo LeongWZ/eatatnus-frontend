@@ -2,14 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import auth from "./reducers/auth";
 import canteenCollection from "./reducers/canteenCollection";
 import stallCollection from "./reducers/stallCollection";
-import caloricTrackerEntryCollection from "./reducers/caloricTrackerEntryCollection";
+import caloricTracker from "./reducers/caloricTracker";
 
 const store = configureStore({
   reducer: {
     auth: auth,
     canteenCollection: canteenCollection,
     stallCollection: stallCollection,
-    caloricTrackerEntryCollection: caloricTrackerEntryCollection,
+    caloricTracker: caloricTracker,
   },
 });
 
