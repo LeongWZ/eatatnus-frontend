@@ -29,7 +29,7 @@ export default function FoodView(props: FoodViewProps) {
 
   const MenuItems = [
     {
-      text: "Save to Caloric Tracker draft",
+      text: "Add to Entry Draft",
       icon: "save",
       onPress: () => saveToCaloricTrackerDraft(food),
     },

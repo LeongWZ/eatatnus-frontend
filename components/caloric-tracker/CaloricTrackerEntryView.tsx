@@ -67,7 +67,6 @@ export default function CaloricTrackerEntryView(
       <Text className="text-2xl">{totalCalories} cal</Text>
       {showFoodInput ? (
         <View>
-          <Text className="text-lg">Food name:</Text>
           <AutocompleteDropdown
             clearOnFocus={false}
             closeOnBlur={true}
@@ -85,6 +84,23 @@ export default function CaloricTrackerEntryView(
             }))}
             onChangeText={(text) => setFoodInput({ name: text })}
             renderItem={renderFoodSuggestion}
+            textInputProps={{
+              placeholder: "Add food name...",
+              autoCorrect: false,
+              autoCapitalize: "none",
+              style: {
+                backgroundColor: "white",
+                color: "black",
+                paddingLeft: 18,
+              },
+            }}
+            inputContainerStyle={{
+              backgroundColor: "white",
+              borderRadius: 25,
+            }}
+            suggestionsListContainerStyle={{
+              backgroundColor: "white",
+            }}
           />
           <View className="flex-row space-x-2 my-2">
             <Pressable
@@ -109,7 +125,7 @@ export default function CaloricTrackerEntryView(
           className="items-center border rounded-lg py-2 px-10 active:bg-slate-400"
           onPress={() => setShowFoodInput(true)}
         >
-          <Text className="text-lg">+ Menu item</Text>
+          <Text className="text-lg">Add item</Text>
         </Pressable>
       )}
       {entry.foods.map((item) => (
@@ -123,9 +139,9 @@ export default function CaloricTrackerEntryView(
           key={item.id}
         />
       ))}
-      <View className="flex-row">
+      <View className="items-center">
         <TouchableOpacity
-          className="my-2 p-2 border-2 border-red-400 rounded"
+          className="my-2 p-2 border-2 border-red-400 rounded-lg"
           onPress={deleteEntry}
         >
           <Text className="text-red-800 text-lg">Delete Entry</Text>

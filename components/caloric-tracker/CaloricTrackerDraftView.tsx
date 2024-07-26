@@ -53,7 +53,7 @@ export default function CaloricTrackerDraftView(
       return;
     }
 
-    searchFoods(foodInput.name, 5)
+    searchFoods(foodInput.name, 10)
       .then(setSuggestedFoods)
       .catch((error: Error) => Alert.alert(error.message));
   }, [foodInput.name]);
@@ -63,7 +63,6 @@ export default function CaloricTrackerDraftView(
       <Text className="text-lg">Entry Draft</Text>
       {showFoodInput ? (
         <View>
-          <Text className="text-lg">Food name:</Text>
           <AutocompleteDropdown
             clearOnFocus={false}
             closeOnBlur={true}
@@ -81,6 +80,23 @@ export default function CaloricTrackerDraftView(
             }))}
             onChangeText={(text) => setFoodInput({ name: text })}
             renderItem={renderFoodSuggestion}
+            textInputProps={{
+              placeholder: "Add food name...",
+              autoCorrect: false,
+              autoCapitalize: "none",
+              style: {
+                backgroundColor: "white",
+                color: "black",
+                paddingLeft: 18,
+              },
+            }}
+            inputContainerStyle={{
+              backgroundColor: "white",
+              borderRadius: 25,
+            }}
+            suggestionsListContainerStyle={{
+              backgroundColor: "white",
+            }}
           />
           <View className="flex-row space-x-2 my-2">
             <Pressable
@@ -93,10 +109,7 @@ export default function CaloricTrackerDraftView(
             </Pressable>
             <Pressable
               className="border-2 rounded border-blue-400 active:bg-blue-100 p-2"
-              onPress={() => {
-                editDraft([foodInput, ...foods]);
-                setFoodInput({ name: "" });
-              }}
+              onPress={() => editDraft([foodInput, ...foods])}
               disabled={foodInput.name === ""}
             >
               <Text className="text-lg text-blue-700">Save</Text>
@@ -108,7 +121,7 @@ export default function CaloricTrackerDraftView(
           className="items-center border rounded-lg py-2 px-10 active:bg-slate-400"
           onPress={() => setShowFoodInput(true)}
         >
-          <Text className="text-lg">+ Menu item</Text>
+          <Text className="text-lg">Add item</Text>
         </Pressable>
       )}
       {foods.map((food, index) => (
