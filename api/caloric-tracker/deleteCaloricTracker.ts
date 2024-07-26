@@ -1,7 +1,6 @@
-import { CaloricTracker } from "@/app/types";
 import { User as FirebaseUser, getAuth } from "firebase/auth";
 
-export default function createCaloricTracker(): Promise<CaloricTracker> {
+export default function deleteCaloricTracker() {
   const firebaseUser: FirebaseUser | null = getAuth().currentUser;
 
   if (!firebaseUser) {
@@ -14,7 +13,7 @@ export default function createCaloricTracker(): Promise<CaloricTracker> {
       fetch(
         "https://eatatnus-backend-xchix.ondigitalocean.app/api/caloric-tracker",
         {
-          method: "POST",
+          method: "DELETE",
           headers: {
             Accept: "application/json",
             Authorization: `Bearer ${token}`,
@@ -27,6 +26,6 @@ export default function createCaloricTracker(): Promise<CaloricTracker> {
       if (result["error"]) {
         throw new Error(result.error);
       }
-      return result.data as CaloricTracker;
+      return result.data;
     });
 }

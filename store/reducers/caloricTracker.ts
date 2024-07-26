@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { CaloricTrackerEntry, CaloricTracker } from "@/app/types";
+import { CaloricTrackerEntry, CaloricTracker, Food } from "@/app/types";
 
 type CaloricTrackerState = {
   id: number | null;
   userId: number | null;
   caloricTrackerEntries: CaloricTrackerEntry[];
+  draft: Omit<Food, "id">[];
   loading: boolean;
   errorMessage: string | null;
   isUnassigned: boolean;
@@ -14,6 +15,7 @@ const initialState: CaloricTrackerState = {
   id: null,
   userId: null,
   caloricTrackerEntries: [],
+  draft: [],
   loading: false,
   errorMessage: null,
   isUnassigned: true,
@@ -34,17 +36,27 @@ const slice = createSlice({
         payload: { caloricTracker },
       }: { payload: { caloricTracker: CaloricTracker } },
     ) => ({
+      ...state,
       ...caloricTracker,
       loading: false,
       errorMessage: null,
       isUnassigned: false,
+    }),
+    deleteCaloricTrackerAction: (state: CaloricTrackerState) => ({
+      id: null,
+      userId: null,
+      caloricTrackerEntries: [],
+      draft: [],
+      loading: false,
+      errorMessage: null,
+      isUnassigned: true,
     }),
     editCaloricTrackerEntryAction: (
       state: CaloricTrackerState,
       { payload: { item } }: { payload: { item: CaloricTrackerEntry } },
     ) => ({
       ...state,
-      items: state.caloricTrackerEntries.map(
+      caloricTrackerEntries: state.caloricTrackerEntries.map(
         (caloricTrackerEntry: CaloricTrackerEntry) =>
           caloricTrackerEntry.id === item?.id ? item : caloricTrackerEntry,
       ),
@@ -56,7 +68,21 @@ const slice = createSlice({
       { payload: { item } }: { payload: { item: CaloricTrackerEntry } },
     ) => ({
       ...state,
-      items: [item].concat(state.caloricTrackerEntries),
+      caloricTrackerEntries: [item, ...state.caloricTrackerEntries],
+      draft: [],
+      loading: false,
+      errorMessage: null,
+      isUnassigned: false,
+    }),
+    deleteCaloricTrackerEntryAction: (
+      state: CaloricTrackerState,
+      { payload: { item } }: { payload: { item: CaloricTrackerEntry } },
+    ) => ({
+      ...state,
+      caloricTrackerEntries: state.caloricTrackerEntries.filter(
+        (entry) => entry.id !== item.id,
+      ),
+      draft: [],
       loading: false,
       errorMessage: null,
       isUnassigned: false,
@@ -69,15 +95,27 @@ const slice = createSlice({
       loading: false,
       errorMessage: errorMessage,
     }),
+    putCaloricTrackerDraftAction: (
+      state: CaloricTrackerState,
+      { payload: { foods } }: { payload: { foods: Omit<Food, "id">[] } },
+    ) => ({
+      ...state,
+      draft: foods,
+      loading: false,
+      errorMessage: null,
+    }),
   },
 });
 
 export const {
   loadCaloricTrackerAction,
   putCaloricTrackerAction,
+  deleteCaloricTrackerAction,
   editCaloricTrackerEntryAction,
   addCaloricTrackerEntryAction,
+  deleteCaloricTrackerEntryAction,
   errorCaloricTrackerAction,
+  putCaloricTrackerDraftAction,
 } = slice.actions;
 
 export default slice.reducer;

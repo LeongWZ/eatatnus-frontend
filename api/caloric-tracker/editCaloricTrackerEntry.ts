@@ -1,7 +1,10 @@
-import { CaloricTracker } from "@/app/types";
+import { CaloricTrackerEntry, Food } from "@/app/types";
 import { User as FirebaseUser, getAuth } from "firebase/auth";
 
-export default function createCaloricTracker(): Promise<CaloricTracker> {
+export default async function editCaloricTrackerEntry(
+  caloricTrackerEntryId: number,
+  foods: Omit<Food, "id">[],
+): Promise<CaloricTrackerEntry> {
   const firebaseUser: FirebaseUser | null = getAuth().currentUser;
 
   if (!firebaseUser) {
@@ -12,13 +15,18 @@ export default function createCaloricTracker(): Promise<CaloricTracker> {
     .getIdToken()
     .then((token) =>
       fetch(
-        "https://eatatnus-backend-xchix.ondigitalocean.app/api/caloric-tracker",
+        "https://eatatnus-backend-xchix.ondigitalocean.app/api/caloric-tracker/entry",
         {
-          method: "POST",
+          method: "PATCH",
           headers: {
             Accept: "application/json",
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
+          body: JSON.stringify({
+            caloricTrackerEntryId: caloricTrackerEntryId,
+            foods: foods,
+          }),
         },
       ),
     )
@@ -27,6 +35,6 @@ export default function createCaloricTracker(): Promise<CaloricTracker> {
       if (result["error"]) {
         throw new Error(result.error);
       }
-      return result.data as CaloricTracker;
+      return result.data as CaloricTrackerEntry;
     });
 }

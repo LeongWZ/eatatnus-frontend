@@ -27,6 +27,8 @@ export default function ReviewCard(props: ReviewProps) {
   const auth = useSelector((state: RootState) => state.auth);
   const user = auth.user;
 
+  const localeString: string = new Date(review.createdAt).toLocaleString();
+
   const copyToClipboard = () => {
     Clipboard.setStringAsync(`${review.description}`);
   };
@@ -71,6 +73,7 @@ export default function ReviewCard(props: ReviewProps) {
             <Text>Deleted user</Text>
           )}
         </View>
+        <Text className="my-2">{localeString}</Text>
         <Rating
           size={20}
           rating={review.rating}

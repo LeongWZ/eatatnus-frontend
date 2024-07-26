@@ -6,7 +6,7 @@ type AddFoodViewProps = {
   submitCreate: (food: Omit<Food, "id">) => void;
 };
 
-export default function EditFoodView(props: AddFoodViewProps) {
+export default function AddFoodView(props: AddFoodViewProps) {
   const { submitCreate } = props;
 
   const [foodInput, setFoodInput] = React.useState<Omit<Food, "id">>({

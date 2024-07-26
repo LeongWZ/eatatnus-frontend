@@ -1,14 +1,21 @@
 import createCaloricTracker from "@/api/caloric-tracker/createCaloricTracker";
-import fetchCaloricTracker from "@/api/caloric-tracker/fetchCaloricTracker";
+import createCaloricTrackerEntry from "@/api/caloric-tracker/createCaloricTrackerEntry";
+import deleteCaloricTrackerEntry from "@/api/caloric-tracker/deleteCaloricTrackerEntry";
+import editCaloricTrackerEntry from "@/api/caloric-tracker/editCaloricTrackerEntry";
+import CaloricTrackerDraftView from "@/components/caloric-tracker/CaloricTrackerDraftView";
+import CaloricTrackerEntryView from "@/components/caloric-tracker/CaloricTrackerEntryView";
 import { RootState } from "@/store";
 import {
   errorCaloricTrackerAction,
-  loadCaloricTrackerAction,
   putCaloricTrackerAction,
+  putCaloricTrackerDraftAction,
+  addCaloricTrackerEntryAction,
+  deleteCaloricTrackerEntryAction,
+  editCaloricTrackerEntryAction,
 } from "@/store/reducers/caloricTracker";
 import { Link } from "expo-router";
 import React from "react";
-import { View, Text, TouchableOpacity } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function CaloricTracker() {
@@ -19,26 +26,6 @@ export default function CaloricTracker() {
   const caloricTracker = useSelector(
     (state: RootState) => state.caloricTracker,
   );
-
-  React.useEffect(() => {
-    dispatch(loadCaloricTrackerAction());
-
-    if (auth.isAuthenticated && caloricTracker.isUnassigned) {
-      fetchCaloricTracker()
-        .then(
-          (caloricTracker) =>
-            caloricTracker &&
-            dispatch(putCaloricTrackerAction({ caloricTracker })),
-        )
-        .catch((error: Error) =>
-          dispatch(
-            errorCaloricTrackerAction({
-              errorMessage: "Failed to fetch caloric tracker: " + error.message,
-            }),
-          ),
-        );
-    }
-  }, [auth]);
 
   if (!auth.isAuthenticated) {
     return (
@@ -58,9 +45,6 @@ export default function CaloricTracker() {
   if (caloricTracker.isUnassigned) {
     return (
       <View className="flex-1 justify-center items-center">
-        <Text className="text-lg text-center px-10">
-          Create caloric tracker
-        </Text>
         <TouchableOpacity
           className="border rounded-lg py-2 px-10 mt-4"
           onPress={() =>
@@ -80,8 +64,9 @@ export default function CaloricTracker() {
               )
           }
         >
-          <Text className="text-xl">Create</Text>
+          <Text className="text-xl">Create Caloric Tracker</Text>
         </TouchableOpacity>
+
         {caloricTracker.errorMessage && (
           <Text className="text-red-400 m-2">
             {caloricTracker.errorMessage}
@@ -92,8 +77,54 @@ export default function CaloricTracker() {
   }
 
   return (
-    <View>
-      <Text className="xl">Caloric Tracker</Text>
-    </View>
+    <ScrollView className="p-2">
+      <CaloricTrackerDraftView
+        foods={caloricTracker.draft}
+        editDraft={(foods) => dispatch(putCaloricTrackerDraftAction({ foods }))}
+        submitDraft={(foods) => {
+          createCaloricTrackerEntry(foods)
+            .then((entry) =>
+              dispatch(addCaloricTrackerEntryAction({ item: entry })),
+            )
+            .catch((error: Error) => {
+              dispatch(
+                errorCaloricTrackerAction({ errorMessage: error.message }),
+              );
+              Alert.alert("Failed to create entry: " + error.message);
+            });
+        }}
+      />
+
+      {caloricTracker.caloricTrackerEntries.map((entry) => (
+        <CaloricTrackerEntryView
+          entry={entry}
+          key={entry.id}
+          deleteEntry={() =>
+            deleteCaloricTrackerEntry(entry.id)
+              .then(() =>
+                dispatch(deleteCaloricTrackerEntryAction({ item: entry })),
+              )
+              .catch((error: Error) => {
+                dispatch(
+                  errorCaloricTrackerAction({ errorMessage: error.message }),
+                );
+                Alert.alert("Failed to delete entry: " + error.message);
+              })
+          }
+          editEntry={(foods) =>
+            editCaloricTrackerEntry(entry.id, foods)
+              .then((entry) =>
+                dispatch(editCaloricTrackerEntryAction({ item: entry })),
+              )
+              .catch((error: Error) => {
+                dispatch(
+                  errorCaloricTrackerAction({ errorMessage: error.message }),
+                );
+                Alert.alert("Failed to delete entry: " + error.message);
+              })
+          }
+        />
+      ))}
+    </ScrollView>
   );
 }

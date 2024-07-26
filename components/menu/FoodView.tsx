@@ -1,7 +1,7 @@
-import { Food, Role, Stall } from "@/app/types";
+import { Food, Role } from "@/app/types";
 import { RootState } from "@/store";
 import React from "react";
-import { View, Text, TextInput, Button, Pressable } from "react-native";
+import { View, Text, TextInput, Pressable } from "react-native";
 import { useSelector } from "react-redux";
 
 // @ts-expect-error: No declaration file for module
@@ -13,10 +13,12 @@ type FoodViewProps = {
   ownerId?: number | null;
   submitEdit: (food: Food) => void;
   submitDelete: (food: Food) => void;
+  saveToCaloricTrackerDraft: (food: Food) => void;
 };
 
 export default function FoodView(props: FoodViewProps) {
-  const { food, ownerId, submitDelete, submitEdit } = props;
+  const { food, ownerId, submitDelete, submitEdit, saveToCaloricTrackerDraft } =
+    props;
 
   const [editMode, setEditMode] = React.useState<boolean>(false);
 
@@ -26,7 +28,11 @@ export default function FoodView(props: FoodViewProps) {
   const [foodVar, setFoodVar] = React.useState<Food>(food);
 
   const MenuItems = [
-    { text: "Save to Caloric Tracker", icon: "save", onPress: () => {} },
+    {
+      text: "Save to Caloric Tracker draft",
+      icon: "save",
+      onPress: () => saveToCaloricTrackerDraft(food),
+    },
     ...(user?.id === ownerId || user?.role === Role.Admin
       ? [
           { text: "Edit", icon: "edit", onPress: () => setEditMode(true) },
@@ -85,20 +91,6 @@ function EditFoodView(props: EditFoodViewProps) {
           className="border rounded p-2 text-xl"
           onChangeText={(text) => setEditedFood({ ...editedFood, name: text })}
           value={editedFood.name}
-        />
-      </View>
-      <View>
-        <Text className="text-lg">Calories:</Text>
-        <TextInput
-          className="border rounded p-2 text-xl"
-          keyboardType="numeric"
-          onChangeText={(text) =>
-            setEditedFood({
-              ...editedFood,
-              calories: parseInt(text) || null,
-            })
-          }
-          value={editedFood.calories?.toString()}
         />
       </View>
       <View className="flex-row space-x-4">
