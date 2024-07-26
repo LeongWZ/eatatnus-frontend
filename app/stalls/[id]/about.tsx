@@ -29,6 +29,7 @@ import {
   patchStallCollectionAction,
 } from "@/store/reducers/stallCollection";
 import createMenu from "@/api/menus/createMenu";
+import { putCaloricTrackerDraftAction } from "@/store/reducers/caloricTracker";
 
 export default function StallAbout() {
   const params = useGlobalSearchParams();
@@ -53,6 +54,10 @@ export default function StallAbout() {
 
   const canteen: Canteen | undefined = canteenCollection.items.find(
     (canteen) => canteen.id === stall?.canteenId,
+  );
+
+  const caloricTracker = useSelector(
+    (state: RootState) => state.caloricTracker,
   );
 
   const [menuImages, dispatchMenuImagesAction] =
@@ -217,6 +222,13 @@ export default function StallAbout() {
             ownerId={stall.ownerId}
             submitDelete={deleteFoodFn(stall, onRefresh)}
             submitEdit={editFoodFn(stall, onRefresh)}
+            saveToCaloricTrackerDraft={() =>
+              dispatch(
+                putCaloricTrackerDraftAction({
+                  foods: [...caloricTracker.draft, item],
+                }),
+              )
+            }
             key={item.id}
           />
         ))}

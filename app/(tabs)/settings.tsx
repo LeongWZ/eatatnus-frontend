@@ -6,6 +6,10 @@ import { useSelector } from "react-redux";
 export default function SettingsPage() {
   const auth = useSelector((state: RootState) => state.auth);
 
+  const caloricTracker = useSelector(
+    (state: RootState) => state.caloricTracker,
+  );
+
   return (
     <View className="items-center">
       <Text className="text-6xl py-12">
@@ -25,6 +29,13 @@ export default function SettingsPage() {
                 <Text className="text-xl">View Profile</Text>
               </TouchableOpacity>
             </Link>
+            {!caloricTracker.isUnassigned && (
+              <Link href={`/(caloric-tracker)/delete-caloric-tracker`} asChild>
+                <TouchableOpacity className="items-center border rounded-lg py-2 px-10 active:bg-slate-400">
+                  <Text className="text-xl">Delete Caloric Tracker</Text>
+                </TouchableOpacity>
+              </Link>
+            )}
             <Link href="/signout" asChild>
               <Pressable className="items-center border rounded-lg py-2 px-10 active:bg-slate-400">
                 <Text className="text-xl">Sign Out</Text>

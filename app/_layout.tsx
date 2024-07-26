@@ -2,15 +2,14 @@ import { Stack } from "expo-router";
 import React from "react";
 import ComposeProviders from "@/components/providers/ComposeProviders";
 import HoldMenuProvider from "@/components/providers/HoldMenuProvider";
-import { Provider, useDispatch } from "react-redux";
-import store from "@/store";
+import { Provider, useDispatch, useSelector } from "react-redux";
+import store, { RootState } from "@/store";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth as firebaseAuth } from "../firebaseConfig";
 import {
   signInAction,
   signOutAction,
   putUserDataAction,
-  loadAuthAction,
   errorAuthAction,
 } from "@/store/reducers/auth";
 import {
@@ -26,6 +25,13 @@ import {
 } from "@/store/reducers/stallCollection";
 import fetchStalls from "@/api/stalls/fetchStalls";
 import fetchUserPersonalData from "@/api/users/fetchUserPersonalData";
+import {
+  errorCaloricTrackerAction,
+  loadCaloricTrackerAction,
+  putCaloricTrackerAction,
+} from "@/store/reducers/caloricTracker";
+import fetchCaloricTracker from "@/api/caloric-tracker/fetchCaloricTracker";
+import AutocompleteDropdownContextProvider from "@/components/providers/AutocompleteDropdownContextProvider";
 
 export default function RootLayout() {
   return (
@@ -33,8 +39,11 @@ export default function RootLayout() {
       <HydrateAuth />
       <HydrateCanteenCollection />
       <HydrateStallCollection />
+      <HydrateCaloricTracker />
 
-      <ComposeProviders providers={[HoldMenuProvider]}>
+      <ComposeProviders
+        providers={[HoldMenuProvider, AutocompleteDropdownContextProvider]}
+      >
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         </Stack>
@@ -109,6 +118,36 @@ function HydrateStallCollection() {
         ),
       );
   }, []);
+
+  return <></>;
+}
+
+function HydrateCaloricTracker() {
+  const dispatch = useDispatch();
+
+  const auth = useSelector((state: RootState) => state.auth);
+  const caloricTracker = useSelector(
+    (state: RootState) => state.caloricTracker,
+  );
+
+  React.useEffect(() => {
+    if (auth.isAuthenticated && caloricTracker.isUnassigned) {
+      dispatch(loadCaloricTrackerAction());
+      fetchCaloricTracker()
+        .then(
+          (caloricTracker) =>
+            caloricTracker &&
+            dispatch(putCaloricTrackerAction({ caloricTracker })),
+        )
+        .catch((error: Error) =>
+          dispatch(
+            errorCaloricTrackerAction({
+              errorMessage: "Failed to fetch caloric tracker: " + error.message,
+            }),
+          ),
+        );
+    }
+  }, [auth.isAuthenticated]);
 
   return <></>;
 }
