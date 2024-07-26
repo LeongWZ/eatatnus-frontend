@@ -21,6 +21,7 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => (
             <FontAwesome6 size={28} name="nutritionix" color={color} />
           ),
+          tabBarHideOnKeyboard: true,
         }}
       />
       <Tabs.Screen

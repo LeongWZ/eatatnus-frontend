@@ -15,8 +15,9 @@ import {
 } from "@/store/reducers/caloricTracker";
 import { Link } from "expo-router";
 import React from "react";
-import { View, Text, TouchableOpacity, ScrollView, Alert } from "react-native";
+import { View, Text, TouchableOpacity, Alert, SectionList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
+import { CaloricTrackerEntry, Food } from "../types";
 
 export default function CaloricTracker() {
   const dispatch = useDispatch();
@@ -26,6 +27,48 @@ export default function CaloricTracker() {
   const caloricTracker = useSelector(
     (state: RootState) => state.caloricTracker,
   );
+
+  const editDraft = (foods: Omit<Food, "id">[]) =>
+    dispatch(putCaloricTrackerDraftAction({ foods }));
+
+  const submitDraft = (foods: Omit<Food, "id">[]) =>
+    createCaloricTrackerEntry(foods)
+      .then((entry) => dispatch(addCaloricTrackerEntryAction({ item: entry })))
+      .catch((error: Error) => {
+        dispatch(
+          errorCaloricTrackerAction({
+            errorMessage: error.message,
+          }),
+        );
+        Alert.alert("Failed to create entry: " + error.message);
+      });
+
+  const deleteEntryFn = (entry: CaloricTrackerEntry) => () =>
+    deleteCaloricTrackerEntry(entry.id)
+      .then(() => dispatch(deleteCaloricTrackerEntryAction({ item: entry })))
+      .catch((error: Error) => {
+        dispatch(
+          errorCaloricTrackerAction({
+            errorMessage: error.message,
+          }),
+        );
+        Alert.alert("Failed to delete entry: " + error.message);
+      });
+
+  const editEntryFn =
+    (entry: CaloricTrackerEntry) => (foods: Omit<Food, "id">[]) =>
+      editCaloricTrackerEntry(entry.id, foods)
+        .then((entry) =>
+          dispatch(editCaloricTrackerEntryAction({ item: entry })),
+        )
+        .catch((error: Error) => {
+          dispatch(
+            errorCaloricTrackerAction({
+              errorMessage: error.message,
+            }),
+          );
+          Alert.alert("Failed to delete entry: " + error.message);
+        });
 
   if (!auth.isAuthenticated) {
     return (
@@ -77,54 +120,42 @@ export default function CaloricTracker() {
   }
 
   return (
-    <ScrollView className="p-2">
-      <CaloricTrackerDraftView
-        foods={caloricTracker.draft}
-        editDraft={(foods) => dispatch(putCaloricTrackerDraftAction({ foods }))}
-        submitDraft={(foods) => {
-          createCaloricTrackerEntry(foods)
-            .then((entry) =>
-              dispatch(addCaloricTrackerEntryAction({ item: entry })),
-            )
-            .catch((error: Error) => {
-              dispatch(
-                errorCaloricTrackerAction({ errorMessage: error.message }),
-              );
-              Alert.alert("Failed to create entry: " + error.message);
-            });
-        }}
+    <View className="p-2">
+      <SectionList
+        sections={[
+          {
+            data: [
+              // dummy data to make the section list work
+              {
+                id: NaN,
+                createdAt: "",
+                updatedAt: "",
+                foods: [],
+                caloricTrackerId: NaN,
+              },
+            ],
+            renderItem: ({ item }) => (
+              <CaloricTrackerDraftView
+                foods={caloricTracker.draft}
+                editDraft={editDraft}
+                submitDraft={submitDraft}
+              />
+            ),
+          },
+          {
+            data: caloricTracker.caloricTrackerEntries,
+            renderItem: ({ item }) => (
+              <CaloricTrackerEntryView
+                entry={item}
+                key={item.id}
+                deleteEntry={deleteEntryFn(item)}
+                editEntry={editEntryFn(item)}
+              />
+            ),
+          },
+        ]}
+        keyExtractor={(item, index) => item.id.toString() + index}
       />
-
-      {caloricTracker.caloricTrackerEntries.map((entry) => (
-        <CaloricTrackerEntryView
-          entry={entry}
-          key={entry.id}
-          deleteEntry={() =>
-            deleteCaloricTrackerEntry(entry.id)
-              .then(() =>
-                dispatch(deleteCaloricTrackerEntryAction({ item: entry })),
-              )
-              .catch((error: Error) => {
-                dispatch(
-                  errorCaloricTrackerAction({ errorMessage: error.message }),
-                );
-                Alert.alert("Failed to delete entry: " + error.message);
-              })
-          }
-          editEntry={(foods) =>
-            editCaloricTrackerEntry(entry.id, foods)
-              .then((entry) =>
-                dispatch(editCaloricTrackerEntryAction({ item: entry })),
-              )
-              .catch((error: Error) => {
-                dispatch(
-                  errorCaloricTrackerAction({ errorMessage: error.message }),
-                );
-                Alert.alert("Failed to delete entry: " + error.message);
-              })
-          }
-        />
-      ))}
-    </ScrollView>
+    </View>
   );
 }
