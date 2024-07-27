@@ -1,9 +1,11 @@
-import { CaloricTrackerEntry, Food } from "@/app/types";
+import { CaloricTrackerEntry, FoodsOnCaloricTrackerEntries } from "@/app/types";
+import DraftItem from "@/store/interfaces/DraftItem";
 import { User as FirebaseUser, getAuth } from "firebase/auth";
 
 export default async function editCaloricTrackerEntry(
   caloricTrackerEntryId: number,
-  foods: Omit<Food, "id">[],
+  items: FoodsOnCaloricTrackerEntries[],
+  newItems?: DraftItem[],
 ): Promise<CaloricTrackerEntry> {
   const firebaseUser: FirebaseUser | null = getAuth().currentUser;
 
@@ -25,7 +27,8 @@ export default async function editCaloricTrackerEntry(
           },
           body: JSON.stringify({
             caloricTrackerEntryId: caloricTrackerEntryId,
-            foods: foods,
+            items: items,
+            ...(newItems && { newItems: newItems }),
           }),
         },
       ),

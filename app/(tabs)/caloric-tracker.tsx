@@ -17,7 +17,8 @@ import { Link } from "expo-router";
 import React from "react";
 import { View, Text, TouchableOpacity, Alert, SectionList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
-import { CaloricTrackerEntry, Food } from "../types";
+import { CaloricTrackerEntry, FoodsOnCaloricTrackerEntries } from "../types";
+import DraftItem from "@/store/interfaces/DraftItem";
 
 export default function CaloricTracker() {
   const dispatch = useDispatch();
@@ -28,11 +29,11 @@ export default function CaloricTracker() {
     (state: RootState) => state.caloricTracker,
   );
 
-  const editDraft = (foods: Omit<Food, "id">[]) =>
-    dispatch(putCaloricTrackerDraftAction({ foods }));
+  const editDraft = (items: DraftItem[]) =>
+    dispatch(putCaloricTrackerDraftAction({ items }));
 
-  const submitDraft = (foods: Omit<Food, "id">[]) =>
-    createCaloricTrackerEntry(foods)
+  const submitDraft = (items: DraftItem[]) =>
+    createCaloricTrackerEntry(items)
       .then((entry) => dispatch(addCaloricTrackerEntryAction({ item: entry })))
       .catch((error: Error) => {
         dispatch(
@@ -40,7 +41,7 @@ export default function CaloricTracker() {
             errorMessage: error.message,
           }),
         );
-        Alert.alert("Failed to create entry: " + error.message);
+        Alert.alert(`Failed to create entry: ${error.message}`);
       });
 
   const deleteEntryFn = (entry: CaloricTrackerEntry) => () =>
@@ -52,12 +53,13 @@ export default function CaloricTracker() {
             errorMessage: error.message,
           }),
         );
-        Alert.alert("Failed to delete entry: " + error.message);
+        Alert.alert(`Failed to create entry: ${error.message}`);
       });
 
   const editEntryFn =
-    (entry: CaloricTrackerEntry) => (foods: Omit<Food, "id">[]) =>
-      editCaloricTrackerEntry(entry.id, foods)
+    (entry: CaloricTrackerEntry) =>
+    (items: FoodsOnCaloricTrackerEntries[], newItems?: DraftItem[]) =>
+      editCaloricTrackerEntry(entry.id, items, newItems)
         .then((entry) =>
           dispatch(editCaloricTrackerEntryAction({ item: entry })),
         )
@@ -136,7 +138,7 @@ export default function CaloricTracker() {
             ],
             renderItem: ({ item }) => (
               <CaloricTrackerDraftView
-                foods={caloricTracker.draft}
+                items={caloricTracker.draft}
                 editDraft={editDraft}
                 submitDraft={submitDraft}
               />

@@ -1,7 +1,7 @@
 import { Canteen } from "@/app/types";
 import { Link } from "expo-router";
 import React from "react";
-import { Text, Pressable, TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import getDistanceToUser from "@/utils/getDistanceToUser";
 
 type CanteenPreviewProps = {

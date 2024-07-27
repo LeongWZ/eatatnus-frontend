@@ -225,7 +225,7 @@ export default function StallAbout() {
             saveToCaloricTrackerDraft={() =>
               dispatch(
                 putCaloricTrackerDraftAction({
-                  foods: [...caloricTracker.draft, item],
+                  items: [...caloricTracker.draft, { food: item }],
                 }),
               )
             }

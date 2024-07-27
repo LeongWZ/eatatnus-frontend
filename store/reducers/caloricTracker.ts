@@ -1,11 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { CaloricTrackerEntry, CaloricTracker, Food } from "@/app/types";
+import { CaloricTrackerEntry, CaloricTracker } from "@/app/types";
+import DraftItem from "../interfaces/DraftItem";
 
 type CaloricTrackerState = {
   id: number | null;
   userId: number | null;
   caloricTrackerEntries: CaloricTrackerEntry[];
-  draft: Omit<Food, "id">[];
+  draft: DraftItem[];
   loading: boolean;
   errorMessage: string | null;
   isUnassigned: boolean;
@@ -97,10 +98,10 @@ const slice = createSlice({
     }),
     putCaloricTrackerDraftAction: (
       state: CaloricTrackerState,
-      { payload: { foods } }: { payload: { foods: Omit<Food, "id">[] } },
+      { payload: { items } }: { payload: { items: DraftItem[] } },
     ) => ({
       ...state,
-      draft: foods,
+      draft: items,
       loading: false,
       errorMessage: null,
     }),

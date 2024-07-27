@@ -108,6 +108,13 @@ export type CaloricTrackerEntry = {
   id: number;
   createdAt: string;
   updatedAt: string;
-  foods: Food[];
+  foods: FoodsOnCaloricTrackerEntries[];
   caloricTrackerId: number;
+};
+
+export type FoodsOnCaloricTrackerEntries = {
+  count: number;
+  food: Food;
+  foodId: number;
+  caloricTrackerEntryId: number;
 };
