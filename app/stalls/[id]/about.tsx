@@ -31,6 +31,7 @@ import {
 import createMenu from "@/api/menus/createMenu";
 import { putCaloricTrackerDraftAction } from "@/store/reducers/caloricTracker";
 import { isEqual } from "lodash";
+import summariseReviews from "@/api/firebase-functions/summariseReviews";
 
 export default function StallAbout() {
   const params = useGlobalSearchParams();
@@ -71,6 +72,8 @@ export default function StallAbout() {
   const menuFoodItems = [...(stall?.menu?.items ?? [])].sort(
     (a, b) => b.id - a.id,
   );
+
+  const [reviewSummary, setReviewSummary] = React.useState<string>("");
 
   const renderMenuImage = ({ item }: { item: ImageType }) => {
     return (
@@ -137,6 +140,8 @@ export default function StallAbout() {
   React.useEffect(() => {
     setMenuImagesAsync();
 
+    summariseReviews(stall?.reviews ?? []).then(setReviewSummary);
+
     async function setMenuImagesAsync() {
       if (menuImages.loading) {
         // prevent race condition or do not process empty array
@@ -185,6 +190,10 @@ export default function StallAbout() {
           </TouchableOpacity>
         </View>
       )}
+
+      <View className="mt-4">
+        <Text>{reviewSummary}</Text>
+      </View>
 
       <View className="mt-4 pb-52">
         <Text className="text-2xl">Menu</Text>
