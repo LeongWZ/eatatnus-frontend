@@ -1,8 +1,9 @@
-import { CaloricTrackerEntry, Food } from "@/app/types";
+import { CaloricTrackerEntry } from "@/app/types";
+import DraftItem from "@/store/interfaces/DraftItem";
 import { User as FirebaseUser, getAuth } from "firebase/auth";
 
 export default async function createCaloricTrackerEntry(
-  foods: Omit<Food, "id">[],
+  items: DraftItem[],
 ): Promise<CaloricTrackerEntry> {
   const firebaseUser: FirebaseUser | null = getAuth().currentUser;
 
@@ -22,7 +23,7 @@ export default async function createCaloricTrackerEntry(
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ foods: foods }),
+          body: JSON.stringify({ items: items }),
         },
       ),
     )

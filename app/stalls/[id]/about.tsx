@@ -30,6 +30,7 @@ import {
 } from "@/store/reducers/stallCollection";
 import createMenu from "@/api/menus/createMenu";
 import { putCaloricTrackerDraftAction } from "@/store/reducers/caloricTracker";
+import { isEqual } from "lodash";
 
 export default function StallAbout() {
   const params = useGlobalSearchParams();
@@ -222,13 +223,18 @@ export default function StallAbout() {
             ownerId={stall.ownerId}
             submitDelete={deleteFoodFn(stall, onRefresh)}
             submitEdit={editFoodFn(stall, onRefresh)}
-            saveToCaloricTrackerDraft={() =>
+            saveToCaloricTrackerDraft={() => {
+              if (
+                caloricTracker.draft.some((draft) => isEqual(draft.food, item))
+              ) {
+                return;
+              }
               dispatch(
                 putCaloricTrackerDraftAction({
-                  foods: [...caloricTracker.draft, item],
+                  items: [...caloricTracker.draft, { food: item }],
                 }),
-              )
-            }
+              );
+            }}
             key={item.id}
           />
         ))}
