@@ -1,4 +1,3 @@
-import { FoodsOnCaloricTrackerEntries } from "@/app/types";
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -6,17 +5,25 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 // @ts-expect-error: No declaration file for module
 // eslint-disable-next-line import/no-unresolved
 import { HoldItem } from "react-native-hold-menu";
+import { Food } from "@/app/types";
 
-type FoodItemViewProps = {
-  item: FoodsOnCaloricTrackerEntries;
+type FoodItemViewProps<T> = {
+  item: T;
   submitDelete: () => void;
-  submitEdit: (food: FoodsOnCaloricTrackerEntries) => void;
+  submitEdit: (item: T) => void;
 };
 
-export default function FoodItemView(props: FoodItemViewProps) {
+type FoodItem = {
+  food: Omit<Food, "id">;
+  count?: number;
+};
+
+export default function FoodItemView<T extends FoodItem>(
+  props: FoodItemViewProps<T>,
+) {
   const { item, submitDelete, submitEdit } = props;
 
-  const count = item.count;
+  const count = item?.count ?? 1;
 
   const MenuItems = [
     {

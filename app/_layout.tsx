@@ -4,7 +4,7 @@ import ComposeProviders from "@/components/providers/ComposeProviders";
 import HoldMenuProvider from "@/components/providers/HoldMenuProvider";
 import { Provider, useDispatch, useSelector } from "react-redux";
 import store, { RootState } from "@/store";
-import { onAuthStateChanged } from "firebase/auth";
+import { onAuthStateChanged, signInAnonymously } from "firebase/auth";
 import { auth as firebaseAuth } from "../firebaseConfig";
 import {
   signInAction,
@@ -57,7 +57,7 @@ function HydrateAuth() {
 
   React.useEffect(() => {
     onAuthStateChanged(firebaseAuth, (user) => {
-      if (user !== null) {
+      if (user !== null && !user.isAnonymous) {
         dispatch(signInAction());
         fetchUserPersonalData()
           .then((userData) => dispatch(putUserDataAction({ user: userData })))
@@ -70,6 +70,7 @@ function HydrateAuth() {
           });
       } else {
         dispatch(signOutAction());
+        signInAnonymously(firebaseAuth);
       }
 
       // For debugging purposes
