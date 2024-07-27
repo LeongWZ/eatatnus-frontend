@@ -49,7 +49,6 @@ function getMenuImagesAsyncCallback() {
         return newMenuImages.concat(menuImages);
       })
       .catch((error) => {
-        console.error(error.message);
         return [];
       });
   }

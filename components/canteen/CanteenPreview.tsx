@@ -30,11 +30,9 @@ export default function CanteenPreview({ canteen }: CanteenPreviewProps) {
         <Text>{canteen.name}</Text>
         <Text>{canteen.description}</Text>
         <Text>{canteen.location.address}</Text>
-        <Text>
-          {distanceToUser === -1
-            ? "Calculating distance..."
-            : `Distance: ${distanceToUser} meters`}
-        </Text>
+        {distanceToUser !== -1 && (
+          <Text>{`Distance: ${distanceToUser} meters`}</Text>
+        )}
       </TouchableOpacity>
     </Link>
   );
