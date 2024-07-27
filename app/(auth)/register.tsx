@@ -14,7 +14,7 @@ import createUser from "@/api/users/createUser";
 type FormData = {
   email: string;
   password: string;
-  displayName: string;
+  username: string;
 };
 
 export default function Register() {
@@ -24,7 +24,7 @@ export default function Register() {
   const [formData, setFormData] = React.useState<FormData>({
     email: "",
     password: "",
-    displayName: "",
+    username: "",
   });
 
   const onSubmit = () => {
@@ -32,7 +32,7 @@ export default function Register() {
 
     registerWithEmail(formData.email, formData.password)
       .then(() =>
-        createUser(formData.displayName)
+        createUser(formData.username)
           .then((userData) => dispatch(putUserDataAction({ user: userData })))
           .catch((error: Error) => {
             dispatch(
@@ -84,12 +84,12 @@ export default function Register() {
           }
         />
 
-        <Text className="mt-2 mb-1">Display Name</Text>
+        <Text className="mt-2 mb-1">Username</Text>
         <TextInput
           className="border px-2 rounded"
           placeholder="display name"
           onChangeText={(input) =>
-            setFormData({ ...formData, displayName: input })
+            setFormData({ ...formData, username: input })
           }
         />
 
@@ -100,7 +100,7 @@ export default function Register() {
             disabled={
               formData.email === "" ||
               formData.password === "" ||
-              formData.displayName === ""
+              formData.username === ""
             }
           />
         </View>

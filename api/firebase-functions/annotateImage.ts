@@ -36,11 +36,6 @@ export type AnnotateImageResponse = {
   labelAnnotations: EntityAnnotation[];
 };
 
-const annotateImage = httpsCallable<
-  AnnotateImageRequest,
-  AnnotateImageResponse[]
->(functions, "annotateImage");
-
 export type BatchAnnotateImagesRequest = {
   requests: AnnotateImageRequest[];
 };
@@ -54,4 +49,4 @@ const batchAnnotateImages = httpsCallable<
   BatchAnnotateImagesResponse[]
 >(functions, "batchAnnotateImages");
 
-export { annotateImage, batchAnnotateImages };
+export { batchAnnotateImages };
