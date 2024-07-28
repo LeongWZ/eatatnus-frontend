@@ -1,5 +1,5 @@
-import fetchIndividualCanteen from "@/api/canteens/fetchIndividualCanteen";
-import editReview from "@/api/reviews/editReview";
+import fetchIndividualCanteen from "@/services/canteens/fetchIndividualCanteen";
+import editReview from "@/services/reviews/editReview";
 import ErrorView from "@/components/ErrorView";
 import ReviewForm, { FormData } from "@/components/review/ReviewForm";
 import { RootState } from "@/store";

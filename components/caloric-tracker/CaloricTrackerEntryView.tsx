@@ -10,7 +10,7 @@ import {
   AutocompleteDropdown,
   AutocompleteDropdownItem,
 } from "react-native-autocomplete-dropdown";
-import searchFoods from "@/api/caloric-tracker/searchFoods";
+import searchFoods from "@/services/caloric-tracker/searchFoods";
 import DraftItem from "@/store/interfaces/DraftItem";
 import { isEqual } from "lodash";
 

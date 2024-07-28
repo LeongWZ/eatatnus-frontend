@@ -1,7 +1,7 @@
-import createCaloricTracker from "@/api/caloric-tracker/createCaloricTracker";
-import createCaloricTrackerEntry from "@/api/caloric-tracker/createCaloricTrackerEntry";
-import deleteCaloricTrackerEntry from "@/api/caloric-tracker/deleteCaloricTrackerEntry";
-import editCaloricTrackerEntry from "@/api/caloric-tracker/editCaloricTrackerEntry";
+import createCaloricTracker from "@/services/caloric-tracker/createCaloricTracker";
+import createCaloricTrackerEntry from "@/services/caloric-tracker/createCaloricTrackerEntry";
+import deleteCaloricTrackerEntry from "@/services/caloric-tracker/deleteCaloricTrackerEntry";
+import editCaloricTrackerEntry from "@/services/caloric-tracker/editCaloricTrackerEntry";
 import CaloricTrackerDraftView from "@/components/caloric-tracker/CaloricTrackerDraftView";
 import CaloricTrackerEntryView from "@/components/caloric-tracker/CaloricTrackerEntryView";
 import { RootState } from "@/store";

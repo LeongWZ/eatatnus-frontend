@@ -1,4 +1,4 @@
-import fetchUser from "@/api/users/fetchUser";
+import fetchUser from "@/services/users/fetchUser";
 import { User } from "@/app/types";
 import Gallery from "@/components/image/gallery";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";

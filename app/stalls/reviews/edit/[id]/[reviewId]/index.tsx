@@ -1,5 +1,5 @@
-import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
-import editReview from "@/api/reviews/editReview";
+import fetchIndividualStall from "@/services/stalls/fetchIndividualStall";
+import editReview from "@/services/reviews/editReview";
 import ErrorView from "@/components/ErrorView";
 import ReviewForm, { FormData } from "@/components/review/ReviewForm";
 import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";

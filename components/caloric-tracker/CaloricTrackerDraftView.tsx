@@ -1,4 +1,4 @@
-import searchFoods from "@/api/caloric-tracker/searchFoods";
+import searchFoods from "@/services/caloric-tracker/searchFoods";
 import { Food } from "@/app/types";
 import DraftItem from "@/store/interfaces/DraftItem";
 import React from "react";

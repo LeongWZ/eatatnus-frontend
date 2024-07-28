@@ -4,7 +4,7 @@ import React from "react";
 import { RootState } from "@/store";
 import { useDispatch, useSelector } from "react-redux";
 import { errorAuthAction, loadAuthAction } from "@/store/reducers/auth";
-import deleteUser from "@/api/users/deleteUser";
+import deleteUser from "@/services/users/deleteUser";
 
 export default function DeleteAccount() {
   const auth = useSelector((state: RootState) => state.auth);

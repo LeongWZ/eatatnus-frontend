@@ -1,4 +1,4 @@
-import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
+import fetchIndividualStall from "@/services/stalls/fetchIndividualStall";
 import { Stall } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
 import { MaterialTopTabs } from "@/components/tabs/MaterialTopTabs";

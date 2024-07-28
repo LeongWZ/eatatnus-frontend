@@ -1,4 +1,4 @@
-import fetchUser from "@/api/users/fetchUser";
+import fetchUser from "@/services/users/fetchUser";
 import { Canteen, Role, Stall, User } from "@/app/types";
 import { RootState } from "@/store";
 import { Link, useGlobalSearchParams, useNavigation } from "expo-router";

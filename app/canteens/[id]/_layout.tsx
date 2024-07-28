@@ -1,4 +1,4 @@
-import fetchIndividualCanteen from "@/api/canteens/fetchIndividualCanteen";
+import fetchIndividualCanteen from "@/services/canteens/fetchIndividualCanteen";
 import { Canteen } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
 import { MaterialTopTabs } from "@/components/tabs/MaterialTopTabs";

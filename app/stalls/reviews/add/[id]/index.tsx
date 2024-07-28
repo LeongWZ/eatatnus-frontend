@@ -1,5 +1,5 @@
-import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
-import submitReview from "@/api/stalls/submitReview";
+import fetchIndividualStall from "@/services/stalls/fetchIndividualStall";
+import submitReview from "@/services/stalls/submitReview";
 import ErrorView from "@/components/ErrorView";
 import ReviewForm, { FormData } from "@/components/review/ReviewForm";
 import { RootState } from "@/store";

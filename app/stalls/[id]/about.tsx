@@ -16,22 +16,22 @@ import { Image } from "expo-image";
 import * as MailComposer from "expo-mail-composer";
 import * as Clipboard from "expo-clipboard";
 import useIdentifiableCollectionReducer from "@/hooks/useIdentifiableCollectionReducer";
-import getMenuImagesAsync from "@/api/firebase-functions/getMenuImagesAsync";
+import getMenuImagesAsync from "@/services/firebase-functions/getMenuImagesAsync";
 import FoodView from "@/components/menu/FoodView";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import AddFoodView from "@/components/menu/AddFoodView";
-import updateMenu from "@/api/menus/updateMenu";
-import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
+import updateMenu from "@/services/menus/updateMenu";
+import fetchIndividualStall from "@/services/stalls/fetchIndividualStall";
 import {
   errorStallCollectionAction,
   loadStallCollectionAction,
   patchStallCollectionAction,
 } from "@/store/reducers/stallCollection";
-import createMenu from "@/api/menus/createMenu";
+import createMenu from "@/services/menus/createMenu";
 import { putCaloricTrackerDraftAction } from "@/store/reducers/caloricTracker";
 import { isEqual } from "lodash";
-import summariseReviews from "@/api/firebase-functions/summariseReviews";
+import summariseReviews from "@/services/firebase-functions/summariseReviews";
 import ReviewSummary from "@/components/review/ReviewSummary";
 
 export default function StallAbout() {

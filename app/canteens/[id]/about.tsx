@@ -12,7 +12,7 @@ import { Canteen, Stall } from "@/app/types";
 import StallPreview from "@/components/stall/StallPreview";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import summariseReviews from "@/api/firebase-functions/summariseReviews";
+import summariseReviews from "@/services/firebase-functions/summariseReviews";
 import ReviewSummary from "@/components/review/ReviewSummary";
 
 export default function CanteenStalls() {

@@ -5,10 +5,10 @@ import React from "react";
 import { View, Text, ActivityIndicator } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import { Role, User } from "@/app/types";
-import fetchUser from "@/api/users/fetchUser";
+import fetchUser from "@/services/users/fetchUser";
 import ProfileForm from "@/components/users/ProfileForm";
-import updateUserProfile from "@/api/users/updateUserProfile";
-import fetchUserPersonalData from "@/api/users/fetchUserPersonalData";
+import updateUserProfile from "@/services/users/updateUserProfile";
+import fetchUserPersonalData from "@/services/users/fetchUserPersonalData";
 import { putUserDataAction } from "@/store/reducers/auth";
 
 export default function EditUserProfile() {

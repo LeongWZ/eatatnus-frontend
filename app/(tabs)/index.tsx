@@ -9,7 +9,7 @@ import {
 } from "react-native";
 import React from "react";
 import CanteenPreview from "@/components/canteen/CanteenPreview";
-import fetchCanteens from "@/api/canteens/fetchCanteens";
+import fetchCanteens from "@/services/canteens/fetchCanteens";
 import getAverageRating from "@/utils/getAverageRating";
 import StallPreview from "@/components/stall/StallPreview";
 import { useDispatch, useSelector } from "react-redux";
