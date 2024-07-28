@@ -150,6 +150,16 @@ export default function CaloricTrackerDraftView(
           key={index}
         />
       ))}
+      {items.length > 0 && (
+        <View className="items-center">
+          <TouchableOpacity
+            className="p-2 border-2 border-red-400 rounded-lg"
+            onPress={() => editDraft([])}
+          >
+            <Text className="text-red-800 text-lg">Clear Items</Text>
+          </TouchableOpacity>
+        </View>
+      )}
       <View className="items-end">
         <Button
           title="Submit"
