@@ -49,6 +49,7 @@ export default function ReviewSummary(props: ReviewSummaryProps) {
           shiftY={-30}
           shiftX={-10}
           disablePress
+          frontColor={"#FFC107"}
         />
       </View>
       {(body || isBodyLoading) && (

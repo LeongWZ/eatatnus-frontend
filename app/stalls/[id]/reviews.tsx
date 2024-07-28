@@ -4,8 +4,8 @@ import { Link, useGlobalSearchParams, useRouter } from "expo-router";
 import ErrorView from "@/components/ErrorView";
 import { Stall, Image } from "@/app/types";
 import ReviewCard from "@/components/review/ReviewCard";
-import fetchIndividualStall from "@/api/stalls/fetchIndividualStall";
-import deleteReview from "@/api/reviews/deleteReview";
+import fetchIndividualStall from "@/services/stalls/fetchIndividualStall";
+import deleteReview from "@/services/reviews/deleteReview";
 import getAverageRating from "@/utils/getAverageRating";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
@@ -89,6 +89,7 @@ export default function StallReviews() {
           renderItem={({ item }) => (
             <ReviewCard
               review={item}
+              user={auth.user}
               onEdit={() => {
                 router.push(`stalls/reviews/edit/${stall.id}/${item.id}`);
               }}

@@ -17,20 +17,20 @@ import {
   loadCanteenCollectionAction,
   errorCanteenCollectionAction,
 } from "@/store/reducers/canteenCollection";
-import fetchCanteens from "@/api/canteens/fetchCanteens";
+import fetchCanteens from "@/services/canteens/fetchCanteens";
 import {
   putStallCollectionAction,
   loadStallCollectionAction,
   errorStallCollectionAction,
 } from "@/store/reducers/stallCollection";
-import fetchStalls from "@/api/stalls/fetchStalls";
-import fetchUserPersonalData from "@/api/users/fetchUserPersonalData";
+import fetchStalls from "@/services/stalls/fetchStalls";
+import fetchUserPersonalData from "@/services/users/fetchUserPersonalData";
 import {
   errorCaloricTrackerAction,
   loadCaloricTrackerAction,
   putCaloricTrackerAction,
 } from "@/store/reducers/caloricTracker";
-import fetchCaloricTracker from "@/api/caloric-tracker/fetchCaloricTracker";
+import fetchCaloricTracker from "@/services/caloric-tracker/fetchCaloricTracker";
 import AutocompleteDropdownContextProvider from "@/components/providers/AutocompleteDropdownContextProvider";
 
 export default function RootLayout() {

@@ -1,6 +1,6 @@
 import { Text, View, TextInput, Button } from "react-native";
 import React from "react";
-import resetPasswordWithEmail from "@/api/auth/resetPasswordWithEmail";
+import resetPasswordWithEmail from "@/services/auth/resetPasswordWithEmail";
 import { useNavigation } from "expo-router";
 
 type FormData = {

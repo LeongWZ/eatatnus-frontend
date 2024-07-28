@@ -9,7 +9,7 @@ import {
   errorCaloricTrackerAction,
   loadCaloricTrackerAction,
 } from "@/store/reducers/caloricTracker";
-import deleteCaloricTracker from "@/api/caloric-tracker/deleteCaloricTracker";
+import deleteCaloricTracker from "@/services/caloric-tracker/deleteCaloricTracker";
 
 export default function DeleteCaloricTracker() {
   const auth = useSelector((state: RootState) => state.auth);

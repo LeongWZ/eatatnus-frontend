@@ -1,8 +1,6 @@
-import { Food, Role } from "@/app/types";
-import { RootState } from "@/store";
+import { Food, Role, User } from "@/app/types";
 import React from "react";
 import { View, Text, TextInput, Pressable } from "react-native";
-import { useSelector } from "react-redux";
 
 // @ts-expect-error: No declaration file for module
 // eslint-disable-next-line import/no-unresolved
@@ -10,6 +8,7 @@ import { HoldItem } from "react-native-hold-menu";
 
 type FoodViewProps = {
   food: Food;
+  user: User | null;
   ownerId?: number | null;
   submitEdit: (food: Food) => void;
   submitDelete: (food: Food) => void;
@@ -17,13 +16,16 @@ type FoodViewProps = {
 };
 
 export default function FoodView(props: FoodViewProps) {
-  const { food, ownerId, submitDelete, submitEdit, saveToCaloricTrackerDraft } =
-    props;
+  const {
+    user,
+    food,
+    ownerId,
+    submitDelete,
+    submitEdit,
+    saveToCaloricTrackerDraft,
+  } = props;
 
   const [editMode, setEditMode] = React.useState<boolean>(false);
-
-  const auth = useSelector((state: RootState) => state.auth);
-  const user = auth.user;
 
   const [foodVar, setFoodVar] = React.useState<Food>(food);
 

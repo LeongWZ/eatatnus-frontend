@@ -1,5 +1,5 @@
-import deleteReview from "@/api/reviews/deleteReview";
-import fetchIndividualCanteen from "@/api/canteens/fetchIndividualCanteen";
+import deleteReview from "@/services/reviews/deleteReview";
+import fetchIndividualCanteen from "@/services/canteens/fetchIndividualCanteen";
 import { Canteen, Review } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
 import ReviewCard from "@/components/review/ReviewCard";
@@ -56,6 +56,7 @@ export default function CanteenReviews() {
   const renderItem = ({ item }: { item: Review }) => (
     <ReviewCard
       review={item}
+      user={auth.user}
       onEdit={() => {
         auth.isAuthenticated &&
           router.push(`canteens/reviews/edit/${canteen?.id}/${item.id}`);

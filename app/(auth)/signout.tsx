@@ -1,7 +1,7 @@
 import { Link, Redirect, useNavigation, useRouter } from "expo-router";
 import { Text, View, Button, Pressable } from "react-native";
 import React from "react";
-import signOut from "@/api/auth/signOut";
+import signOut from "@/services/auth/signOut";
 import { RootState } from "@/store";
 import { useDispatch, useSelector } from "react-redux";
 import { errorAuthAction, loadAuthAction } from "@/store/reducers/auth";

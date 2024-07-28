@@ -1,7 +1,7 @@
 import { Link, Redirect, useNavigation } from "expo-router";
 import { Text, View, TextInput, Button } from "react-native";
 import React from "react";
-import registerWithEmail from "@/api/auth/registerWithEmail";
+import registerWithEmail from "@/services/auth/registerWithEmail";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
 import {
@@ -9,7 +9,7 @@ import {
   errorAuthAction,
   putUserDataAction,
 } from "@/store/reducers/auth";
-import createUser from "@/api/users/createUser";
+import createUser from "@/services/users/createUser";
 
 type FormData = {
   email: string;
