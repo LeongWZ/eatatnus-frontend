@@ -21,17 +21,15 @@ export default function StallPreview(props: StallPreviewProps) {
       }}
       asChild
     >
-      <TouchableOpacity className="border px-2 py-4 my-2 rounded-xl">
+      <TouchableOpacity className="border p-4 my-2 rounded-xl space-y-1">
         <Text className="text-xl">{stall.name}</Text>
-        {canteen && <Text className="text-l">{canteen?.name}</Text>}
+        {canteen && <Text className="text-sm">{canteen?.name}</Text>}
         <Rating
           size={20}
           rating={getAverageRating(stall.reviews)}
-          onChange={() => {}}
           disabled={true}
           style={{ paddingVertical: 4 }}
         />
-        <Text>{stall.description}</Text>
       </TouchableOpacity>
     </Link>
   );
