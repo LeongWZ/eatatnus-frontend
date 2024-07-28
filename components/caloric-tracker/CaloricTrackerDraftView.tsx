@@ -1,7 +1,6 @@
 import searchFoods from "@/api/caloric-tracker/searchFoods";
 import { Food } from "@/app/types";
 import DraftItem from "@/store/interfaces/DraftItem";
-import AntDesign from "@expo/vector-icons/AntDesign";
 import React from "react";
 import {
   Pressable,

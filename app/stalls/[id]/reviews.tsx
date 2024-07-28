@@ -89,6 +89,7 @@ export default function StallReviews() {
           renderItem={({ item }) => (
             <ReviewCard
               review={item}
+              user={auth.user}
               onEdit={() => {
                 router.push(`stalls/reviews/edit/${stall.id}/${item.id}`);
               }}

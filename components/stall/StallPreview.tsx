@@ -4,23 +4,14 @@ import { Link } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity } from "react-native";
 import { Rating } from "@kolking/react-native-rating";
-import { RootState } from "@/store";
-import { useSelector } from "react-redux";
 
 type StallPreviewProps = {
   stall: Stall;
-  includeCanteenName?: boolean;
+  canteen?: Canteen;
 };
 
 export default function StallPreview(props: StallPreviewProps) {
-  const { stall, includeCanteenName } = props;
-  const canteenCollection = useSelector(
-    (state: RootState) => state.canteenCollection,
-  );
-
-  const canteen: Canteen | undefined = canteenCollection.items.find(
-    (canteen) => canteen.id === stall.canteenId,
-  );
+  const { stall, canteen } = props;
 
   return (
     <Link
@@ -32,7 +23,7 @@ export default function StallPreview(props: StallPreviewProps) {
     >
       <TouchableOpacity className="border px-2 py-4 my-2 rounded-xl">
         <Text className="text-xl">{stall.name}</Text>
-        {includeCanteenName && <Text className="text-l">{canteen?.name}</Text>}
+        {canteen && <Text className="text-l">{canteen?.name}</Text>}
         <Rating
           size={20}
           rating={getAverageRating(stall.reviews)}

@@ -241,6 +241,7 @@ export default function StallAbout() {
         {menuFoodItems.map((item) => (
           <FoodView
             food={item}
+            user={auth.user}
             ownerId={stall.ownerId}
             submitDelete={deleteFoodFn(stall, onRefresh)}
             submitEdit={editFoodFn(stall, onRefresh)}

@@ -114,7 +114,9 @@ export default function Index() {
           {topRatedStalls.map((stall) => (
             <StallPreview
               stall={stall}
-              includeCanteenName={true}
+              canteen={canteens.find(
+                (canteen) => canteen.id === stall.canteenId,
+              )}
               key={stall.id}
             />
           ))}
