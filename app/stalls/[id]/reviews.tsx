@@ -14,6 +14,7 @@ import {
   patchStallCollectionAction,
   errorStallCollectionAction,
 } from "@/store/reducers/stallCollection";
+import { Rating } from "@kolking/react-native-rating";
 
 export default function StallReviews() {
   const params = useGlobalSearchParams();
@@ -63,7 +64,10 @@ export default function StallReviews() {
       <View className="flex-row justify-between border-b p-2">
         <View>
           <Text>{reviewCount} reviews</Text>
-          {reviewCount > 0 && <Text>Average rating: {averageRating}/5</Text>}
+          <View className="flex-row space-x-2">
+            <Text className="text-base">{averageRating}</Text>
+            <Rating maxRating={5} rating={averageRating} size={18} disabled />
+          </View>
         </View>
 
         <View className="flex-col justify-center">

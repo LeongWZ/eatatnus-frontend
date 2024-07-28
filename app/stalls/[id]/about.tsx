@@ -32,6 +32,7 @@ import createMenu from "@/api/menus/createMenu";
 import { putCaloricTrackerDraftAction } from "@/store/reducers/caloricTracker";
 import { isEqual } from "lodash";
 import summariseReviews from "@/api/firebase-functions/summariseReviews";
+import ReviewSummary from "@/components/review/ReviewSummary";
 
 export default function StallAbout() {
   const params = useGlobalSearchParams();
@@ -73,7 +74,10 @@ export default function StallAbout() {
     (a, b) => b.id - a.id,
   );
 
-  const [reviewSummary, setReviewSummary] = React.useState<string>("");
+  const [reviewSummary, setReviewSummary] = React.useState({
+    body: "",
+    isLoading: false,
+  });
 
   const renderMenuImage = ({ item }: { item: ImageType }) => {
     return (
@@ -140,7 +144,10 @@ export default function StallAbout() {
   React.useEffect(() => {
     setMenuImagesAsync();
 
-    summariseReviews(stall?.reviews ?? []).then(setReviewSummary);
+    setReviewSummary({ ...reviewSummary, isLoading: true });
+    summariseReviews(stall?.reviews ?? []).then((body) =>
+      setReviewSummary({ body: body, isLoading: false }),
+    );
 
     async function setMenuImagesAsync() {
       if (menuImages.loading) {
@@ -191,8 +198,13 @@ export default function StallAbout() {
         </View>
       )}
 
-      <View className="mt-4">
-        <Text>{reviewSummary}</Text>
+      <View className="mt-2">
+        <Text className="text-2xl">Reviews</Text>
+        <ReviewSummary
+          reviews={stall?.reviews}
+          body={reviewSummary.body}
+          isBodyLoading={reviewSummary.isLoading}
+        />
       </View>
 
       <View className="mt-4 pb-52">

@@ -68,7 +68,7 @@ function HydrateAuth() {
               }),
             );
           });
-      } else {
+      } else if (user === null) {
         dispatch(signOutAction());
         signInAnonymously(firebaseAuth);
       }

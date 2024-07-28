@@ -14,6 +14,7 @@ import { View, Text, Pressable, FlatList } from "react-native";
 import getAverageRating from "@/utils/getAverageRating";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
+import { Rating } from "@kolking/react-native-rating";
 
 export default function CanteenReviews() {
   const params = useGlobalSearchParams();
@@ -31,6 +32,9 @@ export default function CanteenReviews() {
   const canteen: Canteen | undefined = canteenCollection.items.find(
     (canteen) => canteen.id === id,
   );
+
+  const reviewCount = canteen?.reviews.length ?? 0;
+  const averageRating = getAverageRating(canteen?.reviews ?? []);
 
   const onRefresh = () => {
     dispatch(loadCanteenCollectionAction());
@@ -73,12 +77,11 @@ export default function CanteenReviews() {
     <View>
       <View className="flex-row justify-between border-b p-2">
         <View>
-          <Text>{canteen.reviews.length} reviews</Text>
-          {canteen.reviews.length > 0 && (
-            <>
-              <Text>Average rating: {getAverageRating(canteen.reviews)}/5</Text>
-            </>
-          )}
+          <Text>{reviewCount} reviews</Text>
+          <View className="flex-row space-x-2">
+            <Text className="text-base">{averageRating}</Text>
+            <Rating maxRating={5} rating={averageRating} size={18} disabled />
+          </View>
         </View>
 
         <View className="flex-col justify-center">

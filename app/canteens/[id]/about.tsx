@@ -12,6 +12,8 @@ import { Canteen, Stall } from "@/app/types";
 import StallPreview from "@/components/stall/StallPreview";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import summariseReviews from "@/api/firebase-functions/summariseReviews";
+import ReviewSummary from "@/components/review/ReviewSummary";
 
 export default function CanteenStalls() {
   const params = useGlobalSearchParams();
@@ -35,6 +37,11 @@ export default function CanteenStalls() {
       return item ? [item] : [];
     }) ?? [];
 
+  const [reviewSummary, setReviewSummary] = React.useState({
+    body: "",
+    isLoading: false,
+  });
+
   const openAddressInMaps = () => {
     if (canteen === undefined) {
       return;
@@ -47,6 +54,13 @@ export default function CanteenStalls() {
     );
   };
 
+  React.useEffect(() => {
+    setReviewSummary({ ...reviewSummary, isLoading: true });
+    summariseReviews(canteen?.reviews ?? []).then((body) =>
+      setReviewSummary({ body: body, isLoading: false }),
+    );
+  }, [canteen]);
+
   if (canteen === undefined) {
     return <ErrorView />;
   }
@@ -56,11 +70,22 @@ export default function CanteenStalls() {
       <View>
         <Text className="text-4xl">{canteen.name}</Text>
         <TouchableOpacity onPress={openAddressInMaps}>
-          <Text className="text-xl mb-2">{canteen.location.address}</Text>
+          <Text className="text-xl mb-2 text-blue-800">
+            {canteen.location.address}
+          </Text>
         </TouchableOpacity>
       </View>
 
-      <View className="py-4">
+      <View className="mt-2">
+        <Text className="text-2xl">Reviews</Text>
+        <ReviewSummary
+          reviews={canteen.reviews}
+          body={reviewSummary.body}
+          isBodyLoading={reviewSummary.isLoading}
+        />
+      </View>
+
+      <View className="mt-4 pb-10">
         <Text className="text-2xl">Stalls</Text>
         {stalls.map((stall) => (
           <StallPreview stall={stall} key={stall.id} />
