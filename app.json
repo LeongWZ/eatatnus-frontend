@@ -1,6 +1,7 @@
 {
   "expo": {
-    "name": "eatatnus-frontend",
+    "name": "eat@NUS",
+    "description": "An app for NUS students to find food on campus.",
     "slug": "eatatnus-frontend",
     "owner": "feedbackers6226",
     "version": "1.0.0",
