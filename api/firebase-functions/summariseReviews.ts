@@ -24,12 +24,11 @@ export default async function summariseReviews(
         role: "user",
         parts: [
           {
-            text:
-              `Only respond in Markdown format as specified in the following. ` +
-              `Give me short useful excerpts from several reviews along with the reviwer name, ` +
-              `e.g. "This place is so good. Food is good and cheap" - john doe. ` +
-              `Filter out any gibberish reviews. ` +
-              `Reviews: ${reviewsToString}`,
+            text: `Only respond in Markdown format as specified in the following.
+              Give me short useful excerpts from several reviews along with the reviwer name,
+              e.g. "This place is so good. Food is good and cheap" - john doe.
+              Filter out any gibberish reviews.
+              Reviews: ${reviewsToString}`,
           },
         ],
       },
