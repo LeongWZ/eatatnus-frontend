@@ -59,9 +59,9 @@ export default function CanteenAddReview() {
   }
 
   return (
-    <View>
+    <View className="p-2">
       <View className="items-center">
-        <Text className="text-3xl p-2">{canteen.name}</Text>
+        <Text className="text-3xl p-4">{canteen.name}</Text>
       </View>
       <ReviewForm submitReviewForm={submitReviewForm} />
 

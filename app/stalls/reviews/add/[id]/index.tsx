@@ -54,8 +54,9 @@ export default function StallAddReview() {
 
   return (
     <View className="p-2">
-      <Text className="text-3xl">Review stall</Text>
-      <Text className="text-2xl mb-2">{stall.name}</Text>
+      <View className="items-center">
+        <Text className="text-3xl p-4">{stall.name}</Text>
+      </View>
 
       <ReviewForm submitReviewForm={submitReviewForm} />
 
