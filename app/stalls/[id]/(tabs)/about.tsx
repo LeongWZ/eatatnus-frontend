@@ -82,9 +82,7 @@ export default function StallAbout() {
   const renderMenuImage = ({ item }: { item: ImageType }) => {
     return (
       <Pressable
-        onPress={() =>
-          stall && router.push(`stalls/photos/${stall.id}/?image_id=${item.id}`)
-        }
+        onPress={() => stall && router.push(`../photos/?image_id=${item.id}`)}
       >
         <Image
           source={item.url}

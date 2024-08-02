@@ -5,6 +5,15 @@ export type Profile = {
   image: Image | null;
 };
 
+export type Notification = {
+  id: number;
+  message: string;
+  createdAt: string;
+  read: boolean;
+  userId: number;
+  reviewId?: number | null;
+};
+
 export enum Role {
   Admin = "ADMIN",
   User = "User",
@@ -19,6 +28,7 @@ export type User = {
   role: Role;
   profile: Profile | null;
   reviews?: Review[];
+  notifications?: Notification[];
 };
 
 export type Canteen = {
@@ -62,10 +72,22 @@ export type Review = {
   userId: number | null;
   user: User | null;
   images: Image[];
+  replies: Reply[];
   canteenId?: number;
   canteen?: Canteen;
   stallId?: number;
   stall?: Stall;
+};
+
+export type Reply = {
+  id: number;
+  body: string;
+  createdAt: string;
+  updatedAt: string;
+  user: User | null;
+  userId: number | null;
+  reviewId: number;
+  parentId?: number | null;
 };
 
 export type Image = {

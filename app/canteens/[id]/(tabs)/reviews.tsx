@@ -10,7 +10,13 @@ import {
 } from "@/store/reducers/canteenCollection";
 import { Link, useGlobalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { View, Text, Pressable, FlatList } from "react-native";
+import {
+  View,
+  Text,
+  Pressable,
+  FlatList,
+  TouchableOpacity,
+} from "react-native";
 import getAverageRating from "@/utils/getAverageRating";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
@@ -54,20 +60,35 @@ export default function CanteenReviews() {
   };
 
   const renderItem = ({ item }: { item: Review }) => (
-    <ReviewCard
-      review={item}
-      user={auth.user}
-      onEdit={() => {
-        auth.isAuthenticated &&
-          router.push(`canteens/reviews/edit/${canteen?.id}/${item.id}`);
-      }}
-      onDelete={() => {
-        auth.isAuthenticated && deleteReview(item.id).then(onRefresh);
-      }}
-      onImagePress={(image) => {
-        router.push(`canteens/photos/${canteen?.id}/?image_id=${image.id}`);
-      }}
-    />
+    <View>
+      <ReviewCard
+        review={item}
+        user={auth.user}
+        onEdit={() => {
+          auth.isAuthenticated && router.push(`../reviews/${item.id}/edit`);
+        }}
+        onDelete={() => {
+          auth.isAuthenticated && deleteReview(item.id).then(onRefresh);
+        }}
+        onImagePress={(image) => {
+          router.push(`../photos/?image_id=${image.id}`);
+        }}
+      />
+      <View className="flex-row items-start border">
+        {item.replies.length > 0 && (
+          <Link href={`../reviews/${item.id}`} asChild>
+            <TouchableOpacity className="border rounded m-2 p-2">
+              <Text>View {item.replies.length} replies</Text>
+            </TouchableOpacity>
+          </Link>
+        )}
+        <Link href={`../reviews/${item.id}/?autofocus`} asChild>
+          <TouchableOpacity className="border rounded m-2 p-2">
+            <Text>Reply</Text>
+          </TouchableOpacity>
+        </Link>
+      </View>
+    </View>
   );
 
   if (canteen === undefined) {
@@ -86,11 +107,7 @@ export default function CanteenReviews() {
         </View>
 
         <View className="flex-col justify-center">
-          <Link
-            href={`canteens/reviews/add/${canteen.id}`}
-            className="bg-blue-500"
-            asChild
-          >
+          <Link href={`../reviews/add`} className="bg-blue-500" asChild>
             <Pressable className="p-2">
               <Text className="text-xl">+ Review</Text>
             </Pressable>

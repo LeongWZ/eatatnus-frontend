@@ -71,11 +71,7 @@ export default function StallReviews() {
         </View>
 
         <View className="flex-col justify-center">
-          <Link
-            href={`stalls/reviews/add/${stall.id}`}
-            className="bg-blue-500"
-            asChild
-          >
+          <Link href={`../reviews/add`} className="bg-blue-500" asChild>
             <Pressable className="p-2">
               <Text className="text-xl">+ Review</Text>
             </Pressable>
@@ -91,13 +87,13 @@ export default function StallReviews() {
               review={item}
               user={auth.user}
               onEdit={() => {
-                router.push(`stalls/reviews/edit/${stall.id}/${item.id}`);
+                router.push(`../reviews/edit/${item.id}`);
               }}
               onDelete={() => {
                 auth.isAuthenticated && deleteReview(item.id).then(onRefresh);
               }}
               onImagePress={(image: Image) => {
-                router.push(`stalls/photos/${stall.id}/?image_id=${image.id}`);
+                router.push(`../photos/?image_id=${image.id}`);
               }}
             />
           )}

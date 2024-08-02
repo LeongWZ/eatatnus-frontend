@@ -9,6 +9,7 @@ import {
   FlatList,
   ImageBackground,
   TouchableOpacity,
+  ActivityIndicator,
 } from "react-native";
 import { Rating } from "@kolking/react-native-rating";
 import * as ImagePicker from "expo-image-picker";
@@ -27,6 +28,8 @@ type ReviewFormProps = {
 
 export default function ReviewForm(props: ReviewFormProps) {
   const { review, submitReviewForm } = props;
+
+  const [loading, setLoading] = React.useState(false);
 
   const [formData, setFormData] = React.useState<FormData>({
     rating: review?.rating ?? 3,
@@ -71,6 +74,12 @@ export default function ReviewForm(props: ReviewFormProps) {
 
   return (
     <View>
+      {loading && (
+        <View className="items-center my-2">
+          <ActivityIndicator />
+          <Text>Loading...</Text>
+        </View>
+      )}
       <View className="items-center border">
         <Text className="text-2xl">Rating</Text>
         <Rating
@@ -137,7 +146,11 @@ export default function ReviewForm(props: ReviewFormProps) {
       <View className="items-end mt-4">
         <Button
           title="Submit"
-          onPress={async () => submitReviewForm(formData)}
+          onPress={() => {
+            setLoading(true);
+            submitReviewForm(formData);
+          }}
+          disabled={loading}
         />
       </View>
     </View>
