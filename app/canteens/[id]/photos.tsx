@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useGlobalSearchParams, useRouter } from "expo-router";
+import { useGlobalSearchParams, useNavigation, useRouter } from "expo-router";
 import Gallery from "@/components/image/gallery";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
@@ -24,6 +24,13 @@ export default function CanteenPhotos() {
   );
 
   const imageId = params.image_id ? parseInt(params.image_id) : undefined;
+
+  const navigation = useNavigation();
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: canteen?.name ? `${canteen.name} Photos` : "Photos",
+    });
+  }, [navigation]);
 
   return (
     <Gallery

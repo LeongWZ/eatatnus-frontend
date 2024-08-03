@@ -64,7 +64,7 @@ export default function FoodView(props: FoodViewProps) {
 
   return (
     <HoldItem items={MenuItems}>
-      <View className="border rounded my-2 p-4">
+      <View className="border rounded my-2 p-4 bg-white">
         <Text className="text-xl">{foodVar.name}</Text>
         <Text className="text-lg">
           {foodVar.calories ? `${foodVar.calories} cal` : ""}

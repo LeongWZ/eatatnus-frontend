@@ -11,6 +11,7 @@ export type Notification = {
   createdAt: string;
   read: boolean;
   userId: number;
+  review?: Review | null;
   reviewId?: number | null;
 };
 

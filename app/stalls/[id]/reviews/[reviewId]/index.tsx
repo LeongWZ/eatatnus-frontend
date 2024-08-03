@@ -1,6 +1,5 @@
 import { Reply } from "@/app/types";
 import ReplyCard from "@/components/review/ReplyCard";
-import ReviewCard from "@/components/review/ReviewCard";
 import deleteReview from "@/services/reviews/deleteReview";
 import fetchReview from "@/services/reviews/fetchReview";
 import submitReply from "@/services/reviews/submitReply";
@@ -10,20 +9,12 @@ import {
   loadStallCollectionAction,
   patchStallCollectionAction,
 } from "@/store/reducers/stallCollection";
-import { useGlobalSearchParams, useRouter } from "expo-router";
+import { useGlobalSearchParams, useNavigation, useRouter } from "expo-router";
 import React from "react";
-import {
-  View,
-  Text,
-  ActivityIndicator,
-  Alert,
-  SectionList,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, ActivityIndicator, Alert } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 import deleteReply from "@/services/reviews/deleteReply";
-import ReplyInput from "@/components/review/ReplyInput";
-import AntDesign from "@expo/vector-icons/AntDesign";
+import RepliesView from "@/components/review/RepliesView";
 
 export default function ReviewReplies() {
   const params = useGlobalSearchParams();
@@ -42,8 +33,6 @@ export default function ReviewReplies() {
   const stall = stallCollection.items.find((stall) => stall.id === stallId);
 
   const review = stall?.reviews.find((review) => review.id === reviewId);
-
-  const [parentId, setParentId] = React.useState<number | undefined>(undefined);
 
   const onRefresh = () => {
     if (stall && review) {
@@ -72,6 +61,13 @@ export default function ReviewReplies() {
     }
   };
 
+  const navigation = useNavigation();
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: "Review Replies",
+    });
+  }, [navigation]);
+
   React.useEffect(() => {
     if (
       review?.replies.some(
@@ -91,111 +87,58 @@ export default function ReviewReplies() {
     );
   }
 
-  const renderReply = ({ item }: { item: Reply }) => (
-    <ReplyCard
-      reply={item}
-      user={auth.user}
-      parentReply={
-        item.parentId
-          ? review.replies.find((reply) => reply.id === item.parentId)
-          : undefined
-      }
-      onDelete={() =>
-        deleteReply(item.id)
-          .then(onRefresh)
+  return (
+    <RepliesView
+      review={review}
+      auth={auth}
+      autoFocus={params.autofocus !== undefined}
+      onRefresh={onRefresh}
+      onImagePress={(image) => {
+        router.push(`../../photos/?image_id=${image.id}`);
+      }}
+      onReviewDelete={() => {
+        if (auth.isAuthenticated) {
+          deleteReview(review.id)
+            .then(() => {
+              if (stall) {
+                dispatch(
+                  patchStallCollectionAction({
+                    item: {
+                      ...stall,
+                      reviews: stall.reviews.filter(
+                        (review) => review.id !== review.id,
+                      ),
+                    },
+                  }),
+                );
+              }
+            })
+            .then(router.back);
+        }
+      }}
+      onReviewEdit={() => {
+        auth.isAuthenticated && router.push(`./edit`);
+      }}
+      submitReply={(body, parentId) =>
+        submitReply(review.id, { body: body, replyId: parentId })
+          .then(() => {
+            if (params.autofocus !== undefined) {
+              router.setParams({ autofocus: undefined });
+            }
+            onRefresh();
+          })
           .catch((error) => Alert.alert(error.message))
       }
-      onReply={() => {
-        setParentId(item.id);
-      }}
-      key={item.id}
-    />
-  );
-
-  return (
-    <View className="flex-1 p-2 pb-1">
-      <SectionList
-        refreshing={false}
-        onRefresh={onRefresh}
-        contentContainerStyle={{ paddingBottom: 100 }}
-        sections={[
-          {
-            data: [
-              // dummy data to make the section list work
-              {
-                id: NaN,
-                createdAt: "",
-                updatedAt: "",
-                body: "",
-                user: null,
-                userId: NaN,
-                reviewId: review.id,
-                parentId: null,
-              },
-            ],
-            renderItem: ({ item }) => (
-              <ReviewCard
-                review={review}
-                user={auth.user}
-                onEdit={() => {
-                  auth.isAuthenticated && router.push(`./edit`);
-                }}
-                onDelete={() => {
-                  auth.isAuthenticated &&
-                    deleteReview(review.id).then(router.back);
-                }}
-                onImagePress={(image) => {
-                  router.push(`../../photos/?image_id=${image.id}`);
-                }}
-              />
-            ),
-          },
-          {
-            data: review.replies,
-            renderItem: renderReply,
-            title: `${review.replies.length} Replies`,
-          },
-        ]}
-        renderSectionHeader={({ section: { title } }) =>
-          title && <Text className="text-xl mt-2">{title}</Text>
-        }
-        keyExtractor={(item, index) => item.id.toString() + index}
-      />
-      {parentId !== undefined ? (
-        <>
-          <View className="flex-row items-center space-x-1 mt-2">
-            <Text className="text-xl">
-              Reply to{" "}
-              {
-                review?.replies.find((reply) => reply.id === parentId)?.user
-                  ?.name
-              }
-            </Text>
-            <TouchableOpacity onPress={() => setParentId(undefined)}>
-              <AntDesign name="closecircleo" size={24} color="red" />
-            </TouchableOpacity>
-          </View>
-          <ReplyInput
-            submitReply={(body) =>
-              submitReply(review.id, { replyId: parentId, body: body })
-                .then(() => setParentId(undefined))
-                .then(onRefresh)
-                .catch(console.error)
+      deleteReply={(replyId) =>
+        deleteReply(replyId)
+          .then(() => {
+            if (params.autofocus !== undefined) {
+              router.setParams({ autofocus: undefined });
             }
-            autoFocus={true}
-          />
-        </>
-      ) : (
-        <ReplyInput
-          submitReply={(body) =>
-            submitReply(review.id, { body: body })
-              .then(() => setParentId(undefined))
-              .then(onRefresh)
-              .catch((error) => Alert.alert(error.message))
-          }
-          autoFocus={params.autofocus !== undefined}
-        />
-      )}
-    </View>
+            onRefresh();
+          })
+          .catch((error) => Alert.alert(error.message))
+      }
+    />
   );
 }

@@ -2,7 +2,12 @@ import submitReview from "@/services/stalls/submitReview";
 import ErrorView from "@/components/ErrorView";
 import ReviewForm, { FormData } from "@/components/review/ReviewForm";
 import { RootState } from "@/store";
-import { Redirect, useLocalSearchParams, useRouter } from "expo-router";
+import {
+  Redirect,
+  useLocalSearchParams,
+  useNavigation,
+  useRouter,
+} from "expo-router";
 import React from "react";
 import { View, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -49,6 +54,13 @@ export default function StallAddReview() {
         .then(() => router.back())
         .catch((error) => setErrorMessage(error.toString()));
   };
+
+  const navigation = useNavigation();
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: "Add Review",
+    });
+  }, [navigation]);
 
   if (!auth.isAuthenticated) {
     return <Redirect href="/signin" />;

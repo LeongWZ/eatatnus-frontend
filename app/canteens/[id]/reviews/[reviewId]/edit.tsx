@@ -2,7 +2,12 @@ import editReview from "@/services/reviews/editReview";
 import ErrorView from "@/components/ErrorView";
 import ReviewForm, { FormData } from "@/components/review/ReviewForm";
 import { RootState } from "@/store";
-import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";
+import {
+  Redirect,
+  useGlobalSearchParams,
+  useNavigation,
+  useRouter,
+} from "expo-router";
 import React from "react";
 import { View, Text } from "react-native";
 import { useSelector, useDispatch } from "react-redux";
@@ -60,6 +65,13 @@ export default function CanteenEditReview() {
           console.error(error);
         });
   };
+
+  const navigation = useNavigation();
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: "Edit Review",
+    });
+  }, [navigation]);
 
   if (!auth.isAuthenticated) {
     return <Redirect href="/signin" />;
