@@ -6,10 +6,10 @@ import fetchReview from "@/services/reviews/fetchReview";
 import submitReply from "@/services/reviews/submitReply";
 import { RootState } from "@/store";
 import {
-  errorCanteenCollectionAction,
-  loadCanteenCollectionAction,
-  patchCanteenCollectionAction,
-} from "@/store/reducers/canteenCollection";
+  errorStallCollectionAction,
+  loadStallCollectionAction,
+  patchStallCollectionAction,
+} from "@/store/reducers/stallCollection";
 import { useGlobalSearchParams, useRouter } from "expo-router";
 import React from "react";
 import {
@@ -27,7 +27,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 
 export default function ReviewReplies() {
   const params = useGlobalSearchParams();
-  const canteenId = parseInt(params.id as string);
+  const stallId = parseInt(params.id as string);
   const reviewId = parseInt(params.reviewId as string);
 
   const router = useRouter();
@@ -35,28 +35,26 @@ export default function ReviewReplies() {
 
   const auth = useSelector((state: RootState) => state.auth);
 
-  const canteenCollection = useSelector(
-    (state: RootState) => state.canteenCollection,
+  const stallCollection = useSelector(
+    (state: RootState) => state.stallCollection,
   );
 
-  const canteen = canteenCollection.items.find(
-    (canteen) => canteen.id === canteenId,
-  );
+  const stall = stallCollection.items.find((stall) => stall.id === stallId);
 
-  const review = canteen?.reviews.find((review) => review.id === reviewId);
+  const review = stall?.reviews.find((review) => review.id === reviewId);
 
   const [parentId, setParentId] = React.useState<number | undefined>(undefined);
 
   const onRefresh = () => {
-    if (canteen && review) {
-      dispatch(loadCanteenCollectionAction());
+    if (stall && review) {
+      dispatch(loadStallCollectionAction());
       fetchReview(review.id)
         .then((updatedReview) => {
           dispatch(
-            patchCanteenCollectionAction({
+            patchStallCollectionAction({
               item: {
-                ...canteen,
-                reviews: canteen.reviews.map((review) =>
+                ...stall,
+                reviews: stall.reviews.map((review) =>
                   review.id === reviewId ? updatedReview : review,
                 ),
               },
@@ -65,7 +63,7 @@ export default function ReviewReplies() {
         })
         .catch((error: Error) => {
           dispatch(
-            errorCanteenCollectionAction({
+            errorStallCollectionAction({
               errorMessage: error.message,
             }),
           );
@@ -165,8 +163,8 @@ export default function ReviewReplies() {
       />
       {parentId !== undefined ? (
         <>
-          <View className="flex-row items-center space-x-2 mt-2">
-            <Text className="text-lg">
+          <View className="flex-row items-center space-x-1 mt-2">
+            <Text className="text-xl">
               Reply to{" "}
               {
                 review?.replies.find((reply) => reply.id === parentId)?.user

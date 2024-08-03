@@ -10,13 +10,7 @@ import {
 } from "@/store/reducers/canteenCollection";
 import { Link, useGlobalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import {
-  View,
-  Text,
-  Pressable,
-  FlatList,
-  TouchableOpacity,
-} from "react-native";
+import { View, Text, Pressable, FlatList } from "react-native";
 import getAverageRating from "@/utils/getAverageRating";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
@@ -60,35 +54,21 @@ export default function CanteenReviews() {
   };
 
   const renderItem = ({ item }: { item: Review }) => (
-    <View>
-      <ReviewCard
-        review={item}
-        user={auth.user}
-        onEdit={() => {
-          auth.isAuthenticated && router.push(`../reviews/${item.id}/edit`);
-        }}
-        onDelete={() => {
-          auth.isAuthenticated && deleteReview(item.id).then(onRefresh);
-        }}
-        onImagePress={(image) => {
-          router.push(`../photos/?image_id=${image.id}`);
-        }}
-      />
-      <View className="flex-row items-start border">
-        {item.replies.length > 0 && (
-          <Link href={`../reviews/${item.id}`} asChild>
-            <TouchableOpacity className="border rounded m-2 p-2">
-              <Text>View {item.replies.length} replies</Text>
-            </TouchableOpacity>
-          </Link>
-        )}
-        <Link href={`../reviews/${item.id}/?autofocus`} asChild>
-          <TouchableOpacity className="border rounded m-2 p-2">
-            <Text>Reply</Text>
-          </TouchableOpacity>
-        </Link>
-      </View>
-    </View>
+    <ReviewCard
+      review={item}
+      user={auth.user}
+      onEdit={() => {
+        auth.isAuthenticated && router.push(`../reviews/${item.id}/edit`);
+      }}
+      onDelete={() => {
+        auth.isAuthenticated && deleteReview(item.id).then(onRefresh);
+      }}
+      onImagePress={(image) => {
+        router.push(`../photos/?image_id=${image.id}`);
+      }}
+      onViewReplies={() => router.push(`../reviews/${item.id}`)}
+      onReply={() => router.push(`../reviews/${item.id}/?autofocus`)}
+    />
   );
 
   if (canteen === undefined) {
@@ -119,7 +99,7 @@ export default function CanteenReviews() {
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         extraData={canteen}
-        contentContainerStyle={{ padding: 12, paddingBottom: 300 }}
+        contentContainerStyle={{ padding: 8, paddingBottom: 300 }}
         onRefresh={onRefresh}
         refreshing={canteenCollection.loading}
       />

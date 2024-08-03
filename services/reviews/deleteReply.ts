@@ -26,7 +26,6 @@ export default async function deleteReply(replyId: number) {
     )
     .then((response) => response.json())
     .then((result) => {
-      console.log(result);
       if (result["error"]) {
         throw new Error(JSON.stringify(result.error));
       }
