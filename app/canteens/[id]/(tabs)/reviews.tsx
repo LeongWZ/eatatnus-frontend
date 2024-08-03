@@ -102,6 +102,7 @@ export default function CanteenReviews() {
         contentContainerStyle={{ padding: 8, paddingBottom: 300 }}
         onRefresh={onRefresh}
         refreshing={canteenCollection.loading}
+        ListEmptyComponent={<Text>No reviews yet</Text>}
       />
     </View>
   );

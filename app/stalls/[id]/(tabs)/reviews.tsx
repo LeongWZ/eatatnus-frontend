@@ -105,6 +105,7 @@ export default function StallReviews() {
         contentContainerStyle={{ padding: 8, paddingBottom: 300 }}
         onRefresh={onRefresh}
         refreshing={stallCollection.loading}
+        ListEmptyComponent={<Text>No reviews yet</Text>}
       />
     </View>
   );
