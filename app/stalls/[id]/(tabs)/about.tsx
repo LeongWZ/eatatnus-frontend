@@ -180,8 +180,8 @@ export default function StallAbout() {
 
   return (
     <ScrollView className="p-2">
-      <View>
-        <Text className="text-4xl">{stall.name}</Text>
+      <View className="mt-2">
+        <Text className="text-3xl">{stall.name}</Text>
         <Text className="text-xl">{canteen?.name}</Text>
       </View>
 

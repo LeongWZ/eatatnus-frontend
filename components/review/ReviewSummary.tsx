@@ -14,7 +14,7 @@ type ReviewSummaryProps = {
 export default function ReviewSummary(props: ReviewSummaryProps) {
   const { reviews, body, isBodyLoading } = props;
 
-  // O(n^2 solution but no side-effects)
+  // O(k * n solution but no side-effects)
   const reviewCount: number[] = [1, 2, 3, 4, 5].map(
     (rating) => reviews.filter((review) => review.rating === rating).length,
   );
@@ -49,6 +49,7 @@ export default function ReviewSummary(props: ReviewSummaryProps) {
           shiftY={-30}
           shiftX={-10}
           disablePress
+          disableScroll
           frontColor={"#FFC107"}
         />
       </View>
