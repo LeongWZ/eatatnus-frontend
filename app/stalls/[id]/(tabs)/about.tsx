@@ -205,7 +205,7 @@ export default function StallAbout() {
         />
       </View>
 
-      <View className="mt-4 pb-52">
+      <View className="mt-4">
         <Text className="text-2xl">Menu</Text>
 
         <Text>
@@ -258,6 +258,9 @@ export default function StallAbout() {
             key={item.id}
           />
         ))}
+      </View>
+      <View style={{ height: 180 }}>
+        {/*  Dummy div for bottom padding. Setting padding-bottom on above does not work */}
       </View>
     </ScrollView>
   );
