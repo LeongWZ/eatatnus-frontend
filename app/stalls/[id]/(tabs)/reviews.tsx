@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Pressable, FlatList } from "react-native";
 import { Link, useGlobalSearchParams, useRouter } from "expo-router";
 import ErrorView from "@/components/ErrorView";
-import { Stall, Image } from "@/app/types";
+import { Stall, Review } from "@/app/types";
 import ReviewCard from "@/components/review/ReviewCard";
 import fetchIndividualStall from "@/services/stalls/fetchIndividualStall";
 import deleteReview from "@/services/reviews/deleteReview";
@@ -55,12 +55,30 @@ export default function StallReviews() {
       );
   };
 
+  const renderItem = ({ item }: { item: Review }) => (
+    <ReviewCard
+      review={item}
+      user={auth.user}
+      onEdit={() => {
+        auth.isAuthenticated && router.push(`../reviews/${item.id}/edit`);
+      }}
+      onDelete={() => {
+        auth.isAuthenticated && deleteReview(item.id).then(onRefresh);
+      }}
+      onImagePress={(image) => {
+        router.push(`../photos/?image_id=${image.id}`);
+      }}
+      onViewReplies={() => router.push(`../reviews/${item.id}`)}
+      onReply={() => router.push(`../reviews/${item.id}/?autofocus`)}
+    />
+  );
+
   if (stall === undefined) {
     return <ErrorView />;
   }
 
   return (
-    <>
+    <View>
       <View className="flex-row justify-between border-b p-2">
         <View>
           <Text>{reviewCount} reviews</Text>
@@ -71,11 +89,7 @@ export default function StallReviews() {
         </View>
 
         <View className="flex-col justify-center">
-          <Link
-            href={`stalls/reviews/add/${stall.id}`}
-            className="bg-blue-500"
-            asChild
-          >
+          <Link href={`../reviews/add`} className="bg-blue-500" asChild>
             <Pressable className="p-2">
               <Text className="text-xl">+ Review</Text>
             </Pressable>
@@ -83,31 +97,16 @@ export default function StallReviews() {
         </View>
       </View>
 
-      <View className="mx-3">
-        <FlatList
-          data={stall.reviews}
-          renderItem={({ item }) => (
-            <ReviewCard
-              review={item}
-              user={auth.user}
-              onEdit={() => {
-                router.push(`stalls/reviews/edit/${stall.id}/${item.id}`);
-              }}
-              onDelete={() => {
-                auth.isAuthenticated && deleteReview(item.id).then(onRefresh);
-              }}
-              onImagePress={(image: Image) => {
-                router.push(`stalls/photos/${stall.id}/?image_id=${image.id}`);
-              }}
-            />
-          )}
-          keyExtractor={(item) => item.id.toString()}
-          extraData={stall}
-          contentContainerStyle={{ paddingBottom: 300 }}
-          onRefresh={onRefresh}
-          refreshing={stallCollection.loading}
-        />
-      </View>
-    </>
+      <FlatList
+        data={stall.reviews}
+        renderItem={renderItem}
+        keyExtractor={(item) => item.id.toString()}
+        extraData={stall}
+        contentContainerStyle={{ padding: 8, paddingBottom: 300 }}
+        onRefresh={onRefresh}
+        refreshing={stallCollection.loading}
+        ListEmptyComponent={<Text>No reviews yet</Text>}
+      />
+    </View>
   );
 }

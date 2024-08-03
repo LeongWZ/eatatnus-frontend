@@ -6,6 +6,7 @@ import {
   ActivityIndicator,
   Button,
   ScrollView,
+  TouchableOpacity,
 } from "react-native";
 import React from "react";
 import CanteenPreview from "@/components/canteen/CanteenPreview";
@@ -20,12 +21,18 @@ import {
   errorCanteenCollectionAction,
 } from "@/store/reducers/canteenCollection";
 import UserPressable from "@/components/users/UserPressable";
+import Ionicons from "@expo/vector-icons/Ionicons";
+import * as Location from "expo-location";
 
 function Header() {
   const router = useRouter();
 
   const auth = useSelector((state: RootState) => state.auth);
   const user = auth.user;
+
+  const unreadNotificationCount: number =
+    user?.notifications?.filter((notification) => !notification.read).length ??
+    0;
 
   return (
     <View className="flex-row justify-between p-2 border-b border-neutral-300">
@@ -52,10 +59,15 @@ function Header() {
           </Link>
         </View>
       ) : (
-        <Link href="/signout" className="bg-blue-500 p-2" asChild>
-          <Pressable>
-            <Text>Sign Out</Text>
-          </Pressable>
+        <Link href="/users/notifications" asChild>
+          <TouchableOpacity className="flex-row items-center">
+            {unreadNotificationCount > 0 && (
+              <Text className="bg-red-500 text-sm text-white rounded-full px-2 py-1">
+                {unreadNotificationCount}
+              </Text>
+            )}
+            <Ionicons name="notifications" size={24} color="black" />
+          </TouchableOpacity>
         </Link>
       )}
     </View>
@@ -78,6 +90,10 @@ export default function Index() {
     .sort((a, b) => getAverageRating(b.reviews) - getAverageRating(a.reviews))
     .slice(0, 3);
 
+  const [userLocation, setUserLocation] = React.useState<
+    Location.LocationObject | undefined
+  >(undefined);
+
   const onRefresh = () => {
     dispatch(loadCanteenCollectionAction());
 
@@ -89,6 +105,18 @@ export default function Index() {
         dispatch(errorCanteenCollectionAction({ errorMessage: error.message })),
       );
   };
+
+  React.useEffect(() => {
+    Location.requestForegroundPermissionsAsync()
+      .then(({ status }) => {
+        if (status !== "granted") {
+          return undefined;
+        }
+        return Location.getCurrentPositionAsync({});
+      })
+      .then((location) => setUserLocation(location))
+      .catch((error) => setUserLocation(undefined));
+  }, []);
 
   if (
     (canteenCollection.items.length === 0 && canteenCollection.loading) ||
@@ -124,7 +152,11 @@ export default function Index() {
         <View className="p-2 pb-28" id="canteens">
           <Text className="text-2xl">Canteens</Text>
           {canteens.map((canteen) => (
-            <CanteenPreview canteen={canteen} key={canteen.id} />
+            <CanteenPreview
+              canteen={canteen}
+              userLocation={userLocation}
+              key={canteen.id}
+            />
           ))}
         </View>
       </ScrollView>

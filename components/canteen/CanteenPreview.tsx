@@ -2,27 +2,27 @@ import { Canteen } from "@/app/types";
 import { Link } from "expo-router";
 import React from "react";
 import { Text, TouchableOpacity } from "react-native";
-import getDistanceToUser from "@/utils/getDistanceToUser";
 import { Rating } from "@kolking/react-native-rating";
 import getAverageRating from "@/utils/getAverageRating";
+import * as Location from "expo-location";
+import measureDistance from "@/utils/measureDistance";
 
 type CanteenPreviewProps = {
   canteen: Canteen;
+  userLocation?: Location.LocationObject;
 };
 
-export default function CanteenPreview({ canteen }: CanteenPreviewProps) {
-  const [distanceToUser, setDistanceToUser] = React.useState<number | null>(
-    null,
-  );
+export default function CanteenPreview(props: CanteenPreviewProps) {
+  const { canteen, userLocation } = props;
 
-  React.useEffect(() => {
-    getDistanceToUser(canteen.location.latitude, canteen.location.longitude)
-      .then((distance) => setDistanceToUser(distance))
-      .catch((error) => {
-        console.error(error);
-        setDistanceToUser(null);
-      });
-  }, [canteen]);
+  const distanceToUser: number | undefined = userLocation
+    ? measureDistance(
+        userLocation.coords.latitude,
+        userLocation.coords.longitude,
+        canteen.location.latitude,
+        canteen.location.latitude,
+      )
+    : undefined;
 
   return (
     <Link
@@ -41,7 +41,7 @@ export default function CanteenPreview({ canteen }: CanteenPreviewProps) {
           disabled={true}
           style={{ paddingVertical: 4 }}
         />
-        {distanceToUser !== null && (
+        {distanceToUser !== undefined && (
           <Text>{`Distance: ${distanceToUser} meters`}</Text>
         )}
       </TouchableOpacity>

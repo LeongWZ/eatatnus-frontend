@@ -1,20 +1,26 @@
-import fetchIndividualCanteen from "@/services/canteens/fetchIndividualCanteen";
-import submitCanteenReview from "@/services/canteens/submitReview";
+import editReview from "@/services/reviews/editReview";
 import ErrorView from "@/components/ErrorView";
 import ReviewForm, { FormData } from "@/components/review/ReviewForm";
 import { RootState } from "@/store";
-import { Redirect, useGlobalSearchParams, useRouter } from "expo-router";
+import {
+  Redirect,
+  useGlobalSearchParams,
+  useNavigation,
+  useRouter,
+} from "expo-router";
 import React from "react";
 import { View, Text } from "react-native";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import {
   loadCanteenCollectionAction,
   patchCanteenCollectionAction,
 } from "@/store/reducers/canteenCollection";
+import fetchReview from "@/services/reviews/fetchReview";
 
-export default function CanteenAddReview() {
+export default function CanteenEditReview() {
   const params = useGlobalSearchParams();
   const canteenId = parseInt(params.id as string);
+  const reviewId = parseInt(params.reviewId as string);
 
   const router = useRouter();
   const dispatch = useDispatch();
@@ -29,32 +35,49 @@ export default function CanteenAddReview() {
     (canteen) => canteen.id === canteenId,
   );
 
+  const review = canteen?.reviews.find((review) => review.id === reviewId);
+
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
 
   const submitReviewForm = (formData: FormData) => {
     auth.isAuthenticated &&
-      submitCanteenReview({
-        ...formData,
-        canteenId: canteenId,
-      })
-        .then(async (res) => {
+      editReview(reviewId, formData)
+        .then((res) => fetchReview(res.id))
+        .then((updatedReview) => {
           setErrorMessage(null);
-          dispatch(loadCanteenCollectionAction());
-          dispatch(
-            patchCanteenCollectionAction({
-              item: await fetchIndividualCanteen(canteenId),
-            }),
-          );
+          if (canteen) {
+            dispatch(loadCanteenCollectionAction());
+            dispatch(
+              patchCanteenCollectionAction({
+                item: {
+                  ...canteen,
+                  reviews: canteen.reviews.map((review) =>
+                    review.id === reviewId ? updatedReview : review,
+                  ),
+                },
+              }),
+            );
+          }
         })
         .then(() => router.back())
-        .catch((error) => setErrorMessage(error.toString()));
+        .catch((error) => {
+          setErrorMessage(error.toString());
+          console.error(error);
+        });
   };
+
+  const navigation = useNavigation();
+  React.useEffect(() => {
+    navigation.setOptions({
+      title: "Edit Review",
+    });
+  }, [navigation]);
 
   if (!auth.isAuthenticated) {
     return <Redirect href="/signin" />;
   }
 
-  if (!canteen) {
+  if (!canteen || !review) {
     return <ErrorView />;
   }
 
@@ -63,7 +86,7 @@ export default function CanteenAddReview() {
       <View className="items-center">
         <Text className="text-3xl p-4">{canteen.name}</Text>
       </View>
-      <ReviewForm submitReviewForm={submitReviewForm} />
+      <ReviewForm review={review} submitReviewForm={submitReviewForm} />
 
       {errorMessage && <Text className="text-red-500 m-2">{errorMessage}</Text>}
     </View>

@@ -58,15 +58,16 @@ export default function CanteenReviews() {
       review={item}
       user={auth.user}
       onEdit={() => {
-        auth.isAuthenticated &&
-          router.push(`canteens/reviews/edit/${canteen?.id}/${item.id}`);
+        auth.isAuthenticated && router.push(`../reviews/${item.id}/edit`);
       }}
       onDelete={() => {
         auth.isAuthenticated && deleteReview(item.id).then(onRefresh);
       }}
       onImagePress={(image) => {
-        router.push(`canteens/photos/${canteen?.id}/?image_id=${image.id}`);
+        router.push(`../photos/?image_id=${image.id}`);
       }}
+      onViewReplies={() => router.push(`../reviews/${item.id}`)}
+      onReply={() => router.push(`../reviews/${item.id}/?autofocus`)}
     />
   );
 
@@ -86,11 +87,7 @@ export default function CanteenReviews() {
         </View>
 
         <View className="flex-col justify-center">
-          <Link
-            href={`canteens/reviews/add/${canteen.id}`}
-            className="bg-blue-500"
-            asChild
-          >
+          <Link href={`../reviews/add`} className="bg-blue-500" asChild>
             <Pressable className="p-2">
               <Text className="text-xl">+ Review</Text>
             </Pressable>
@@ -102,9 +99,10 @@ export default function CanteenReviews() {
         renderItem={renderItem}
         keyExtractor={(item) => item.id.toString()}
         extraData={canteen}
-        contentContainerStyle={{ padding: 12, paddingBottom: 300 }}
+        contentContainerStyle={{ padding: 8, paddingBottom: 300 }}
         onRefresh={onRefresh}
         refreshing={canteenCollection.loading}
+        ListEmptyComponent={<Text>No reviews yet</Text>}
       />
     </View>
   );

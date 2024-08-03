@@ -1,5 +1,11 @@
 import { Review, Role, Image as ImageType, User } from "@/app/types";
-import { View, Text, FlatList, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  FlatList,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 import * as Clipboard from "expo-clipboard";
 import { Image } from "expo-image";
 import { useRouter } from "expo-router";
@@ -16,10 +22,20 @@ type ReviewProps = {
   onEdit: () => void;
   onDelete: () => void;
   onImagePress: (image: ImageType) => void;
+  onViewReplies?: () => void;
+  onReply?: () => void;
 };
 
 export default function ReviewCard(props: ReviewProps) {
-  const { review, user, onEdit, onDelete, onImagePress } = props;
+  const {
+    review,
+    user,
+    onEdit,
+    onDelete,
+    onImagePress,
+    onViewReplies,
+    onReply,
+  } = props;
 
   const router = useRouter();
 
@@ -86,6 +102,20 @@ export default function ReviewCard(props: ReviewProps) {
           showsHorizontalScrollIndicator={true}
           style={{ marginVertical: 8 }}
         />
+        <View className="flex-row items-start space-x-4">
+          {review.replies.length > 0 && onViewReplies && (
+            <TouchableOpacity onPress={onViewReplies}>
+              <Text className="text-lg text-blue-800">
+                View {review.replies.length} replies
+              </Text>
+            </TouchableOpacity>
+          )}
+          {onReply && (
+            <TouchableOpacity onPress={onReply}>
+              <Text className="text-lg text-blue-800">Reply</Text>
+            </TouchableOpacity>
+          )}
+        </View>
       </View>
     </HoldItem>
   );

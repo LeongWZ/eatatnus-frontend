@@ -67,7 +67,7 @@ export default function CanteenStalls() {
 
   return (
     <ScrollView className="p-4">
-      <View>
+      <View className="mt-2">
         <Text className="text-4xl">{canteen.name}</Text>
         <TouchableOpacity onPress={openAddressInMaps}>
           <Text className="text-xl mb-2 text-blue-800">

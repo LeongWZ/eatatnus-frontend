@@ -82,9 +82,7 @@ export default function StallAbout() {
   const renderMenuImage = ({ item }: { item: ImageType }) => {
     return (
       <Pressable
-        onPress={() =>
-          stall && router.push(`stalls/photos/${stall.id}/?image_id=${item.id}`)
-        }
+        onPress={() => stall && router.push(`../photos/?image_id=${item.id}`)}
       >
         <Image
           source={item.url}
@@ -182,8 +180,8 @@ export default function StallAbout() {
 
   return (
     <ScrollView className="p-2">
-      <View>
-        <Text className="text-4xl">{stall.name}</Text>
+      <View className="mt-2">
+        <Text className="text-3xl">{stall.name}</Text>
         <Text className="text-xl">{canteen?.name}</Text>
       </View>
 
@@ -207,7 +205,7 @@ export default function StallAbout() {
         />
       </View>
 
-      <View className="mt-4 pb-52">
+      <View className="mt-4">
         <Text className="text-2xl">Menu</Text>
 
         <Text>
@@ -260,6 +258,9 @@ export default function StallAbout() {
             key={item.id}
           />
         ))}
+      </View>
+      <View style={{ height: 180 }}>
+        {/*  Dummy div for bottom padding. Setting padding-bottom on above does not work */}
       </View>
     </ScrollView>
   );
