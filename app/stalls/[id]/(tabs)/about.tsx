@@ -255,6 +255,7 @@ export default function StallAbout() {
                 }),
               );
             }}
+            onViewNutrition={() => router.push(`../foods/${item.id}`)}
             key={item.id}
           />
         ))}

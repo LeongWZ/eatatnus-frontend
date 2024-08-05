@@ -14,6 +14,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import summariseReviews from "@/services/firebase-functions/summariseReviews";
 import ReviewSummary from "@/components/review/ReviewSummary";
+import FontAwesome from "@expo/vector-icons/FontAwesome";
 
 export default function CanteenStalls() {
   const params = useGlobalSearchParams();
@@ -69,7 +70,11 @@ export default function CanteenStalls() {
     <ScrollView className="p-4">
       <View className="mt-2">
         <Text className="text-4xl">{canteen.name}</Text>
-        <TouchableOpacity onPress={openAddressInMaps}>
+        <TouchableOpacity
+          onPress={openAddressInMaps}
+          className="flex-row space-x-1 mt-1"
+        >
+          <FontAwesome name="map-marker" size={24} color="red" />
           <Text className="text-xl mb-2 text-blue-800">
             {canteen.location.address}
           </Text>
@@ -85,11 +90,15 @@ export default function CanteenStalls() {
         />
       </View>
 
-      <View className="mt-4 pb-10">
+      <View className="mt-4">
         <Text className="text-2xl">Stalls</Text>
         {stalls.map((stall) => (
           <StallPreview stall={stall} key={stall.id} />
         ))}
+      </View>
+
+      <View style={{ height: 180 }}>
+        {/*  Dummy div for bottom padding. Setting padding-bottom on above does not work */}
       </View>
     </ScrollView>
   );

@@ -1,6 +1,6 @@
 /* eslint-disable no-undef */
 import React from "react";
-import App from "../app/(main)/index";
+import App from "../app/(tabs)/index";
 import { render, screen } from "@testing-library/react-native";
 
 // It is recommended to use userEvent with fake timers

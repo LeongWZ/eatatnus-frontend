@@ -13,7 +13,7 @@ import {
   deleteCaloricTrackerEntryAction,
   editCaloricTrackerEntryAction,
 } from "@/store/reducers/caloricTracker";
-import { Link } from "expo-router";
+import { Link, useRouter } from "expo-router";
 import React from "react";
 import { View, Text, TouchableOpacity, Alert, SectionList } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
@@ -22,6 +22,7 @@ import DraftItem from "@/store/interfaces/DraftItem";
 
 export default function CaloricTracker() {
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const auth = useSelector((state: RootState) => state.auth);
 
@@ -152,6 +153,9 @@ export default function CaloricTracker() {
                 key={item.id}
                 deleteEntry={deleteEntryFn(item)}
                 editEntry={editEntryFn(item)}
+                onViewNutrition={(foodId) => {
+                  router.push(`/foods/${foodId}`);
+                }}
               />
             ),
           },

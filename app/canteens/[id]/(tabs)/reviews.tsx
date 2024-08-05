@@ -10,7 +10,7 @@ import {
 } from "@/store/reducers/canteenCollection";
 import { Link, useGlobalSearchParams, useRouter } from "expo-router";
 import React from "react";
-import { View, Text, Pressable, FlatList } from "react-native";
+import { View, Text, FlatList, TouchableOpacity } from "react-native";
 import getAverageRating from "@/utils/getAverageRating";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
@@ -87,10 +87,13 @@ export default function CanteenReviews() {
         </View>
 
         <View className="flex-col justify-center">
-          <Link href={`../reviews/add`} className="bg-blue-500" asChild>
-            <Pressable className="p-2">
-              <Text className="text-xl">+ Review</Text>
-            </Pressable>
+          <Link href={`../reviews/add`} asChild>
+            <TouchableOpacity
+              className="p-2 border rounded"
+              style={{ backgroundColor: "rgb(220 38 38)" }}
+            >
+              <Text className="text-xl text-white">+ Review</Text>
+            </TouchableOpacity>
           </Link>
         </View>
       </View>

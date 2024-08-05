@@ -2,7 +2,6 @@ import { Link, useRouter } from "expo-router";
 import {
   Text,
   View,
-  Pressable,
   ActivityIndicator,
   Button,
   ScrollView,
@@ -47,15 +46,15 @@ function Header() {
 
       {user === null ? (
         <View className="flex-row gap-2">
-          <Link href="/signin" className="bg-blue-500 p-2" asChild>
-            <Pressable>
-              <Text>Sign In</Text>
-            </Pressable>
+          <Link href="/signin" asChild>
+            <TouchableOpacity className="p-2 border rounded">
+              <Text className="text-sm">Sign In</Text>
+            </TouchableOpacity>
           </Link>
-          <Link href="/register" className="bg-blue-500 p-2" asChild>
-            <Pressable>
-              <Text>Register</Text>
-            </Pressable>
+          <Link href="/register" asChild>
+            <TouchableOpacity className="p-2 border rounded">
+              <Text className="text-sm">Register</Text>
+            </TouchableOpacity>
           </Link>
         </View>
       ) : (

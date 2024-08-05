@@ -1,5 +1,5 @@
 import { Notification } from "@/app/types";
-import { TouchableOpacity, View, Text } from "react-native";
+import { TouchableOpacity, Text } from "react-native";
 
 type NotificationCardProps = {
   notification: Notification;

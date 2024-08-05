@@ -1,5 +1,3 @@
-import { Reply } from "@/app/types";
-import ReplyCard from "@/components/review/ReplyCard";
 import deleteReview from "@/services/reviews/deleteReview";
 import fetchReview from "@/services/reviews/fetchReview";
 import submitReply from "@/services/reviews/submitReply";
