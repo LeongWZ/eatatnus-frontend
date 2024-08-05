@@ -11,6 +11,7 @@ import { Image } from "expo-image";
 import { useRouter } from "expo-router";
 import UserPressable from "../users/UserPressable";
 import { Rating } from "@kolking/react-native-rating";
+import Markdown from "react-native-markdown-display";
 
 // @ts-expect-error: No declaration file for module
 // eslint-disable-next-line import/no-unresolved
@@ -93,7 +94,9 @@ export default function ReviewCard(props: ReviewProps) {
           disabled={true}
           style={{ paddingVertical: 4 }}
         />
-        <Text className="my-2">{review.description}</Text>
+        <View className="my-2">
+          <Markdown>{review.description ?? ""}</Markdown>
+        </View>
         <FlatList
           data={review.images}
           renderItem={renderItem}

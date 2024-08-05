@@ -1,6 +1,12 @@
 import { Food, Role, User } from "@/app/types";
 import React from "react";
-import { View, Text, TextInput, Pressable } from "react-native";
+import {
+  View,
+  Text,
+  TextInput,
+  Pressable,
+  TouchableOpacity,
+} from "react-native";
 
 // @ts-expect-error: No declaration file for module
 // eslint-disable-next-line import/no-unresolved
@@ -13,6 +19,7 @@ type FoodViewProps = {
   submitEdit: (food: Food) => void;
   submitDelete: (food: Food) => void;
   saveToCaloricTrackerDraft: (food: Food) => void;
+  onViewNutrition?: () => void;
 };
 
 export default function FoodView(props: FoodViewProps) {
@@ -23,6 +30,7 @@ export default function FoodView(props: FoodViewProps) {
     submitDelete,
     submitEdit,
     saveToCaloricTrackerDraft,
+    onViewNutrition,
   } = props;
 
   const [editMode, setEditMode] = React.useState<boolean>(false);
@@ -69,6 +77,13 @@ export default function FoodView(props: FoodViewProps) {
         <Text className="text-lg">
           {foodVar.calories ? `${foodVar.calories} cal` : ""}
         </Text>
+        {onViewNutrition && (
+          <View className="items-start mt-1">
+            <TouchableOpacity onPress={onViewNutrition}>
+              <Text className="text-blue-800">View Nutrition</Text>
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
     </HoldItem>
   );

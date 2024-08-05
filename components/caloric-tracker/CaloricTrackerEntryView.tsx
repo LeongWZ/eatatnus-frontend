@@ -21,12 +21,13 @@ type CaloricTrackerEntryViewProps = {
     items: FoodsOnCaloricTrackerEntries[],
     newItems?: DraftItem[],
   ) => void;
+  onViewNutrition?: (foodId: number) => void;
 };
 
 export default function CaloricTrackerEntryView(
   props: CaloricTrackerEntryViewProps,
 ) {
-  const { entry, deleteEntry, editEntry } = props;
+  const { entry, deleteEntry, editEntry, onViewNutrition } = props;
 
   const [showItemInput, setShowItemInput] = React.useState<boolean>(false);
 
@@ -164,6 +165,9 @@ export default function CaloricTrackerEntryView(
           }
           submitEdit={(item) =>
             editEntry(entry.foods.map((food, i) => (i === index ? item : food)))
+          }
+          onViewNutrition={
+            onViewNutrition ? () => onViewNutrition?.(item.food.id) : undefined
           }
           key={`${item.foodId}-${item.count}`}
         />

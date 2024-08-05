@@ -66,7 +66,7 @@ export type Stall = {
 export type Review = {
   id: number;
   rating: number;
-  description: string;
+  description: string | null;
   createdAt: string;
   updatedAt: string;
   reviewType: string;
