@@ -1,4 +1,5 @@
 import { Food, Role, User } from "@/app/types";
+import AntDesign from "@expo/vector-icons/AntDesign";
 import React from "react";
 import {
   View,
@@ -19,6 +20,7 @@ type FoodViewProps = {
   submitEdit: (food: Food) => void;
   submitDelete: (food: Food) => void;
   saveToCaloricTrackerDraft: (food: Food) => void;
+  addToOrder?: (food: Food) => void;
   onViewNutrition?: () => void;
 };
 
@@ -30,6 +32,7 @@ export default function FoodView(props: FoodViewProps) {
     submitDelete,
     submitEdit,
     saveToCaloricTrackerDraft,
+    addToOrder,
     onViewNutrition,
   } = props;
 
@@ -72,18 +75,35 @@ export default function FoodView(props: FoodViewProps) {
 
   return (
     <HoldItem items={MenuItems}>
-      <View className="border rounded my-2 p-4 bg-white">
-        <Text className="text-xl">{foodVar.name}</Text>
-        <Text className="text-lg">
-          {foodVar.calories ? `${foodVar.calories} cal` : ""}
-        </Text>
-        {onViewNutrition && (
-          <View className="items-start mt-1">
-            <TouchableOpacity onPress={onViewNutrition}>
-              <Text className="text-blue-800">View Nutrition</Text>
+      <View className="flex-row justify-center border rounded my-2 p-4 bg-white">
+        <View className="flex-1">
+          <Text className="text-xl">{foodVar.name}</Text>
+          <Text className="text-lg">
+            {foodVar.calories ? `${foodVar.calories} cal` : ""}
+          </Text>
+          {onViewNutrition && (
+            <View className="items-start mt-1">
+              <TouchableOpacity onPress={onViewNutrition}>
+                <Text className="text-blue-800">View Nutrition</Text>
+              </TouchableOpacity>
+            </View>
+          )}
+        </View>
+        <View className="flex-1 justify-center items-end space-y-2 ml-2">
+          {foodVar.price && (
+            <Text className="text-3xl">${foodVar.price.toFixed(2)}</Text>
+          )}
+          {addToOrder && (
+            <TouchableOpacity
+              className="flex-row items-center space-x-1 border rounded p-2"
+              onPress={() => addToOrder(food)}
+              disabled={user?.role === Role.Business}
+            >
+              <AntDesign name="shoppingcart" size={22} color="green" />
+              <Text className="text-lg">Add to cart</Text>
             </TouchableOpacity>
-          </View>
-        )}
+          )}
+        </View>
       </View>
     </HoldItem>
   );
@@ -108,6 +128,20 @@ function EditFoodView(props: EditFoodViewProps) {
           className="border rounded p-2 text-xl"
           onChangeText={(text) => setEditedFood({ ...editedFood, name: text })}
           value={editedFood.name}
+        />
+      </View>
+      <View>
+        <Text className="text-lg">Price ($):</Text>
+        <TextInput
+          className="border rounded p-2 text-xl"
+          onChangeText={(text) =>
+            setEditedFood({
+              ...editedFood,
+              price: Math.floor(parseFloat(text) * 100) / 100,
+            })
+          }
+          keyboardType="numeric"
+          defaultValue={food.price?.toFixed(2)}
         />
       </View>
       <View className="flex-row space-x-4">

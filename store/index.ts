@@ -3,6 +3,7 @@ import auth from "./reducers/auth";
 import canteenCollection from "./reducers/canteenCollection";
 import stallCollection from "./reducers/stallCollection";
 import caloricTracker from "./reducers/caloricTracker";
+import orderCollection from "./reducers/orderCollection";
 
 const store = configureStore({
   reducer: {
@@ -10,6 +11,7 @@ const store = configureStore({
     canteenCollection: canteenCollection,
     stallCollection: stallCollection,
     caloricTracker: caloricTracker,
+    orderCollection: orderCollection,
   },
 });
 

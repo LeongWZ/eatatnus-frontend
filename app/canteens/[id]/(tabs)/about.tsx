@@ -32,11 +32,9 @@ export default function CanteenStalls() {
     (canteen) => canteen.id === id,
   );
 
-  const stalls: Stall[] =
-    canteen?.stalls.flatMap((stall) => {
-      const item = stallCollection.items.find((item) => item.id === stall.id);
-      return item ? [item] : [];
-    }) ?? [];
+  const stalls: Stall[] = stallCollection.items.filter(
+    (stall) => stall.canteenId === canteen?.id,
+  );
 
   const [reviewSummary, setReviewSummary] = React.useState({
     body: "",

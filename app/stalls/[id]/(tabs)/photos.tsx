@@ -42,7 +42,7 @@ export default function StallPhotos() {
   }
 
   return (
-    <View className="p-2">
+    <View className="items-center p-2">
       {images.length === 0 && <Text>No photos found</Text>}
       <FlatList
         data={images}

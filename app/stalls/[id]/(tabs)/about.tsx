@@ -11,6 +11,7 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   Alert,
+  ToastAndroid,
 } from "react-native";
 import { Image } from "expo-image";
 import * as MailComposer from "expo-mail-composer";
@@ -33,6 +34,15 @@ import { putCaloricTrackerDraftAction } from "@/store/reducers/caloricTracker";
 import { isEqual } from "lodash";
 import summariseReviews from "@/services/firebase-functions/summariseReviews";
 import ReviewSummary from "@/components/review/ReviewSummary";
+import {
+  addOrderAction,
+  errorOrderCollectionAction,
+  loadOrderCollectionAction,
+  editOrderAction,
+} from "@/store/reducers/orderCollection";
+import editOrder from "@/services/orders/editOrder";
+import createOrder from "@/services/orders/createOrder";
+import fetchIsUserOnboarded from "@/services/payments/fetchIsUserOnboarded";
 
 export default function StallAbout() {
   const params = useGlobalSearchParams();
@@ -63,6 +73,10 @@ export default function StallAbout() {
     (state: RootState) => state.caloricTracker,
   );
 
+  const orderCollection = useSelector(
+    (state: RootState) => state.orderCollection,
+  );
+
   const [menuImages, dispatchMenuImagesAction] =
     useIdentifiableCollectionReducer<ImageType>({
       items: [],
@@ -78,6 +92,9 @@ export default function StallAbout() {
     body: "",
     isLoading: false,
   });
+
+  const [isOwnerOnboarded, setIsOwnerOnboarded] =
+    React.useState<boolean>(false);
 
   const renderMenuImage = ({ item }: { item: ImageType }) => {
     return (
@@ -122,6 +139,52 @@ export default function StallAbout() {
     );
   };
 
+  const addToOrder = (food: Food) => {
+    if (!stall) {
+      return;
+    }
+
+    const order = orderCollection.items
+      .filter((order) => !order.paid && !order.fulfilled)
+      .find((order) => order.stallId === stall.id);
+
+    dispatch(loadOrderCollectionAction());
+    if (order) {
+      const foodExists = order.foods.some((item) => item.food.id === food.id);
+      const updatedFoods = foodExists
+        ? order.foods.map((item) =>
+            item.food.id === food.id
+              ? { ...item, count: item.count + 1 }
+              : item,
+          )
+        : order.foods;
+      const newFoods = foodExists ? undefined : [{ food: food }];
+      editOrder(order.id, updatedFoods, newFoods)
+        .then((order) => dispatch(editOrderAction({ item: order })))
+        .then(() => ToastAndroid.show("Added to Cart!", ToastAndroid.SHORT))
+        .catch((error: Error) => {
+          dispatch(
+            errorOrderCollectionAction({
+              errorMessage: "Failed to add food to order: " + error.message,
+            }),
+          );
+          Alert.alert("Failed to add food to order", error.message);
+        });
+    } else {
+      createOrder(stall.id, [{ food: food }])
+        .then((order) => dispatch(addOrderAction({ item: order })))
+        .then(() => ToastAndroid.show("Added to Cart!", ToastAndroid.SHORT))
+        .catch((error: Error) => {
+          dispatch(
+            errorOrderCollectionAction({
+              errorMessage: "Failed to create order: " + error.message,
+            }),
+          );
+          Alert.alert("Failed to add create order", error.message);
+        });
+    }
+  };
+
   const onRefresh = () => {
     if (stall === undefined) {
       return;
@@ -146,6 +209,15 @@ export default function StallAbout() {
     summariseReviews(stall?.reviews ?? []).then((body) =>
       setReviewSummary({ body: body, isLoading: false }),
     );
+
+    if (stall?.ownerId) {
+      fetchIsUserOnboarded(stall.ownerId)
+        .then((onboarded) => setIsOwnerOnboarded(onboarded))
+        .catch((err) => {
+          setIsOwnerOnboarded(false);
+          console.log(err);
+        });
+    }
 
     async function setMenuImagesAsync() {
       if (menuImages.loading) {
@@ -255,6 +327,7 @@ export default function StallAbout() {
                 }),
               );
             }}
+            addToOrder={isOwnerOnboarded ? addToOrder : undefined}
             onViewNutrition={() => router.push(`../foods/${item.id}`)}
             key={item.id}
           />

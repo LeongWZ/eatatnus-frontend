@@ -65,7 +65,7 @@ export default function SignIn() {
 
   return (
     <View className="flex-1 justify-center items-center">
-      <View className="bg-slate-200 w-4/5 h-fit p-4 border rounded-lg">
+      <View className="bg-slate-200 w-4/5 p-4 border rounded-lg">
         <Text className="text-2xl mb-2">Sign in</Text>
 
         <Text className="mt-2 mb-1">Email</Text>

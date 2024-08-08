@@ -5,6 +5,7 @@ import { auth } from "@/firebaseConfig";
 export default async function createUser(
   name: string,
   bio?: string,
+  isBusinessAccount?: boolean,
 ): Promise<User> {
   const firebaseUser: FirebaseUser | null = auth.currentUser;
 
@@ -25,6 +26,7 @@ export default async function createUser(
         body: JSON.stringify({
           name: name,
           bio: bio,
+          isBusinessAccount: isBusinessAccount,
         }),
       }),
     )

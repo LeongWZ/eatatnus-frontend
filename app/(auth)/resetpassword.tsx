@@ -1,7 +1,8 @@
 import { Text, View, TextInput, Button } from "react-native";
-import React from "react";
+import React, { useCallback } from "react";
 import resetPasswordWithEmail from "@/services/auth/resetPasswordWithEmail";
 import { useNavigation } from "expo-router";
+import { auth } from "@/firebaseConfig";
 
 type FormData = {
   email: string;
@@ -13,6 +14,8 @@ type ResetStatus = {
 };
 
 export default function ResetPassword() {
+  const firebaseUser = auth.currentUser;
+
   const [formData, setFormData] = React.useState<FormData>({ email: "" });
 
   const [resetStatus, setResetStatus] = React.useState<ResetStatus>({
@@ -20,13 +23,19 @@ export default function ResetPassword() {
     error_message: null,
   });
 
-  const onSubmit = () => {
+  const onSubmit = React.useCallback(() => {
     resetPasswordWithEmail(formData.email)
       .then(() => setResetStatus({ data: true, error_message: null }))
       .catch((error) =>
         setResetStatus({ data: false, error_message: error.message }),
       );
-  };
+  }, [formData.email]);
+
+  React.useEffect(() => {
+    if (firebaseUser?.email) {
+      setFormData({ email: firebaseUser.email });
+    }
+  }, [firebaseUser]);
 
   const navigation = useNavigation();
   React.useEffect(() => {
@@ -44,6 +53,7 @@ export default function ResetPassword() {
         <TextInput
           className="border px-2 rounded"
           placeholder="email"
+          value={formData.email}
           onChangeText={(input) => setFormData({ ...formData, email: input })}
         />
 

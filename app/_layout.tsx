@@ -32,14 +32,33 @@ import {
 } from "@/store/reducers/caloricTracker";
 import fetchCaloricTracker from "@/services/caloric-tracker/fetchCaloricTracker";
 import AutocompleteDropdownContextProvider from "@/components/providers/AutocompleteDropdownContextProvider";
+import fetchPublishableKey from "@/services/payments/fetchPublishableKey";
+import fetchOrders from "@/services/orders/fetchOrders";
+import {
+  errorOrderCollectionAction,
+  loadOrderCollectionAction,
+  putOrderCollectionAction,
+} from "@/store/reducers/orderCollection";
 
 export default function RootLayout() {
+  const [stripePublishableKey, setStripePublishableKey] = React.useState("");
+
+  const fetchStripePublishableKey = async () => {
+    const key = await fetchPublishableKey(); // fetch key from your server here
+    setStripePublishableKey(key);
+  };
+
+  React.useEffect(() => {
+    fetchStripePublishableKey();
+  }, []);
+
   return (
     <Provider store={store}>
       <HydrateAuth />
       <HydrateCanteenCollection />
       <HydrateStallCollection />
       <HydrateCaloricTracker />
+      <HydrateOrderCollection />
 
       <ComposeProviders
         providers={[HoldMenuProvider, AutocompleteDropdownContextProvider]}
@@ -144,6 +163,28 @@ function HydrateCaloricTracker() {
           dispatch(
             errorCaloricTrackerAction({
               errorMessage: "Failed to fetch caloric tracker: " + error.message,
+            }),
+          ),
+        );
+    }
+  }, [auth.isAuthenticated]);
+
+  return <></>;
+}
+
+function HydrateOrderCollection() {
+  const dispatch = useDispatch();
+  const auth = useSelector((state: RootState) => state.auth);
+
+  React.useEffect(() => {
+    dispatch(loadOrderCollectionAction());
+    if (auth.isAuthenticated) {
+      fetchOrders()
+        .then((orders) => dispatch(putOrderCollectionAction({ items: orders })))
+        .catch((error: Error) =>
+          dispatch(
+            errorOrderCollectionAction({
+              errorMessage: error.message,
             }),
           ),
         );

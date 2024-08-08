@@ -70,7 +70,7 @@ export default function NotificationPage() {
     section: { title },
   }: {
     section: { title: string };
-  }) => <Text className="m-2 text-2xl">{title}</Text>;
+  }) => <Text className="mt-2 text-2xl">{title}</Text>;
 
   const navigation = useNavigation();
   React.useEffect(() => {
@@ -80,11 +80,11 @@ export default function NotificationPage() {
   }, [navigation]);
 
   return (
-    <View className="flex-1">
+    <View className="p-4 flex-1">
       <SectionList
         onRefresh={onRefresh}
         refreshing={auth.loading}
-        contentContainerStyle={{ padding: 8, paddingBottom: 100 }}
+        contentContainerStyle={{ paddingBottom: 100 }}
         sections={[
           {
             title: "Unread",
@@ -97,6 +97,11 @@ export default function NotificationPage() {
         ]}
         renderItem={renderItem}
         renderSectionHeader={renderSectionHeader}
+        renderSectionFooter={({ section }) =>
+          section.data.length === 0 ? (
+            <Text className="mt-1 mb-4 text-base">None</Text>
+          ) : null
+        }
       />
       <View className="items-center p-2 border-t">
         <TouchableOpacity

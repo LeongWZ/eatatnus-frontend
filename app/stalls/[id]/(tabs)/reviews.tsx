@@ -92,7 +92,7 @@ export default function StallReviews() {
           <Link href={`../reviews/add`} asChild>
             <TouchableOpacity
               className="p-2 border rounded"
-              style={{ backgroundColor: "rgb(220 38 38)" }}
+              style={{ backgroundColor: "rgb(14 165 233)" }}
             >
               <Text className="text-xl text-white">+ Review</Text>
             </TouchableOpacity>
