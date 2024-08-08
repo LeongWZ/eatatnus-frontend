@@ -1,5 +1,5 @@
 import { Text, View, TextInput, Button } from "react-native";
-import React, { useCallback } from "react";
+import React from "react";
 import resetPasswordWithEmail from "@/services/auth/resetPasswordWithEmail";
 import { useNavigation } from "expo-router";
 import { auth } from "@/firebaseConfig";

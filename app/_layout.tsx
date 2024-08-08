@@ -32,7 +32,6 @@ import {
 } from "@/store/reducers/caloricTracker";
 import fetchCaloricTracker from "@/services/caloric-tracker/fetchCaloricTracker";
 import AutocompleteDropdownContextProvider from "@/components/providers/AutocompleteDropdownContextProvider";
-import fetchPublishableKey from "@/services/payments/fetchPublishableKey";
 import fetchOrders from "@/services/orders/fetchOrders";
 import {
   errorOrderCollectionAction,
@@ -41,17 +40,6 @@ import {
 } from "@/store/reducers/orderCollection";
 
 export default function RootLayout() {
-  const [stripePublishableKey, setStripePublishableKey] = React.useState("");
-
-  const fetchStripePublishableKey = async () => {
-    const key = await fetchPublishableKey(); // fetch key from your server here
-    setStripePublishableKey(key);
-  };
-
-  React.useEffect(() => {
-    fetchStripePublishableKey();
-  }, []);
-
   return (
     <Provider store={store}>
       <HydrateAuth />
