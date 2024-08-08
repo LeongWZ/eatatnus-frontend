@@ -8,7 +8,7 @@ import {
   putOrderCollectionAction,
   loadOrderCollectionAction,
 } from "@/store/reducers/orderCollection";
-import { Link, useRouter } from "expo-router";
+import { Href, Link, useRouter } from "expo-router";
 import React from "react";
 import {
   View,
@@ -273,9 +273,13 @@ export default function OrderPage() {
             onViewNutrition={(foodId) =>
               router.push(`/stalls/${item.stallId}/foods/${foodId}`)
             }
-            onCheckout={() => router.push(`/orders/${item.id}/checkout`)}
+            onCheckout={() =>
+              router.push(`/orders/${item.id}/checkout` as Href<string>)
+            }
             onReview={() =>
-              router.push(`/stalls/${item.stallId}/(tabs)/reviews`)
+              router.push(
+                `/stalls/${item.stallId}/(tabs)/reviews` as Href<string>,
+              )
             }
           />
         )}
