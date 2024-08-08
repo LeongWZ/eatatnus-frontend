@@ -1,7 +1,7 @@
 import { Image, Reply, Review } from "@/app/types";
 import ReplyCard from "./ReplyCard";
 import React from "react";
-import { SectionList, TouchableOpacity, View, Text } from "react-native";
+import { SectionList, TouchableOpacity, View, Text, Alert } from "react-native";
 import ReviewCard from "./ReviewCard";
 import ReplyInput from "./ReplyInput";
 import { Auth } from "@/store/reducers/auth";
@@ -47,6 +47,9 @@ export default function RepliesView(props: RepliesViewProps) {
       onDelete={() => deleteReply(item.id)}
       onReply={() => {
         setParentId(item.id);
+        if (!auth.isAuthenticated) {
+          Alert.alert("Sign In Required", "Please sign in to post a reply.");
+        }
       }}
       key={item.id}
     />
@@ -94,7 +97,7 @@ export default function RepliesView(props: RepliesViewProps) {
         }
         keyExtractor={(item, index) => item.id.toString() + index}
       />
-      {parentId !== undefined ? (
+      {auth.isAuthenticated && parentId !== undefined && (
         <>
           <View className="flex-row items-center space-x-2 mt-2">
             <Text className="text-lg">
@@ -119,7 +122,8 @@ export default function RepliesView(props: RepliesViewProps) {
             autoFocus={true}
           />
         </>
-      ) : (
+      )}
+      {auth.isAuthenticated && !parentId && (
         <ReplyInput
           submitReply={(body) => {
             if (body.length > 0) {

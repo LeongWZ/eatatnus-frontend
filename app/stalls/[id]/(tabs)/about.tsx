@@ -43,6 +43,7 @@ import {
 import editOrder from "@/services/orders/editOrder";
 import createOrder from "@/services/orders/createOrder";
 import fetchIsUserOnboarded from "@/services/payments/fetchIsUserOnboarded";
+import OnlinePaymentUnavailableCard from "@/components/menu/OnlinePaymentUnavailableCard";
 
 export default function StallAbout() {
   const params = useGlobalSearchParams();
@@ -93,8 +94,11 @@ export default function StallAbout() {
     isLoading: false,
   });
 
-  const [isOwnerOnboarded, setIsOwnerOnboarded] =
-    React.useState<boolean>(false);
+  const [isOwnerOnboardedOnStripe, setIsOwnerOnboardedOnStripe] =
+    React.useState({
+      data: false,
+      loading: true,
+    });
 
   const renderMenuImage = ({ item }: { item: ImageType }) => {
     return (
@@ -141,6 +145,11 @@ export default function StallAbout() {
 
   const addToOrder = (food: Food) => {
     if (!stall) {
+      return;
+    }
+
+    if (!auth.isAuthenticated) {
+      router.push("/signin");
       return;
     }
 
@@ -212,11 +221,15 @@ export default function StallAbout() {
 
     if (stall?.ownerId) {
       fetchIsUserOnboarded(stall.ownerId)
-        .then((onboarded) => setIsOwnerOnboarded(onboarded))
+        .then((onboarded) =>
+          setIsOwnerOnboardedOnStripe({ data: onboarded, loading: false }),
+        )
         .catch((err) => {
-          setIsOwnerOnboarded(false);
+          setIsOwnerOnboardedOnStripe({ data: false, loading: false });
           console.log(err);
         });
+    } else {
+      setIsOwnerOnboardedOnStripe({ data: false, loading: false });
     }
 
     async function setMenuImagesAsync() {
@@ -304,10 +317,15 @@ export default function StallAbout() {
           showsHorizontalScrollIndicator={true}
           style={{ marginVertical: 8, marginLeft: 8 }}
         />
+
+        {!isOwnerOnboardedOnStripe.data &&
+          !isOwnerOnboardedOnStripe.loading && <OnlinePaymentUnavailableCard />}
+
         {(auth.user?.id === stall.ownerId ||
           auth.user?.role === Role.Admin) && (
           <AddFoodView submitCreate={addFoodFn(stall, onRefresh)} />
         )}
+
         {menuFoodItems.map((item) => (
           <FoodView
             food={item}
@@ -327,7 +345,11 @@ export default function StallAbout() {
                 }),
               );
             }}
-            addToOrder={isOwnerOnboarded ? addToOrder : undefined}
+            addToOrder={
+              isOwnerOnboardedOnStripe.data && auth.user?.role !== Role.Business
+                ? addToOrder
+                : undefined
+            }
             onViewNutrition={() => router.push(`../foods/${item.id}`)}
             key={item.id}
           />
