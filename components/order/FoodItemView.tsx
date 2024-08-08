@@ -1,38 +1,50 @@
 import React from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { Food } from "@/app/types";
+import { FoodsOnOrders } from "@/app/types";
 
 // @ts-expect-error: No declaration file for module
 // eslint-disable-next-line import/no-unresolved
 import { HoldItem } from "react-native-hold-menu";
+import DraftItem from "@/store/interfaces/DraftItem";
 
-type FoodItem = {
-  food: Omit<Food, "id">;
-  count?: number;
-};
-
-type FoodItemViewProps<T extends FoodItem> = {
-  item: T;
+type FoodItemViewProps = {
+  item: FoodsOnOrders;
   submitDelete: () => void;
-  submitEdit: (item: T) => void;
+  submitEdit: (item: FoodsOnOrders) => void;
+  saveToCaloricTrackerDraft: (item: DraftItem) => void;
+  disabled?: boolean;
   onViewNutrition?: () => void;
 };
 
-export default function FoodItemView<T extends FoodItem>(
-  props: FoodItemViewProps<T>,
-) {
-  const { item, submitDelete, submitEdit, onViewNutrition } = props;
+export default function FoodItemView(props: FoodItemViewProps) {
+  const {
+    item,
+    submitDelete,
+    submitEdit,
+    saveToCaloricTrackerDraft,
+    disabled,
+    onViewNutrition,
+  } = props;
 
   const count = item?.count ?? 1;
 
   const MenuItems = [
     {
-      text: "Delete",
-      icon: "trash",
-      isDestructive: true,
-      onPress: submitDelete,
+      text: "Add to Entry Draft",
+      icon: "save",
+      onPress: () => saveToCaloricTrackerDraft(item),
     },
+    ...(disabled
+      ? []
+      : [
+          {
+            text: "Delete",
+            icon: "trash",
+            isDestructive: true,
+            onPress: submitDelete,
+          },
+        ]),
   ];
 
   return (
@@ -40,10 +52,10 @@ export default function FoodItemView<T extends FoodItem>(
       <View className="flex-row justify-between border rounded my-2 p-4 bg-slate-50">
         <View className="flex-1">
           <Text className="text-xl">{item.food.name}</Text>
-          {item.food.calories && (
-            <Text className="text-lg">{`${item.food.calories} cal`}</Text>
+          {item.food.price && (
+            <Text className="text-lg">${item.food.price.toFixed(2)}</Text>
           )}
-          {"id" in item.food && onViewNutrition && (
+          {onViewNutrition && (
             <View className="items-start mt-1">
               <TouchableOpacity onPress={onViewNutrition}>
                 <Text className="text-blue-800">View Nutrition</Text>
@@ -56,19 +68,24 @@ export default function FoodItemView<T extends FoodItem>(
             onPress={() =>
               submitEdit({ ...item, count: Math.max(1, count - 1) })
             }
-            disabled={count <= 1}
+            disabled={count <= 1 || disabled}
           >
             <AntDesign
               name="minussquareo"
               size={32}
-              color={count <= 1 ? "grey" : "red"}
+              color={disabled || count <= 1 ? "grey" : "red"}
             />
           </TouchableOpacity>
           <Text className="text-4xl">{item.count ?? 1}</Text>
           <TouchableOpacity
             onPress={() => submitEdit({ ...item, count: count + 1 })}
+            disabled={disabled}
           >
-            <AntDesign name="plussquareo" size={32} color="green" />
+            <AntDesign
+              name="plussquareo"
+              size={32}
+              color={disabled ? "grey" : "green"}
+            />
           </TouchableOpacity>
         </View>
       </View>

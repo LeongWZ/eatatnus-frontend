@@ -16,7 +16,7 @@ export default function NotificationCard(props: NotificationCardProps) {
   return (
     <TouchableOpacity
       onPress={onPress}
-      className={`border rounded-xl m-2 p-2 ${notification.read ? "bg-gray-200" : ""}`}
+      className={`border rounded-xl my-2 p-2 ${notification.read ? "bg-gray-200" : ""}`}
     >
       <Text className="text-base">{localeString}</Text>
       <Text className="text-lg">{notification.message}</Text>

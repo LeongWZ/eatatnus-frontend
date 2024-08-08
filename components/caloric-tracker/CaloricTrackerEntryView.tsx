@@ -167,7 +167,7 @@ export default function CaloricTrackerEntryView(
             editEntry(entry.foods.map((food, i) => (i === index ? item : food)))
           }
           onViewNutrition={
-            onViewNutrition ? () => onViewNutrition?.(item.food.id) : undefined
+            onViewNutrition ? () => onViewNutrition(item.food.id) : undefined
           }
           key={`${item.foodId}-${item.count}`}
         />

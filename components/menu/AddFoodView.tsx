@@ -35,7 +35,19 @@ export default function AddFoodView(props: AddFoodViewProps) {
         <TextInput
           className="border rounded p-2 text-xl"
           onChangeText={(text) => setFoodInput({ ...foodInput, name: text })}
-          value={foodInput.name}
+        />
+      </View>
+      <View>
+        <Text className="text-lg">Price ($):</Text>
+        <TextInput
+          className="border rounded p-2 text-xl"
+          onChangeText={(text) =>
+            setFoodInput({
+              ...foodInput,
+              price: Math.floor(parseFloat(text) * 100) / 100,
+            })
+          }
+          keyboardType="numeric"
         />
       </View>
       <View className="flex-row space-x-4">

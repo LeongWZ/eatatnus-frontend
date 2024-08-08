@@ -17,7 +17,7 @@ export type Notification = {
 
 export enum Role {
   Admin = "ADMIN",
-  User = "User",
+  User = "USER",
   Business = "BUSINESS",
 }
 
@@ -40,7 +40,6 @@ export type Canteen = {
   updatedAt: string;
   locationId: number;
   location: Location;
-  stalls: Stall[];
   reviews: Review[];
 };
 
@@ -113,6 +112,7 @@ export type Food = {
   sugars?: number | null;
   totalCarbohydrate?: number | null;
   totalFat?: number | null;
+  price?: number | null;
 };
 
 export type Menu = {
@@ -140,4 +140,30 @@ export type FoodsOnCaloricTrackerEntries = {
   food: Food;
   foodId: number;
   caloricTrackerEntryId: number;
+};
+
+export type Order = {
+  id: number;
+  fulfilled: boolean;
+  paid: boolean;
+  createdAt: string;
+  updatedAt: string;
+  userId: number;
+  stallId: number;
+  foods: FoodsOnOrders[];
+};
+
+export type FoodsOnOrders = {
+  count: number;
+  createdAt: string;
+  updatedAt: string;
+  food: Food;
+  foodId: number;
+  orderId: number;
+};
+
+export type PaymentSheetParams = {
+  paymentIntent: string | null;
+  stripeAccountId: string;
+  publishableKey: string;
 };

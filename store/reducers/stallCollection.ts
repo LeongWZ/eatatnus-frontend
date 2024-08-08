@@ -30,7 +30,7 @@ const slice = createSlice({
       { payload: { item } }: { payload: { item: Stall } },
     ) => ({
       items: state.items.map((Stall: Stall) =>
-        Stall.id === item?.id ? item : Stall,
+        Stall.id === item.id ? item : Stall,
       ),
       loading: false,
       errorMessage: null,

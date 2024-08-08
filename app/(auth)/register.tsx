@@ -10,11 +10,13 @@ import {
   putUserDataAction,
 } from "@/store/reducers/auth";
 import createUser from "@/services/users/createUser";
+import BouncyCheckbox from "react-native-bouncy-checkbox";
 
 type FormData = {
   email: string;
   password: string;
   username: string;
+  isBusinessAccount?: boolean;
 };
 
 export default function Register() {
@@ -25,6 +27,7 @@ export default function Register() {
     email: "",
     password: "",
     username: "",
+    isBusinessAccount: false,
   });
 
   const onSubmit = () => {
@@ -32,7 +35,7 @@ export default function Register() {
 
     registerWithEmail(formData.email, formData.password)
       .then(() =>
-        createUser(formData.username)
+        createUser(formData.username, undefined, formData.isBusinessAccount)
           .then((userData) => dispatch(putUserDataAction({ user: userData })))
           .catch((error: Error) => {
             dispatch(
@@ -64,7 +67,7 @@ export default function Register() {
 
   return (
     <View className="flex-1 justify-center items-center">
-      <View className="bg-slate-200 w-4/5 h-4/5 p-4 border rounded-lg">
+      <View className="bg-slate-200 w-4/5 p-4 border rounded-lg">
         <Text className="text-2xl mb-2">Register</Text>
 
         <Text className="mt-2 mb-1">Email</Text>
@@ -93,6 +96,16 @@ export default function Register() {
           }
         />
 
+        <View className="flex-row mt-3">
+          <BouncyCheckbox
+            fillColor="red"
+            unFillColor="#FFFFFF"
+            onPress={(isChecked: boolean) => {
+              setFormData({ ...formData, isBusinessAccount: isChecked });
+            }}
+          />
+          <Text className="text-base">Business account</Text>
+        </View>
         <View className="mt-4 w-1/4">
           <Button
             title="Submit"
