@@ -14,7 +14,7 @@ import {
   editOrderAction,
   errorOrderCollectionAction,
 } from "@/store/reducers/orderCollection";
-import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
+import { initStripe, useStripe } from "@stripe/stripe-react-native";
 import { useGlobalSearchParams, useNavigation, useRouter } from "expo-router";
 import { isEqual } from "lodash";
 import React from "react";
@@ -33,22 +33,22 @@ export default function CheckoutPage() {
     .filter((order) => !order.paid && !order.fulfilled)
     .find((order) => order.id === id);
 
-  const [stripeProviderParams, setStripeProviderParams] = React.useState<{
-    publishableKey: string;
-    stripeAccountId?: string;
-    loading: boolean;
-  }>({
-    publishableKey: "",
-    loading: true,
-  });
+  const [isStripeInitialising, setIsStripeInitialising] =
+    React.useState<boolean>(true);
 
   React.useEffect(() => {
     if (order === undefined) {
       return;
     }
-    fetchPublishableKey(order.id)
-      .then((params) => setStripeProviderParams({ ...params, loading: false }))
-      .catch(console.error);
+    fetchPublishableKey(order.stallId)
+      .then((params) =>
+        initStripe({
+          publishableKey: params.publishableKey,
+          stripeAccountId: params.stripeAccountId,
+        }),
+      )
+      .then(() => setIsStripeInitialising(false))
+      .catch((error) => Alert.alert("Failed to initialise Stripe", error));
   }, []);
 
   const navigation = useNavigation();
@@ -62,7 +62,7 @@ export default function CheckoutPage() {
     return <ErrorView />;
   }
 
-  if (stripeProviderParams.loading) {
+  if (isStripeInitialising) {
     return (
       <View className="flex-1 justify-center items-center">
         <ActivityIndicator />
@@ -71,14 +71,7 @@ export default function CheckoutPage() {
     );
   }
 
-  return (
-    <StripeProvider
-      publishableKey={stripeProviderParams.publishableKey}
-      stripeAccountId={stripeProviderParams.stripeAccountId}
-    >
-      <CheckoutScreen order={order} />
-    </StripeProvider>
-  );
+  return <CheckoutScreen order={order} />;
 }
 
 function CheckoutScreen({ order }: { order: Order }) {

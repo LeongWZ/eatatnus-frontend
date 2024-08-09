@@ -21,7 +21,7 @@ export default function CanteenPreview(props: CanteenPreviewProps) {
         userLocation.coords.longitude,
         canteen.location.latitude,
         canteen.location.latitude,
-      )
+      ) / 1000
     : undefined;
 
   return (
@@ -42,7 +42,7 @@ export default function CanteenPreview(props: CanteenPreviewProps) {
           style={{ paddingVertical: 4 }}
         />
         {distanceToUser !== undefined && (
-          <Text>{`Distance: ${distanceToUser} meters`}</Text>
+          <Text>{`Distance: ${distanceToUser.toFixed(2)} km`}</Text>
         )}
       </TouchableOpacity>
     </Link>
