@@ -48,6 +48,13 @@
           "photosPermission": "The app accesses your photos to let you share them with others.",
           "cameraPermission": "The app accesses your camera to let you share photos with others."
         }
+      ],
+      [
+        "@stripe/stripe-react-native",
+        {
+          "merchantIdentifier": [],
+          "enableGooglePay": true
+        }
       ]
     ],
     "experiments": {

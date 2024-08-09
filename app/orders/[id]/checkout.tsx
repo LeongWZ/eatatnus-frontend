@@ -18,7 +18,7 @@ import { StripeProvider, useStripe } from "@stripe/stripe-react-native";
 import { useGlobalSearchParams, useNavigation, useRouter } from "expo-router";
 import { isEqual } from "lodash";
 import React from "react";
-import { ScrollView, Alert } from "react-native";
+import { ScrollView, Alert, ActivityIndicator, View, Text } from "react-native";
 import { useDispatch, useSelector } from "react-redux";
 
 export default function CheckoutPage() {
@@ -36,8 +36,10 @@ export default function CheckoutPage() {
   const [stripeProviderParams, setStripeProviderParams] = React.useState<{
     publishableKey: string;
     stripeAccountId?: string;
+    loading: boolean;
   }>({
     publishableKey: "",
+    loading: true,
   });
 
   React.useEffect(() => {
@@ -45,7 +47,7 @@ export default function CheckoutPage() {
       return;
     }
     fetchPublishableKey(order.id)
-      .then(setStripeProviderParams)
+      .then((params) => setStripeProviderParams({ ...params, loading: false }))
       .catch(console.error);
   }, []);
 
@@ -60,8 +62,20 @@ export default function CheckoutPage() {
     return <ErrorView />;
   }
 
+  if (stripeProviderParams.loading) {
+    return (
+      <View className="flex-1 justify-center items-center">
+        <ActivityIndicator />
+        <Text className="text-base">Loading...</Text>
+      </View>
+    );
+  }
+
   return (
-    <StripeProvider {...stripeProviderParams}>
+    <StripeProvider
+      publishableKey={stripeProviderParams.publishableKey}
+      stripeAccountId={stripeProviderParams.stripeAccountId}
+    >
       <CheckoutScreen order={order} />
     </StripeProvider>
   );
