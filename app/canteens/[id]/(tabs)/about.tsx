@@ -46,7 +46,7 @@ export default function CanteenStalls() {
       return;
     }
 
-    const address = encodeURIComponent(canteen.location.address);
+    const address = encodeURIComponent(canteen.location?.address ?? "");
     const url = `https://www.google.com/maps/search/?api=1&query=${address}`;
     Linking.openURL(url).catch((err) =>
       console.error("An error occurred", err),
@@ -68,15 +68,17 @@ export default function CanteenStalls() {
     <ScrollView className="p-4">
       <View className="mt-2">
         <Text className="text-4xl">{canteen.name}</Text>
-        <TouchableOpacity
-          onPress={openAddressInMaps}
-          className="flex-row space-x-1 mt-1"
-        >
-          <FontAwesome name="map-marker" size={24} color="red" />
-          <Text className="text-xl mb-2 text-blue-800">
-            {canteen.location.address}
-          </Text>
-        </TouchableOpacity>
+        {canteen.location && (
+          <TouchableOpacity
+            onPress={openAddressInMaps}
+            className="flex-row space-x-1 mt-1"
+          >
+            <FontAwesome name="map-marker" size={24} color="red" />
+            <Text className="text-xl mb-2 text-blue-800">
+              {canteen.location.address}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <View className="mt-2">

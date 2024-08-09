@@ -1,7 +1,7 @@
 import fetchUser from "@/services/users/fetchUser";
 import { Canteen, Role, Stall, User } from "@/app/types";
 import { RootState } from "@/store";
-import { Link, useGlobalSearchParams, useNavigation } from "expo-router";
+import { Href, Link, useGlobalSearchParams, useNavigation } from "expo-router";
 import React from "react";
 import {
   View,
@@ -139,7 +139,7 @@ export default function UserPage() {
           return (
             <Link
               key={canteen.id}
-              href={`/canteens/${canteen.id}/reviews`}
+              href={`/canteens/${canteen.id}/reviews` as Href<string>}
               asChild
             >
               <TouchableOpacity className="border rounded-lg p-4 my-1">
@@ -148,18 +148,28 @@ export default function UserPage() {
             </Link>
           );
         })}
+        {canteensReviewed.length === 0 && (
+          <Text className="mt-1 text-base">None</Text>
+        )}
       </View>
       <View className="mt-4 mb-32">
         <Text className="text-2xl">Stalls reviewed</Text>
         {stallsReviewed.map((stall) => {
           return (
-            <Link key={stall.id} href={`/stalls/${stall.id}/reviews`} asChild>
+            <Link
+              key={stall.id}
+              href={`/stalls/${stall.id}/reviews` as Href<string>}
+              asChild
+            >
               <TouchableOpacity className="border rounded-lg p-4 my-1">
                 <Text className="text-xl">{stall.name}</Text>
               </TouchableOpacity>
             </Link>
           );
         })}
+        {stallsReviewed.length === 0 && (
+          <Text className="mt-1 text-base">None</Text>
+        )}
       </View>
     </ScrollView>
   );

@@ -22,6 +22,7 @@ import {
 import UserPressable from "@/components/users/UserPressable";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import * as Location from "expo-location";
+import measureDistance from "@/utils/measureDistance";
 
 function Header() {
   const router = useRouter();
@@ -76,10 +77,32 @@ function Header() {
 export default function Index() {
   const dispatch = useDispatch();
 
+  const [userLocation, setUserLocation] = React.useState<
+    Location.LocationObject | undefined
+  >(undefined);
+
   const canteenCollection = useSelector(
     (state: RootState) => state.canteenCollection,
   );
+
   const canteens = canteenCollection.items;
+  const canteensWithDistance = canteens
+    .map((canteen) => ({
+      canteen: canteen,
+      distance: userLocation
+        ? measureDistance(
+            canteen.location?.latitude ?? 0,
+            canteen.location?.longitude ?? 0,
+            userLocation.coords.latitude,
+            userLocation.coords.longitude,
+          )
+        : undefined,
+    }))
+    .sort((a, b) =>
+      a.distance !== undefined && b.distance !== undefined
+        ? a.distance - b.distance
+        : a.canteen.id - b.canteen.id,
+    );
 
   const stallCollection = useSelector(
     (state: RootState) => state.stallCollection,
@@ -88,10 +111,6 @@ export default function Index() {
   const topRatedStalls = [...stallCollection.items]
     .sort((a, b) => getAverageRating(b.reviews) - getAverageRating(a.reviews))
     .slice(0, 3);
-
-  const [userLocation, setUserLocation] = React.useState<
-    Location.LocationObject | undefined
-  >(undefined);
 
   const onRefresh = () => {
     dispatch(loadCanteenCollectionAction());
@@ -150,11 +169,11 @@ export default function Index() {
         </View>
         <View className="p-2 pb-28" id="canteens">
           <Text className="text-2xl">Canteens</Text>
-          {canteens.map((canteen) => (
+          {canteensWithDistance.map((item) => (
             <CanteenPreview
-              canteen={canteen}
-              userLocation={userLocation}
-              key={canteen.id}
+              canteen={item.canteen}
+              distance={item.distance}
+              key={item.canteen.id}
             />
           ))}
         </View>
