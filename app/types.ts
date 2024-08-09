@@ -38,8 +38,8 @@ export type Canteen = {
   description: string | null;
   createdAt: string;
   updatedAt: string;
-  locationId: number;
-  location: Location;
+  locationId?: number | null;
+  location?: Location | null;
   reviews: Review[];
 };
 

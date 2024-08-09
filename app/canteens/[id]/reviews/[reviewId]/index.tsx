@@ -61,6 +61,12 @@ export default function ReviewReplies() {
     }
   };
 
+  React.useEffect(() => {
+    if (!auth.isAuthenticated) {
+      Alert.alert("Sign In Required", "You need to sign in to reply");
+    }
+  }, [auth]);
+
   const navigation = useNavigation();
   React.useEffect(() => {
     navigation.setOptions({

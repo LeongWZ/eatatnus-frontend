@@ -301,7 +301,7 @@ export default function StallAbout() {
           !stall.menu &&
           menuImages.items.length === 0 && (
             <View className="items-center">
-              <Text className="p-4">No menu found.</Text>
+              <Text className="p-4">No menu image found</Text>
             </View>
           )}
 
