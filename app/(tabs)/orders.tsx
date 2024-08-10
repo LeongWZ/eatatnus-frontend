@@ -223,13 +223,15 @@ export default function OrderPage() {
   return (
     <View className="p-4">
       {auth.user?.role === Role.Business && stall === undefined && (
-        <View className="flex-row">
-          <Text>This account is not connected to a stall</Text>
+        <View className="my-2 items-start space-y-2">
+          <Text className="text-base">
+            This account is not connected to a stall
+          </Text>
           <TouchableOpacity
             className="border rounded p-2"
             onPress={createClaimAlert}
           >
-            <Text className="text-sm">Claim stall business</Text>
+            <Text className="text-base">Claim stall business</Text>
           </TouchableOpacity>
         </View>
       )}
