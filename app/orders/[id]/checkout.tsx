@@ -145,23 +145,6 @@ function CheckoutScreen({ order }: { order: Order }) {
       });
   };
 
-  const onEditOrder = (items: FoodsOnOrders[]) => {
-    if (order === undefined) {
-      return;
-    }
-
-    editOrder(order.id, items)
-      .then((order) => dispatch(editOrderAction({ item: order })))
-      .catch((error: Error) => {
-        dispatch(
-          errorOrderCollectionAction({
-            errorMessage: "Failed to delete order: " + error.message,
-          }),
-        );
-        Alert.alert("Failed to delete order: ", error.message);
-      });
-  };
-
   const openPaymentSheet = async () => {
     if (order === undefined) {
       return;
@@ -197,8 +180,6 @@ function CheckoutScreen({ order }: { order: Order }) {
           (stall) => stall.id === order.stallId,
         )}
         saveToCaloricTrackerDraft={saveToCaloricTrackerDraft}
-        deleteOrder={onDeleteOrder}
-        editOrder={onEditOrder}
         onCancel={() =>
           router.canGoBack() ? router.back() : router.replace("/orders")
         }

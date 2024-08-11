@@ -34,7 +34,7 @@ export default function DeleteCaloricTracker() {
       .catch((err) =>
         dispatch(
           errorCaloricTrackerAction({
-            errorMessage: "Failed to delete account: " + err.message,
+            errorMessage: "Failed to delete caloric Tracker: " + err.message,
           }),
         ),
       );

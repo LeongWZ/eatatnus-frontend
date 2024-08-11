@@ -106,6 +106,7 @@ export default function Register() {
           />
           <Text className="text-base">Business account</Text>
         </View>
+
         <View className="mt-4 w-1/4">
           <Button
             title="Submit"

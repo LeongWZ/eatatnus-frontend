@@ -264,7 +264,7 @@ export default function StallAbout() {
   }
 
   return (
-    <ScrollView className="p-2">
+    <ScrollView className="p-4">
       <View className="mt-2">
         <Text className="text-3xl">{stall.name}</Text>
         <Text className="text-xl">{canteen?.name}</Text>
@@ -281,7 +281,7 @@ export default function StallAbout() {
         </View>
       )}
 
-      <View className="mt-2">
+      <View className="mt-5">
         <Text className="text-2xl">Reviews</Text>
         <ReviewSummary
           reviews={stall?.reviews}
@@ -290,10 +290,10 @@ export default function StallAbout() {
         />
       </View>
 
-      <View className="mt-4">
+      <View className="mt-8">
         <Text className="text-2xl">Menu</Text>
 
-        <Text>
+        <Text className="text-sm my-2">
           Contribute by submitting a review along with an image of a menu.
         </Text>
 

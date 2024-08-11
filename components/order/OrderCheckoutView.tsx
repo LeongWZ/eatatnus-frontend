@@ -8,8 +8,6 @@ import { Link } from "expo-router";
 type OrderCheckoutViewProps = {
   order: Order;
   saveToCaloricTrackerDraft: (item: DraftItem) => void;
-  deleteOrder: () => void;
-  editOrder: (items: FoodsOnOrders[], newItems?: DraftItem[]) => void;
   onCancel: () => void;
   onPayment: () => void;
   stall?: Stall;
@@ -19,8 +17,6 @@ type OrderCheckoutViewProps = {
 export default function OrderCheckoutView(props: OrderCheckoutViewProps) {
   const {
     order,
-    deleteOrder,
-    editOrder,
     saveToCaloricTrackerDraft,
     onCancel,
     onPayment,
@@ -52,19 +48,10 @@ export default function OrderCheckoutView(props: OrderCheckoutViewProps) {
       {order.foods.map((item, index) => (
         <FoodItemView
           item={item}
-          submitDelete={() =>
-            order.foods.length > 1
-              ? editOrder([
-                  ...order.foods.slice(0, index),
-                  ...order.foods.slice(index + 1),
-                ])
-              : deleteOrder()
-          }
-          submitEdit={(item) =>
-            editOrder(order.foods.map((food, i) => (i === index ? item : food)))
-          }
+          submitDelete={() => {}}
+          submitEdit={(item) => {}}
           saveToCaloricTrackerDraft={saveToCaloricTrackerDraft}
-          disabled={disabled}
+          disabled={true}
           key={`${item.foodId}-${item.count}`}
         />
       ))}
