@@ -240,7 +240,14 @@ export default function OrderPage() {
         refreshing={orderCollection.loading}
         sections={[
           ...(auth.user?.role === Role.Business
-            ? []
+            ? [
+                {
+                  title: "To Fulfill",
+                  data: orderCollection.items
+                    .filter((order) => order.paid && !order.fulfilled)
+                    .toReversed(),
+                },
+              ]
             : [
                 {
                   title: "To Pay",
@@ -248,14 +255,14 @@ export default function OrderPage() {
                     (order) => !order.paid && !order.fulfilled,
                   ),
                 },
+
+                {
+                  title: "To Receive",
+                  data: orderCollection.items.filter(
+                    (order) => order.paid && !order.fulfilled,
+                  ),
+                },
               ]),
-          {
-            title:
-              auth.user?.role === Role.Business ? "To Fulfill" : "To Receive",
-            data: orderCollection.items.filter(
-              (order) => order.paid && !order.fulfilled,
-            ),
-          },
           {
             title: "Fulfilled",
             data: orderCollection.items.filter((order) => order.fulfilled),

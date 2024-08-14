@@ -12,7 +12,7 @@ export default async function searchFoods(
     .then((response) => response.json())
     .then((result) => {
       if (result["error"]) {
-        throw new Error(result.error);
+        throw new Error(JSON.stringify(result.error));
       }
       return result.data;
     })

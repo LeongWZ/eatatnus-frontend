@@ -24,7 +24,9 @@ export default function OrderCheckoutView(props: OrderCheckoutViewProps) {
     disabled,
   } = props;
 
-  const localeString: string = new Date(order.createdAt).toLocaleString();
+  const updatedAtLocaleString: string = new Date(
+    order.updatedAt,
+  ).toLocaleString();
 
   const totalPrice: number = order.foods.reduce(
     (acc, item) => acc + (item.food.price ?? 0) * item.count,
@@ -34,7 +36,7 @@ export default function OrderCheckoutView(props: OrderCheckoutViewProps) {
   return (
     <View className="border rounded my-2 p-4 space-y-4">
       <View className="items-start">
-        <Text className="text-lg">{localeString}</Text>
+        <Text className="text-sm">Updated at: {updatedAtLocaleString}</Text>
         {stall && (
           <Link href={`/stalls/${stall.id}`} asChild>
             <TouchableOpacity>

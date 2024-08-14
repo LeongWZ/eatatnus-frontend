@@ -32,7 +32,13 @@ export default function OrderView(props: OrderViewProps) {
     onReview,
   } = props;
 
-  const localeString: string = new Date(order.createdAt).toLocaleString();
+  const updatedAtLocaleString: string = new Date(
+    order.updatedAt,
+  ).toLocaleString();
+
+  const paidAtLocateString: string | undefined = order.paidAt
+    ? new Date(order.paidAt).toLocaleString()
+    : undefined;
 
   const totalPrice: number = order.foods.reduce(
     (acc, item) => acc + (item.food.price ?? 0) * item.count,
@@ -42,7 +48,7 @@ export default function OrderView(props: OrderViewProps) {
   return (
     <View className="border rounded my-2 p-4 space-y-4">
       <View className="items-start">
-        <Text className="text-lg">{localeString}</Text>
+        <Text className="text-base">Updated at: {updatedAtLocaleString}</Text>
         {stall && (
           <Link href={`/stalls/${stall.id}`} asChild>
             <TouchableOpacity>
@@ -51,6 +57,9 @@ export default function OrderView(props: OrderViewProps) {
           </Link>
         )}
         <Text className="mt-2 text-sm">Order ID: {order.id}</Text>
+        {paidAtLocateString && (
+          <Text className="text-sm">Paid at: {paidAtLocateString}</Text>
+        )}
         <Text className="mt-4 mb-2 text-3xl">${totalPrice.toFixed(2)}</Text>
       </View>
       {order.foods.map((item, index) => (

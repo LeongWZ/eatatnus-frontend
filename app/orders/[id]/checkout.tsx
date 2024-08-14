@@ -101,7 +101,12 @@ function CheckoutScreen({ order }: { order: Order }) {
       return;
     }
 
-    const { paymentIntent } = await fetchPaymentSheetParams(order.id);
+    const { paymentIntent } = await fetchPaymentSheetParams(order.id).catch(
+      (err) => {
+        Alert.alert("Error: failed to fetch payment intent", `${err}}`);
+        return { paymentIntent: null };
+      },
+    );
 
     const { error } = await initPaymentSheet({
       merchantDisplayName: stall?.name ?? "Stall",
@@ -110,6 +115,7 @@ function CheckoutScreen({ order }: { order: Order }) {
         name: auth.user?.name,
       },
     });
+
     if (!error) {
       setLoading(true);
     }

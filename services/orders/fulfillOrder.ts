@@ -25,7 +25,7 @@ export default async function fulfillOrder(orderId: number): Promise<Order> {
     .then((response) => response.json())
     .then((result) => {
       if (result["error"]) {
-        throw new Error(result.error);
+        throw new Error(JSON.stringify(result.error));
       }
 
       return result.data as Order;
