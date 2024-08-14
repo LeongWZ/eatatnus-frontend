@@ -123,7 +123,7 @@ export default function CaloricTracker() {
   }
 
   return (
-    <View className="p-2">
+    <View>
       <SectionList
         sections={[
           {
@@ -160,6 +160,7 @@ export default function CaloricTracker() {
             ),
           },
         ]}
+        contentContainerStyle={{ padding: 12 }}
         keyExtractor={(item, index) => item.id.toString() + index}
       />
     </View>

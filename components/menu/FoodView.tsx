@@ -91,7 +91,7 @@ export default function FoodView(props: FoodViewProps) {
         </View>
         <View className="flex-1 justify-center items-end space-y-2 ml-2">
           {foodVar.price && (
-            <Text className="text-3xl">${foodVar.price.toFixed(2)}</Text>
+            <Text className="text-2xl">${foodVar.price.toFixed(2)}</Text>
           )}
           {addToOrder && (
             <TouchableOpacity

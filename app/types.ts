@@ -148,6 +148,7 @@ export type Order = {
   paid: boolean;
   createdAt: string;
   updatedAt: string;
+  paidAt?: string | null;
   userId: number;
   stallId: number;
   foods: FoodsOnOrders[];

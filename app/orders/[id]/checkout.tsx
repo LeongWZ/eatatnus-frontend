@@ -1,19 +1,13 @@
-import { FoodsOnOrders, Order, Stall } from "@/app/types";
+import { Order, Stall } from "@/app/types";
 import ErrorView from "@/components/ErrorView";
 import OrderCheckoutView from "@/components/order/OrderCheckoutView";
-import deleteOrder from "@/services/orders/deleteOrder";
-import editOrder from "@/services/orders/editOrder";
 import fetchIndividualOrder from "@/services/orders/fetchIndividualOrder";
 import fetchPaymentSheetParams from "@/services/payments/fetchPaymentSheetParams";
 import fetchPublishableKey from "@/services/payments/fetchPublishableKey";
 import { RootState } from "@/store";
 import DraftItem from "@/store/interfaces/DraftItem";
 import { putCaloricTrackerDraftAction } from "@/store/reducers/caloricTracker";
-import {
-  deleteOrderAction,
-  editOrderAction,
-  errorOrderCollectionAction,
-} from "@/store/reducers/orderCollection";
+import { editOrderAction } from "@/store/reducers/orderCollection";
 import { initStripe, useStripe } from "@stripe/stripe-react-native";
 import { useGlobalSearchParams, useNavigation, useRouter } from "expo-router";
 import { isEqual } from "lodash";
@@ -101,7 +95,12 @@ function CheckoutScreen({ order }: { order: Order }) {
       return;
     }
 
-    const { paymentIntent } = await fetchPaymentSheetParams(order.id);
+    const { paymentIntent } = await fetchPaymentSheetParams(order.id).catch(
+      (err) => {
+        Alert.alert("Error: failed to fetch payment intent", `${err}}`);
+        return { paymentIntent: null };
+      },
+    );
 
     const { error } = await initPaymentSheet({
       merchantDisplayName: stall?.name ?? "Stall",
@@ -110,6 +109,7 @@ function CheckoutScreen({ order }: { order: Order }) {
         name: auth.user?.name,
       },
     });
+
     if (!error) {
       setLoading(true);
     }
@@ -124,42 +124,6 @@ function CheckoutScreen({ order }: { order: Order }) {
         items: [...caloricTracker.draft, draftItem],
       }),
     );
-  };
-
-  const onDeleteOrder = () => {
-    if (order === undefined) {
-      return;
-    }
-    deleteOrder(order.id)
-      .then(() => dispatch(deleteOrderAction({ item: order })))
-      .then(() =>
-        router.canGoBack() ? router.back() : router.replace("/orders"),
-      )
-      .catch((error: Error) => {
-        dispatch(
-          errorOrderCollectionAction({
-            errorMessage: error.message,
-          }),
-        );
-        Alert.alert("Failed to create order", error.message);
-      });
-  };
-
-  const onEditOrder = (items: FoodsOnOrders[]) => {
-    if (order === undefined) {
-      return;
-    }
-
-    editOrder(order.id, items)
-      .then((order) => dispatch(editOrderAction({ item: order })))
-      .catch((error: Error) => {
-        dispatch(
-          errorOrderCollectionAction({
-            errorMessage: "Failed to delete order: " + error.message,
-          }),
-        );
-        Alert.alert("Failed to delete order: ", error.message);
-      });
   };
 
   const openPaymentSheet = async () => {
@@ -197,8 +161,6 @@ function CheckoutScreen({ order }: { order: Order }) {
           (stall) => stall.id === order.stallId,
         )}
         saveToCaloricTrackerDraft={saveToCaloricTrackerDraft}
-        deleteOrder={onDeleteOrder}
-        editOrder={onEditOrder}
         onCancel={() =>
           router.canGoBack() ? router.back() : router.replace("/orders")
         }

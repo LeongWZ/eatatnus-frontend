@@ -154,7 +154,7 @@ export default function Index() {
   return (
     <View>
       <Header />
-      <ScrollView>
+      <ScrollView className="p-2">
         <View className="p-2" id="stalls">
           <Text className="text-2xl">Top-rated stalls</Text>
           {topRatedStalls.map((stall) => (

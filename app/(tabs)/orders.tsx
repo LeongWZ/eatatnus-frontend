@@ -129,7 +129,7 @@ export default function OrderPage() {
             errorMessage: "Failed to fulfill order: " + error.message,
           }),
         );
-        Alert.alert("Failed to fulfill order: ", error.message);
+        Alert.alert("Failed to fulfill order", error.message);
       });
 
   const saveToCaloricTrackerDraft = (draftItem: DraftItem) => {
@@ -221,9 +221,9 @@ export default function OrderPage() {
   }
 
   return (
-    <View className="p-4">
+    <View>
       {auth.user?.role === Role.Business && stall === undefined && (
-        <View className="my-2 items-start space-y-2">
+        <View className="m-4 items-start space-y-2">
           <Text className="text-base">
             This account is not connected to a stall
           </Text>
@@ -240,7 +240,14 @@ export default function OrderPage() {
         refreshing={orderCollection.loading}
         sections={[
           ...(auth.user?.role === Role.Business
-            ? []
+            ? [
+                {
+                  title: "To Fulfill",
+                  data: orderCollection.items
+                    .filter((order) => order.paid && !order.fulfilled)
+                    .toReversed(),
+                },
+              ]
             : [
                 {
                   title: "To Pay",
@@ -248,14 +255,14 @@ export default function OrderPage() {
                     (order) => !order.paid && !order.fulfilled,
                   ),
                 },
+
+                {
+                  title: "To Receive",
+                  data: orderCollection.items.filter(
+                    (order) => order.paid && !order.fulfilled,
+                  ),
+                },
               ]),
-          {
-            title:
-              auth.user?.role === Role.Business ? "To Fulfill" : "To Receive",
-            data: orderCollection.items.filter(
-              (order) => order.paid && !order.fulfilled,
-            ),
-          },
           {
             title: "Fulfilled",
             data: orderCollection.items.filter((order) => order.fulfilled),
@@ -295,6 +302,7 @@ export default function OrderPage() {
             <Text className="mt-1 mb-4 text-base">None</Text>
           ) : null
         }
+        contentContainerStyle={{ padding: 12 }}
         keyExtractor={(item, index) => item.id.toString() + index}
       />
     </View>

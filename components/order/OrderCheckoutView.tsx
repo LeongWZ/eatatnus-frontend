@@ -8,8 +8,6 @@ import { Link } from "expo-router";
 type OrderCheckoutViewProps = {
   order: Order;
   saveToCaloricTrackerDraft: (item: DraftItem) => void;
-  deleteOrder: () => void;
-  editOrder: (items: FoodsOnOrders[], newItems?: DraftItem[]) => void;
   onCancel: () => void;
   onPayment: () => void;
   stall?: Stall;
@@ -19,8 +17,6 @@ type OrderCheckoutViewProps = {
 export default function OrderCheckoutView(props: OrderCheckoutViewProps) {
   const {
     order,
-    deleteOrder,
-    editOrder,
     saveToCaloricTrackerDraft,
     onCancel,
     onPayment,
@@ -28,7 +24,9 @@ export default function OrderCheckoutView(props: OrderCheckoutViewProps) {
     disabled,
   } = props;
 
-  const localeString: string = new Date(order.createdAt).toLocaleString();
+  const updatedAtLocaleString: string = new Date(
+    order.updatedAt,
+  ).toLocaleString();
 
   const totalPrice: number = order.foods.reduce(
     (acc, item) => acc + (item.food.price ?? 0) * item.count,
@@ -38,7 +36,7 @@ export default function OrderCheckoutView(props: OrderCheckoutViewProps) {
   return (
     <View className="border rounded my-2 p-4 space-y-4">
       <View className="items-start">
-        <Text className="text-lg">{localeString}</Text>
+        <Text className="text-sm">Updated at: {updatedAtLocaleString}</Text>
         {stall && (
           <Link href={`/stalls/${stall.id}`} asChild>
             <TouchableOpacity>
@@ -52,19 +50,10 @@ export default function OrderCheckoutView(props: OrderCheckoutViewProps) {
       {order.foods.map((item, index) => (
         <FoodItemView
           item={item}
-          submitDelete={() =>
-            order.foods.length > 1
-              ? editOrder([
-                  ...order.foods.slice(0, index),
-                  ...order.foods.slice(index + 1),
-                ])
-              : deleteOrder()
-          }
-          submitEdit={(item) =>
-            editOrder(order.foods.map((food, i) => (i === index ? item : food)))
-          }
+          submitDelete={() => {}}
+          submitEdit={(item) => {}}
           saveToCaloricTrackerDraft={saveToCaloricTrackerDraft}
-          disabled={disabled}
+          disabled={true}
           key={`${item.foodId}-${item.count}`}
         />
       ))}
