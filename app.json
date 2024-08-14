@@ -20,7 +20,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/eatatnus_icon.png",
         "backgroundColor": "#ffffff"
       },
       "permissions": [
